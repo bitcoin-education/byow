@@ -1,4 +1,4 @@
-package com.byow.wallet.byow.events;
+package com.byow.wallet.byow.gui.events;
 
 import com.byow.wallet.byow.GuiApplication;
 import javafx.stage.Stage;

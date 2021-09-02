@@ -1,6 +1,6 @@
 package com.byow.wallet.byow;
 
-import com.byow.wallet.byow.events.GuiStartedEvent;
+import com.byow.wallet.byow.gui.events.GuiStartedEvent;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;

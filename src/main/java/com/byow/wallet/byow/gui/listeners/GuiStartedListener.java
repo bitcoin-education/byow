@@ -1,6 +1,6 @@
-package com.byow.wallet.byow.listeners;
+package com.byow.wallet.byow.gui.listeners;
 
-import com.byow.wallet.byow.events.GuiStartedEvent;
+import com.byow.wallet.byow.gui.events.GuiStartedEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
