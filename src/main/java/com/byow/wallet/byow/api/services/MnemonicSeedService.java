@@ -1,6 +1,6 @@
 package com.byow.wallet.byow.api.services;
 
-import bitcoinjava.MnemonicSeedGenerator;
+import io.github.bitcoineducation.bitcoinjava.MnemonicSeedGenerator;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
