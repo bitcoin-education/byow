@@ -59,6 +59,11 @@
 			<version>4.0.16-alpha</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.github.bitcoin-education</groupId>
+			<artifactId>bitcoin-java</artifactId>
+			<version>0.1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -91,6 +96,30 @@
 							<goal>removeStubs</goal>
 							<goal>removeTestStubs</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>io.github.bitcoin-education</groupId>
+									<artifactId>bitcoin-java</artifactId>
+									<version>0.1.0</version>
+									<overWrite>true</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+									<destFileName>wordlist.txt</destFileName>
+									<includes>**/*.txt</includes>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
