@@ -26,7 +26,8 @@ public class MainWindowController {
     public MainWindowController(
         @Value("fxml/create_wallet_dialog.fxml") Resource createWalletDialog,
         ApplicationContext context,
-        CurrentWallet currentWallet) {
+        CurrentWallet currentWallet
+    ) {
         this.createWalletDialog = createWalletDialog;
         this.context = context;
         this.currentWallet = currentWallet;
