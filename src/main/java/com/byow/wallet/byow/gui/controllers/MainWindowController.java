@@ -1,7 +1,6 @@
 package com.byow.wallet.byow.gui.controllers;
 
 import com.byow.wallet.byow.observables.CurrentWallet;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
