@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.TextArea
+import javafx.scene.control.TextField
 import javafx.stage.Stage
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -54,9 +55,12 @@ class CreateWalletTest extends ApplicationSpec {
             clickOn("Create")
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea.class).text
             clickOn("OK")
+            clickOn("Receive")
+            String address = lookup("#receivingAddress").queryAs(TextField.class).getText();
         then:
             mnemonicSeed
             stage.title == "BYOW Wallet - " + "My Test Wallet"
+            address
     }
 
     def "should cancel wallet creation"() {

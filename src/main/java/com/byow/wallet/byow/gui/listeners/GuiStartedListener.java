@@ -1,10 +1,13 @@
 package com.byow.wallet.byow.gui.listeners;
 
+import com.byow.wallet.byow.gui.controllers.ReceiveTabController;
 import com.byow.wallet.byow.gui.events.GuiStartedEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Builder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -40,6 +43,13 @@ public class GuiStartedListener implements ApplicationListener<GuiStartedEvent> 
         try {
             fxmlLoader.setLocation(this.fxml.getURL());
             fxmlLoader.setControllerFactory(context::getBean);
+            fxmlLoader.setBuilderFactory(type -> {
+                if (type.equals(ReceiveTabController.class)) {
+                    return (Builder<Object>) () -> context.getBean(type);
+                }
+                JavaFXBuilderFactory defaultFactory = new JavaFXBuilderFactory();
+                return defaultFactory.getBuilder(type);
+            });
             root = fxmlLoader.load();
         } catch (IOException e) {
             throw new RuntimeException(e);
