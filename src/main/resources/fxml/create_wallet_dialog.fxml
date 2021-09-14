@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<DialogPane headerText="Give your wallet a name, and click on create." minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.byow.wallet.byow.gui.controllers.CreateWalletDialogController">
+<DialogPane fx:id="dialogPane" headerText="Give your wallet a name, optionally a password, and click on create. Then, copy the generated mnemonic seed on a safe place and click on OK." minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.byow.wallet.byow.gui.controllers.CreateWalletDialogController">
    <padding>
       <Insets left="10.0" right="10.0" top="10.0" />
    </padding>
@@ -15,18 +15,25 @@
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" onAction="#createMnemonicSeed" text="Create" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" onAction="#createMnemonicSeed" text="Create" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Wallet Name" />
             <TextField fx:id="name" GridPane.columnIndex="1" />
-            <TextArea fx:id="mnemonicSeed" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-            <Label text="Mnemonic Seed" GridPane.rowIndex="2" />
+            <TextArea fx:id="mnemonicSeed" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+            <Label text="Mnemonic Seed" GridPane.rowIndex="3" />
+            <Label text="Password (optional)" GridPane.rowIndex="1" />
+            <PasswordField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </content>
+   <buttonTypes>
+      <ButtonType fx:id="ok" fx:constant="OK" />
+      <ButtonType fx:id="cancel" buttonData="CANCEL_CLOSE" text="Cancel" />
+   </buttonTypes>
 </DialogPane>
