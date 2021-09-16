@@ -31,7 +31,7 @@ public class MainWindowController {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(this.borderPane.getScene().getWindow());
         dialog.setTitle("Create New Wallet");
-        dialog.setOnShown(event -> dialog.getDialogPane().getScene().getWindow().setOnCloseRequest(event2 -> dialog.hide()));
+        dialog.setOnShown(event -> dialog.getDialogPane().getScene().getWindow().setOnCloseRequest(event1 -> dialog.hide()));
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(createWalletDialog.getURL(), null, null, context::getBean);

@@ -8,6 +8,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
@@ -15,13 +16,16 @@ import java.io.FileNotFoundException;
 @Component
 public class CreateWalletDialogController {
     @FXML
-    private  TextField name;
+    private ButtonType cancel;
 
     @FXML
     private ButtonType ok;
 
     @FXML
-    private  ButtonType cancel;
+    private PasswordField password;
+
+    @FXML
+    private TextField name;
 
     @FXML
     private DialogPane dialogPane;
@@ -32,7 +36,7 @@ public class CreateWalletDialogController {
     private final MnemonicSeedService mnemonicSeedService;
 
     private BooleanBinding allRequiredInputsAreFull;
-
+  
     public void initialize() {
         dialogPane.lookupButton(cancel)
             .addEventHandler(ActionEvent.ACTION, event -> dialogPane.getScene().getWindow().hide());
@@ -67,5 +71,37 @@ public class CreateWalletDialogController {
 
     public void createMnemonicSeed() throws FileNotFoundException {
         mnemonicSeed.setText(mnemonicSeedService.create());
+    }
+
+    public void initialize() {
+        dialogPane.lookupButton(cancel)
+            .addEventHandler(ActionEvent.ACTION, event -> dialogPane.getScene().getWindow().hide());
+        allRequiredInputsAreFull = new BooleanBinding() {
+            {
+                bind(name.textProperty(), mnemonicSeed.textProperty());
+            }
+
+            @Override
+            protected boolean computeValue() {
+                return !(name.getText().trim().isEmpty() || mnemonicSeed.getText().trim().isEmpty());
+            }
+        };
+        dialogPane.lookupButton(ok)
+            .disableProperty()
+            .bind(getAllRequiredInputsAreFull().not());
+        dialogPane.lookupButton(ok)
+            .addEventHandler(ActionEvent.ACTION, event -> createWallet());
+    }
+
+    private void createWallet() {
+        dialogPane.getScene().getWindow().hide();
+    }
+
+    public BooleanBinding getAllRequiredInputsAreFull() {
+        return allRequiredInputsAreFull;
+    }
+
+    public BooleanBinding allRequiredInputsAreFullProperty() {
+        return allRequiredInputsAreFull;
     }
 }

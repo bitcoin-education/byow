@@ -24,6 +24,8 @@ class CreateWalletTest extends ApplicationSpec {
     @Autowired
     private ApplicationContext context
 
+    private Stage stage
+
     @Override
     void init() throws Exception {
         FxToolkit.registerStage { new Stage() }
