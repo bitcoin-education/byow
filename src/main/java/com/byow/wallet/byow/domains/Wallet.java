@@ -1,3 +1,5 @@
 package com.byow.wallet.byow.domains;
 
-public record Wallet(String name) {}
+import java.util.List;
+
+public record Wallet(String name, List<ExtendedPubkey> extendedPubkeys) {}

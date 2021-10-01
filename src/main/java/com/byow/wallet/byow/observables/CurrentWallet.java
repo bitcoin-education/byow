@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 public class CurrentWallet {
     private final SimpleStringProperty name = new SimpleStringProperty();
 
+    private final SimpleStringProperty receivingAddress = new SimpleStringProperty();
+
     public SimpleStringProperty nameProperty() {
         return name;
     }
@@ -17,6 +19,18 @@ public class CurrentWallet {
 
     public void setName(String name) {
         this.name.set(name);
+    }
+
+    public SimpleStringProperty receivingAddressProperty() {
+        return receivingAddress;
+    }
+
+    public String getReceivingAddress() {
+        return receivingAddress.get();
+    }
+
+    public void setReceivingAddress(String receivingAddress) {
+        this.receivingAddress.set(receivingAddress);
     }
 
 }

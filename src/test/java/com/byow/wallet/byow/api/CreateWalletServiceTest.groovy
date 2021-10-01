@@ -9,7 +9,7 @@ class CreateWalletServiceTest extends Specification {
     CreateWalletService createWalletService
 
     def setup() {
-        createWalletService = new CreateWalletService()
+        createWalletService = new CreateWalletService(extendedPubkeyService, addressConfiguration)
     }
 
     def "should create wallet"() {
