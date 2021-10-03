@@ -3,6 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.geometry.Insets?>
+<?import com.byow.wallet.byow.gui.controllers.ReceiveTabController?>
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="770" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.byow.wallet.byow.gui.controllers.MainWindowController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
@@ -15,4 +17,15 @@
         </menus>
       </MenuBar>
    </top>
+   <center>
+      <VBox prefHeight="300.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                  <ReceiveTabController />
+              </tabs>
+            </TabPane>
+         </children>
+      </VBox>
+   </center>
 </BorderPane>
