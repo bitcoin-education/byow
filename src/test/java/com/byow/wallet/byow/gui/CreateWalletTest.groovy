@@ -1,11 +1,14 @@
 package com.byow.wallet.byow.gui
 
+import com.byow.wallet.byow.gui.controllers.ReceiveTabController
 import javafx.fxml.FXMLLoader
+import javafx.fxml.JavaFXBuilderFactory
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import javafx.stage.Stage
+import javafx.util.Builder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
@@ -40,6 +43,18 @@ class CreateWalletTest extends ApplicationSpec {
         this.stage = stage
         FXMLLoader fxmlLoader = new FXMLLoader(fxml.URL)
         fxmlLoader.controllerFactory = context::getBean
+        fxmlLoader.builderFactory = type -> {
+            if (type.equals(ReceiveTabController.class)) {
+                return new Builder<Object>() {
+                    @Override
+                    Object build() {
+                        return context.getBean(type)
+                    }
+                }
+            }
+            JavaFXBuilderFactory defaultFactory = new JavaFXBuilderFactory()
+            return defaultFactory.getBuilder(type)
+        }
         Parent root = fxmlLoader.load()
         stage.title = "BYOW Wallet"
         stage.scene = new Scene(root)
