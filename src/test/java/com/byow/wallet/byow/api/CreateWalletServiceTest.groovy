@@ -1,7 +1,9 @@
 package com.byow.wallet.byow.api
 
+import com.byow.wallet.byow.api.services.AddressSequentialGenerator
 import com.byow.wallet.byow.api.services.CreateWalletService
 import com.byow.wallet.byow.api.services.ExtendedPubkeyService
+import com.byow.wallet.byow.api.services.SegwitAddressGenerator
 import com.byow.wallet.byow.domains.AddressConfig
 import com.byow.wallet.byow.domains.Wallet
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -16,18 +18,24 @@ class CreateWalletServiceTest extends Specification {
 
     CreateWalletService createWalletService
 
-    List<AddressConfig> addressConfigs
+    Map<String, AddressConfig> addressConfigs;
 
     ExtendedPubkeyService extendedPubkeyService
 
+    AddressSequentialGenerator addressSequentialGenerator
+
+    SegwitAddressGenerator segwitAddressGenerator
+
     def setup() {
         Security.addProvider(new BouncyCastleProvider())
+        segwitAddressGenerator = new SegwitAddressGenerator()
+        addressSequentialGenerator = new AddressSequentialGenerator(20)
         addressConfigs = [
-            new AddressConfig(SEGWIT, "84'/0'/0'/0"),
-            new AddressConfig(SEGWIT_CHANGE, "84'/0'/0'/1")
+            "SEGWIT": new AddressConfig(SEGWIT, "84'/0'/0'/0", segwitAddressGenerator),
+            "SEGWIT_CHANGE": new AddressConfig(SEGWIT_CHANGE, "84'/0'/0'/1", segwitAddressGenerator)
         ]
         extendedPubkeyService = new ExtendedPubkeyService()
-        createWalletService = new CreateWalletService(addressConfigs, extendedPubkeyService)
+        createWalletService = new CreateWalletService(addressConfigs, extendedPubkeyService, addressSequentialGenerator)
     }
 
     def "should create wallet"() {
@@ -40,5 +48,7 @@ class CreateWalletServiceTest extends Specification {
         then:
             wallet.name() == name
             wallet.extendedPubkeys().size() == 2
+            wallet.extendedPubkeys()[0].addresses.size() == 20
+            wallet.extendedPubkeys()[1].addresses.size() == 20
     }
 }

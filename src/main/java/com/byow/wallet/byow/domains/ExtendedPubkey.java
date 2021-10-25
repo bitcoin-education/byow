@@ -23,4 +23,8 @@ public class ExtendedPubkey {
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
     }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
 }
