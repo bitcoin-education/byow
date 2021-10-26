@@ -1,5 +1,6 @@
 package com.byow.wallet.byow.api
 
+import com.byow.wallet.byow.api.config.AddressConfiguration
 import com.byow.wallet.byow.api.services.SegwitAddressGenerator
 import io.github.bitcoineducation.bitcoinjava.ExtendedKey
 import io.github.bitcoineducation.bitcoinjava.ExtendedPubkey
@@ -8,11 +9,16 @@ import spock.lang.Specification
 
 import java.security.Security
 
+import static io.github.bitcoineducation.bitcoinjava.AddressConstants.MAINNET_P2WPKH_ADDRESS_PREFIX
+
 class SegwitAddressGeneratorTest extends Specification {
-    SegwitAddressGenerator segwitAddressGenerator = new SegwitAddressGenerator()
+    SegwitAddressGenerator segwitAddressGenerator
+    AddressConfiguration addressConfigurationMock
 
     def setup() {
         Security.addProvider(new BouncyCastleProvider())
+        addressConfigurationMock = Mock(AddressConfiguration)
+        segwitAddressGenerator = new SegwitAddressGenerator(addressConfigurationMock)
     }
 
     def "should generate segwit address"() {
@@ -20,6 +26,7 @@ class SegwitAddressGeneratorTest extends Specification {
             ExtendedPubkey extendedPubkey = ExtendedPubkey.unserialize(extendedPubkeyString)
             ExtendedKey extendedChildKey = extendedPubkey.ckd(index);
         when:
+            addressConfigurationMock.getP2WPKHAddressPrefix() >> MAINNET_P2WPKH_ADDRESS_PREFIX
             String address = segwitAddressGenerator.generate(extendedChildKey)
         then:
             address == expectedAddress
