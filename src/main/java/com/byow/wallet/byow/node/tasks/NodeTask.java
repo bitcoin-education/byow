@@ -1,8 +1,8 @@
 package com.byow.wallet.byow.node.tasks;
 
+import com.byow.wallet.byow.node.events.TransactionReceivedEvent;
 import io.github.bitcoineducation.bitcoinjava.Transaction;
 import javafx.concurrent.Task;
-import org.bouncycastle.util.encoders.Hex;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -46,14 +46,12 @@ public class NodeTask extends Task<Void> {
                 continue;
             }
             byte[] contents = subscriber.recv();
-            System.out.println(Hex.toHexString(contents));
-            Transaction transaction = Transaction.fromByteStream(new ByteArrayInputStream(contents));
-            System.out.println(transaction.getOutputs().get(0).getAmount());
-            System.out.println(transaction.getOutputs().get(0).getScriptPubkey());
 
-//            applicationEventPublisher.publishEvent(
-//                new TransactionReceivedEvent(this, )
-//            );
+            Transaction transaction = Transaction.fromByteStream(new ByteArrayInputStream(contents));
+
+            applicationEventPublisher.publishEvent(
+                new TransactionReceivedEvent(this, transaction)
+            );
         }
 
         return null;

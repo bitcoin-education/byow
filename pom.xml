@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>io.github.bitcoin-education</groupId>
 			<artifactId>bitcoin-java</artifactId>
-			<version>0.3.1</version>
+			<version>0.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zeromq</groupId>
@@ -117,7 +117,7 @@
 								<artifactItem>
 									<groupId>io.github.bitcoin-education</groupId>
 									<artifactId>bitcoin-java</artifactId>
-									<version>0.3.1</version>
+									<version>0.4.0</version>
 									<overWrite>true</overWrite>
 									<outputDirectory>${project.build.directory}/classes</outputDirectory>
 									<destFileName>wordlist.txt</destFileName>
