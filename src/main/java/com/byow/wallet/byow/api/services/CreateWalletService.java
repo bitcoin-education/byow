@@ -8,17 +8,20 @@ import io.github.bitcoineducation.bitcoinjava.MnemonicSeed;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 import static io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes.MAINNET_PREFIX;
 
 @Component
 public class CreateWalletService {
-    private final Map<String, AddressConfig> addressConfigs;
+    private final List<AddressConfig> addressConfigs;
     private final ExtendedPubkeyService extendedPubkeyService;
     private final AddressSequentialGenerator addressSequentialGenerator;
 
-    public CreateWalletService(Map<String, AddressConfig> addressConfigs, ExtendedPubkeyService extendedPubkeyService, AddressSequentialGenerator addressSequentialGenerator) {
+    public CreateWalletService(
+        List<AddressConfig> addressConfigs,
+        ExtendedPubkeyService extendedPubkeyService,
+        AddressSequentialGenerator addressSequentialGenerator
+    ) {
         this.addressConfigs = addressConfigs;
         this.extendedPubkeyService = extendedPubkeyService;
         this.addressSequentialGenerator = addressSequentialGenerator;
@@ -27,7 +30,7 @@ public class CreateWalletService {
     public Wallet create(String name, String password, String mnemonicSeedString) {
         MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString);
         ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey(password, MAINNET_PREFIX.getPrivatePrefix());
-        List<ExtendedPubkey> extendedPubkeys = addressConfigs.values()
+        List<ExtendedPubkey> extendedPubkeys = addressConfigs
             .stream()
             .map(addressConfig -> extendedPubkeyService.create(masterKey, addressConfig.derivationPath(), addressConfig.addressType()))
             .toList();
@@ -36,6 +39,6 @@ public class CreateWalletService {
     }
 
     private void generateAddresses(ExtendedPubkey extendedPubkey) {
-        extendedPubkey.setAddresses(addressSequentialGenerator.generate(extendedPubkey.getKey(), addressConfigs.get(extendedPubkey.getType()).addressGenerator()));
+        extendedPubkey.setAddresses(addressSequentialGenerator.generate(extendedPubkey.getKey(), extendedPubkey.getType()));
     }
 }

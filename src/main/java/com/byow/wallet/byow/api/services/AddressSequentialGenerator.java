@@ -14,13 +14,17 @@ import java.util.stream.LongStream;
 public class AddressSequentialGenerator {
     private final Integer initialNumberOfGeneratedAddresses;
 
+    private final AddressGeneratorFactory addressGeneratorFactory;
+
     public AddressSequentialGenerator(
-        @Qualifier("initialNumberOfGeneratedAddresses") Integer initialNumberOfGeneratedAddresses
+        @Qualifier("initialNumberOfGeneratedAddresses") Integer initialNumberOfGeneratedAddresses,
+        AddressGeneratorFactory addressGeneratorFactory
     ) {
         this.initialNumberOfGeneratedAddresses = initialNumberOfGeneratedAddresses;
+        this.addressGeneratorFactory = addressGeneratorFactory;
     }
 
-    public List<Address> generate(String key, AddressGenerator addressGenerator) {
+    public List<Address> generate(String key, String addressType) {
         ExtendedPubkey extendedPubkey;
         try {
             extendedPubkey = ExtendedPubkey.unserialize(key);
@@ -28,7 +32,7 @@ public class AddressSequentialGenerator {
             throw new RuntimeException(e);
         }
         return LongStream.range(0, initialNumberOfGeneratedAddresses)
-            .mapToObj(i -> generateAddress(addressGenerator, extendedPubkey, i))
+            .mapToObj(i -> generateAddress(addressGeneratorFactory.get(addressType), extendedPubkey, i))
             .toList();
     }
 
