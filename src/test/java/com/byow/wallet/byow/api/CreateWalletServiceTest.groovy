@@ -27,7 +27,7 @@ class CreateWalletServiceTest extends Specification {
             new AddressConfig(SEGWIT_CHANGE, "84'/0'/0'/1")
         ]
         extendedPubkeyService = new ExtendedPubkeyService()
-        createWalletService = new CreateWalletService(addressConfigs, extendedPubkeyService)
+        createWalletService = new CreateWalletService(addressConfigs, extendedPubkeyService, addressSequentialGenerator)
     }
 
     def "should create wallet"() {
