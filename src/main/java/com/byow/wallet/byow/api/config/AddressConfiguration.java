@@ -17,4 +17,9 @@ public class AddressConfiguration {
     AddressConfig segwitChangeConfig() {
         return new AddressConfig(AddressType.SEGWIT_CHANGE, "84'/0'/0'/1");
     }
+
+    @Bean
+    Integer initialNumberOfGeneratedAddresses() {
+        return 20;
+    }
 }

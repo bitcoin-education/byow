@@ -1,15 +1,23 @@
 package com.byow.wallet.byow.api
 
+import com.byow.wallet.byow.api.services.AddressGeneratorFactory
 import com.byow.wallet.byow.api.services.AddressSequentialGenerator
+import com.byow.wallet.byow.api.services.SegwitAddressGenerator
 import com.byow.wallet.byow.domains.Address
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import spock.lang.Specification
+
+import java.security.Security
 
 class AddressSequentialGeneratorTest extends Specification {
 
-    AddressSequentialGenerator addressSequentialGenerator;
+    AddressSequentialGenerator addressSequentialGenerator
+    AddressGeneratorFactory addressGeneratorFactory
 
     def setup() {
-        addressSequentialGenerator = new AddressSequentialGenerator(initialNumberOfGeneratedAddresses, addressGeneratorFactory)
+        Security.addProvider(new BouncyCastleProvider())
+        addressGeneratorFactory = new AddressGeneratorFactory(new SegwitAddressGenerator())
+        addressSequentialGenerator = new AddressSequentialGenerator(20, addressGeneratorFactory)
     }
 
     def "should generate 20 addresses"() {

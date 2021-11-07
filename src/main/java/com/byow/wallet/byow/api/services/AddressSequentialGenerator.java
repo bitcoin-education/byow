@@ -4,11 +4,13 @@ import com.byow.wallet.byow.domains.Address;
 import io.github.bitcoineducation.bitcoinjava.ExtendedKey;
 import io.github.bitcoineducation.bitcoinjava.ExtendedPubkey;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.LongStream;
 
+@Service
 public class AddressSequentialGenerator {
     private final int initialNumberOfGeneratedAddresses;
     private final AddressGeneratorFactory addressGeneratorFactory;

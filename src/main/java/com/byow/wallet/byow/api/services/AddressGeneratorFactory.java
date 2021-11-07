@@ -1,9 +1,11 @@
 package com.byow.wallet.byow.api.services;
 
 import com.byow.wallet.byow.domains.AddressType;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+@Service
 public class AddressGeneratorFactory {
     private final Map<String, AddressGenerator> addressGeneratorMap;
 
