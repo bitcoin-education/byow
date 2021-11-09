@@ -1,0 +1,22 @@
+package com.byow.wallet.byow.node.listeners;
+
+import com.byow.wallet.byow.gui.events.GuiStartedEvent;
+import com.byow.wallet.byow.node.tasks.NodeTask;
+import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
+
+@Component
+public class GuiStartedNodeListener implements ApplicationListener<GuiStartedEvent> {
+    private final NodeTask nodeTask;
+
+    public GuiStartedNodeListener(NodeTask nodeTask) {
+        this.nodeTask = nodeTask;
+    }
+
+    @Override
+    public void onApplicationEvent(GuiStartedEvent event) {
+        Thread thread = new Thread(nodeTask);
+        thread.setDaemon(true);
+        thread.start();
+    }
+}

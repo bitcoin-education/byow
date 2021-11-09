@@ -1,6 +1,7 @@
 package com.byow.wallet.byow.api
 
 import com.byow.wallet.byow.api.services.AddressGeneratorFactory
+import com.byow.wallet.byow.api.services.AddressPrefixFactory
 import com.byow.wallet.byow.api.services.AddressSequentialGenerator
 import com.byow.wallet.byow.api.services.SegwitAddressGenerator
 import com.byow.wallet.byow.domains.Address
@@ -9,14 +10,18 @@ import spock.lang.Specification
 
 import java.security.Security
 
+import static com.byow.wallet.byow.api.services.AddressPrefixFactory.MAINNET
+
 class AddressSequentialGeneratorTest extends Specification {
 
     AddressSequentialGenerator addressSequentialGenerator
     AddressGeneratorFactory addressGeneratorFactory
+    AddressPrefixFactory addressPrefixFactory
 
     def setup() {
         Security.addProvider(new BouncyCastleProvider())
-        addressGeneratorFactory = new AddressGeneratorFactory(new SegwitAddressGenerator())
+        addressPrefixFactory = new AddressPrefixFactory(MAINNET)
+        addressGeneratorFactory = new AddressGeneratorFactory(new SegwitAddressGenerator(addressPrefixFactory))
         addressSequentialGenerator = new AddressSequentialGenerator(20, addressGeneratorFactory)
     }
 
