@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleStringProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -15,6 +16,7 @@ public class CurrentWallet {
 
     private List<List<Address>> addressLists = List.of();
 
+    private Date createdAt;
 
     public void setName(String name) {
         this.name.set(name);
@@ -49,5 +51,13 @@ public class CurrentWallet {
 
     public void setAddressLists(List<List<Address>> addressLists) {
         this.addressLists = addressLists;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 }

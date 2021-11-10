@@ -6,10 +6,10 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreatedWalletListener implements ApplicationListener<CreatedWalletEvent> {
+public class CreatedWalletUpdateListener implements ApplicationListener<CreatedWalletEvent> {
     private final UpdateCurrentWalletService updateCurrentWalletService;
 
-    public CreatedWalletListener(UpdateCurrentWalletService updateCurrentWalletService) {
+    public CreatedWalletUpdateListener(UpdateCurrentWalletService updateCurrentWalletService) {
         this.updateCurrentWalletService = updateCurrentWalletService;
     }
 

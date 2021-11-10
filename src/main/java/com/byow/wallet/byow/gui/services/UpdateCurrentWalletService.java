@@ -20,6 +20,7 @@ public class UpdateCurrentWalletService {
         currentWallet.setName(wallet.name());
         currentWallet.setAddressLists(getAddressLists(wallet));
         currentWallet.setReceivingAddress(wallet.extendedPubkeys().get(0).getAddresses().get(0).address());
+        currentWallet.setCreatedAt(wallet.createdAt());
     }
 
     private List<List<Address>> getAddressLists(Wallet wallet) {

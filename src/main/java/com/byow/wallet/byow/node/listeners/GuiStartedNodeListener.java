@@ -5,6 +5,8 @@ import com.byow.wallet.byow.node.tasks.NodeTask;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Component
 public class GuiStartedNodeListener implements ApplicationListener<GuiStartedEvent> {
     private final NodeTask nodeTask;
@@ -15,8 +17,10 @@ public class GuiStartedNodeListener implements ApplicationListener<GuiStartedEve
 
     @Override
     public void onApplicationEvent(GuiStartedEvent event) {
-        Thread thread = new Thread(nodeTask);
-        thread.setDaemon(true);
-        thread.start();
+        try {
+            nodeTask.run();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.byow.wallet.byow.node.listeners;
 
+import com.byow.wallet.byow.gui.services.UpdateUTXOsService;
 import com.byow.wallet.byow.node.events.TransactionReceivedEvent;
 import com.byow.wallet.byow.node.services.AddressParser;
 import com.byow.wallet.byow.observables.CurrentWallet;
@@ -15,9 +16,16 @@ public class TransactionReceivedListener implements ApplicationListener<Transact
 
     private final CurrentWallet currentWallet;
 
-    public TransactionReceivedListener(AddressParser addressParser, CurrentWallet currentWallet) {
+    private final UpdateUTXOsService updateUTXOsService;
+
+    public TransactionReceivedListener(
+        AddressParser addressParser,
+        CurrentWallet currentWallet,
+        UpdateUTXOsService updateUTXOsService
+    ) {
         this.addressParser = addressParser;
         this.currentWallet = currentWallet;
+        this.updateUTXOsService = updateUTXOsService;
     }
 
     @Override
@@ -26,13 +34,10 @@ public class TransactionReceivedListener implements ApplicationListener<Transact
         List<String> addresses = transaction.getOutputs()
             .stream()
             .map(addressParser::parse)
-            .filter(address -> currentWallet.getAddressesAsStrings().contains(address))
+            .filter(address -> !address.isEmpty() && currentWallet.getAddressesAsStrings().contains(address))
             .toList();
-
-//        transaction.getInputs()
-//            .stream()
-//            .filter(transactionInput -> !transactionInput.getWitness().getItems().isEmpty())
-//            .map(transactionInput -> (String) transactionInput.getWitness().getItems().get(1))
-//            .map(publicKeyHex -> PublicKey.fromCompressedPublicKey(Hex.decodeStrict(publicKeyHex)).segwitAddressFromCompressedPublicKey())
+        if (!addresses.isEmpty()) {
+            updateUTXOsService.update(addresses, currentWallet.getName());
+        }
     }
 }
