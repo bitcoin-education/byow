@@ -71,7 +71,7 @@ public class NodeImportWalletService {
         return wallet.extendedPubkeys()
             .stream()
             .flatMap(extendedPubkey -> extendedPubkey.getAddresses().stream())
-            .map(Address::address)
+            .map(Address::getAddress)
             .toList();
     }
 }

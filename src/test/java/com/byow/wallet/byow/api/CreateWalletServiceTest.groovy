@@ -36,8 +36,8 @@ class CreateWalletServiceTest extends Specification {
     def setup() {
         Security.addProvider(new BouncyCastleProvider())
         addressConfigs = [
-            new AddressConfig(SEGWIT, "84'/0'/0'/0"),
-            new AddressConfig(SEGWIT_CHANGE, "84'/0'/0'/1")
+                new AddressConfig(SEGWIT, "84'/0'/0'/0"),
+                new AddressConfig(SEGWIT_CHANGE, "84'/0'/0'/1")
         ]
         extendedPubkeyService = new ExtendedPubkeyService()
         addressPrefixFactory = new AddressPrefixFactory(MAINNET)

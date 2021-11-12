@@ -1,12 +1,14 @@
 package com.byow.wallet.byow.observables;
 
 import com.byow.wallet.byow.domains.Address;
+import com.byow.wallet.byow.domains.AddressType;
+import com.byow.wallet.byow.domains.ExtendedPubkey;
 import javafx.beans.property.SimpleStringProperty;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class CurrentWallet {
@@ -14,7 +16,7 @@ public class CurrentWallet {
 
     private final SimpleStringProperty receivingAddress = new SimpleStringProperty();
 
-    private List<List<Address>> addressLists = List.of();
+    private final Addresses addresses = new Addresses();
 
     private Date createdAt;
 
@@ -43,14 +45,11 @@ public class CurrentWallet {
     }
 
     public List<String> getAddressesAsStrings() {
-        return addressLists.stream()
-            .flatMap(Collection::stream)
-            .map(Address::address)
-            .toList();
+        return addresses.getAllAddressesAsStrings();
     }
 
-    public void setAddressLists(List<List<Address>> addressLists) {
-        this.addressLists = addressLists;
+    public void setAddresses(List<ExtendedPubkey> extendedPubkeys) {
+        addresses.setAddresses(extendedPubkeys);
     }
 
     public Date getCreatedAt() {
@@ -59,5 +58,17 @@ public class CurrentWallet {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Map<String, Address> getAddressesAsMap() {
+        return addresses.getAllAddressesAsMap();
+    }
+
+    public long findNextAddressIndex(AddressType addressType) {
+        return addresses.findNextAddressIndex(addressType);
+    }
+
+    public String getAddressAt(long index, AddressType addressType) {
+        return addresses.getAddressAt(index, addressType);
     }
 }
