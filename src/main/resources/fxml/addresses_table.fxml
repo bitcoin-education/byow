@@ -1,0 +1,12 @@
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.Label?>
+<fx:root type="javafx.scene.control.TableView" xmlns:fx="http://javafx.com/fxml" fx:id="addressesTable" >
+    <placeholder>
+        <Label/>
+    </placeholder>
+    <columns>
+        <TableColumn fx:id="columnAddress" editable="false" resizable="false" sortable="false" text="Address" prefWidth="${addressesTable.width*0.60}" />
+        <TableColumn fx:id="columnBalance" editable="false" resizable="false" sortable="false" text="Balance" prefWidth="${addressesTable.width*0.20}"/>
+        <TableColumn fx:id="columnConfirmations" editable="false" resizable="false" sortable="false" text="Confirmations" prefWidth="${addressesTable.width*0.20}"/>
+    </columns>
+</fx:root>

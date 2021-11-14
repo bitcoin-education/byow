@@ -1,6 +1,5 @@
 package com.byow.wallet.byow.gui.services;
 
-import com.byow.wallet.byow.domains.Address;
 import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.observables.CurrentWallet;
@@ -27,12 +26,10 @@ public class UpdateCurrentWalletAddressesService {
     public void update(List<Utxo> utxos) {
         Platform.runLater(() -> {
             Map<String, List<Utxo>> groupedUtxos = utxos.stream().collect(Collectors.groupingBy(Utxo::address));
-            Map<String, Address> addresses = currentWallet.getAddressesAsMap();
             groupedUtxos.forEach((address, utxoList) -> {
-                Address walletAddress = addresses.get(address);
-                setBalance(walletAddress, utxoList);
-                setConfirmations(walletAddress, utxoList);
-                walletAddress.markAsUsed();
+                setBalance(address, utxoList);
+                setConfirmations(address, utxoList);
+                markAsUsed(address);
             });
             updateReceivingAddress();
         });
@@ -44,18 +41,23 @@ public class UpdateCurrentWalletAddressesService {
         currentWallet.setReceivingAddress(nextAddress);
     }
 
-    private void setConfirmations(Address walletAddress, List<Utxo> utxoList) {
+    private void setConfirmations(String address, List<Utxo> utxoList) {
         long confirmations = utxoList.stream()
             .mapToLong(Utxo::confirmations)
             .min()
             .getAsLong();
-        walletAddress.setConfirmations(confirmations);
+        currentWallet.setAddressConfirmations(address, confirmations);
     }
 
-    private void setBalance(Address walletAddress, List<Utxo> utxoList) {
+    private void setBalance(String address, List<Utxo> utxoList) {
         double sum = utxoList.stream()
             .mapToDouble(Utxo::amount)
             .sum();
-        walletAddress.setBalance(sum);
+        currentWallet.setAddressBalance(address, sum);
     }
+
+    private void markAsUsed(String address) {
+        currentWallet.markAddressAsUsed(address);
+    }
+
 }

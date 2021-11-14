@@ -4,6 +4,7 @@ import com.byow.wallet.byow.domains.Address;
 import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.ExtendedPubkey;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableList;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -60,15 +61,27 @@ public class CurrentWallet {
         this.createdAt = createdAt;
     }
 
-    public Map<String, Address> getAddressesAsMap() {
-        return addresses.getAllAddressesAsMap();
-    }
-
     public long findNextAddressIndex(AddressType addressType) {
         return addresses.findNextAddressIndex(addressType);
     }
 
     public String getAddressAt(long index, AddressType addressType) {
         return addresses.getAddressAt(index, addressType);
+    }
+
+    public void setAddressConfirmations(String address, long confirmations) {
+        addresses.setAddressConfirmations(address, confirmations);
+    }
+
+    public void setAddressBalance(String address, double sum) {
+        addresses.setAddressBalance(address, sum);
+    }
+
+    public void markAddressAsUsed(String address) {
+        addresses.markAsUsed(address);
+    }
+
+    public ObservableList<AddressRow> getObservableAddressRows() {
+        return addresses.getObservableAddressRows();
     }
 }

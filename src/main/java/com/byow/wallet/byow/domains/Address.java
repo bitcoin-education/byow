@@ -1,6 +1,6 @@
 package com.byow.wallet.byow.domains;
 
-public final class Address {
+public class Address {
 
     private final String address;
 
