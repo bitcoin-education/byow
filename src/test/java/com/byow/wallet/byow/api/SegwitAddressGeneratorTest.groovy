@@ -1,18 +1,23 @@
 package com.byow.wallet.byow.api
 
+import com.byow.wallet.byow.api.services.AddressPrefixFactory
 import com.byow.wallet.byow.api.services.SegwitAddressGenerator
 import io.github.bitcoineducation.bitcoinjava.ExtendedKey
 import io.github.bitcoineducation.bitcoinjava.ExtendedPubkey
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import spock.lang.Specification
+import static com.byow.wallet.byow.api.services.AddressPrefixFactory.MAINNET
 
 import java.security.Security
 
 class SegwitAddressGeneratorTest extends Specification {
-    SegwitAddressGenerator segwitAddressGenerator = new SegwitAddressGenerator()
+    SegwitAddressGenerator segwitAddressGenerator
+    AddressPrefixFactory addressPrefixFactory
 
     def setup() {
         Security.addProvider(new BouncyCastleProvider())
+        addressPrefixFactory = new AddressPrefixFactory(MAINNET)
+        segwitAddressGenerator = new SegwitAddressGenerator(addressPrefixFactory)
     }
 
     def "should generate segwit address"() {
