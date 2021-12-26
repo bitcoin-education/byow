@@ -4,10 +4,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NodeGetNewAddress {
+public class NodeGetNewAddressClient {
     private final NodeClient nodeClient;
 
-    public NodeGetNewAddress(NodeClient nodeClient) {
+    public NodeGetNewAddressClient(NodeClient nodeClient) {
         this.nodeClient = nodeClient;
     }
 
