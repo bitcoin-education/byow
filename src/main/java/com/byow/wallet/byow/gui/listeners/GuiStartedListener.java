@@ -1,5 +1,6 @@
 package com.byow.wallet.byow.gui.listeners;
 
+import com.byow.wallet.byow.gui.controllers.AddressesTableController;
 import com.byow.wallet.byow.gui.controllers.ReceiveTabController;
 import com.byow.wallet.byow.gui.events.GuiStartedEvent;
 import javafx.fxml.FXMLLoader;
@@ -44,7 +45,7 @@ public class GuiStartedListener implements ApplicationListener<GuiStartedEvent> 
             fxmlLoader.setLocation(this.fxml.getURL());
             fxmlLoader.setControllerFactory(context::getBean);
             fxmlLoader.setBuilderFactory(type -> {
-                if (type.equals(ReceiveTabController.class)) {
+                if (type.equals(ReceiveTabController.class) || type.equals(AddressesTableController.class)) {
                     return (Builder<Object>) () -> context.getBean(type);
                 }
                 JavaFXBuilderFactory defaultFactory = new JavaFXBuilderFactory();
