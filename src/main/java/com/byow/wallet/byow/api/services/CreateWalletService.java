@@ -7,6 +7,7 @@ import io.github.bitcoineducation.bitcoinjava.ExtendedPrivateKey;
 import io.github.bitcoineducation.bitcoinjava.MnemonicSeed;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 import static io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes.MAINNET_PREFIX;
@@ -30,7 +31,7 @@ public class CreateWalletService {
             .map(addressConfig -> extendedPubkeyService.create(masterKey, addressConfig.derivationPath(), addressConfig.addressType()))
             .toList();
         extendedPubkeys.forEach(this::generateAddresses);
-        return new Wallet(name, extendedPubkeys);
+        return new Wallet(name, extendedPubkeys, new Date());
     }
 
     private void generateAddresses(ExtendedPubkey extendedPubkey) {
