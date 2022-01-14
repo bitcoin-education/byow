@@ -6,6 +6,8 @@ import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.util.concurrent.ExecutorService;
+
 public class GuiApplication extends Application {
     private ConfigurableApplicationContext context;
 
@@ -17,5 +19,11 @@ public class GuiApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.context.publishEvent(new GuiStartedEvent(this, stage));
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        this.context.getBean("defaultExecutorService", ExecutorService.class).shutdownNow();
     }
 }
