@@ -16,4 +16,9 @@ public class AsyncConfig {
     public ExecutorService defaultExecutorService() {
         return Executors.newSingleThreadExecutor();
     }
+
+    @Bean
+    public ExecutorService nodeExecutorService() {
+        return Executors.newSingleThreadExecutor();
+    }
 }

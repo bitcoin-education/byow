@@ -25,5 +25,6 @@ public class GuiApplication extends Application {
     public void stop() throws Exception {
         super.stop();
         this.context.getBean("defaultExecutorService", ExecutorService.class).shutdownNow();
+        this.context.getBean("nodeExecutorService", ExecutorService.class).shutdownNow();
     }
 }
