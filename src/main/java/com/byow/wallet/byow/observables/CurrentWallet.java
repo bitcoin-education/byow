@@ -1,13 +1,18 @@
 package com.byow.wallet.byow.observables;
 
+import com.byow.wallet.byow.domains.ExtendedPubkey;
 import javafx.beans.property.SimpleStringProperty;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class CurrentWallet {
     private final SimpleStringProperty name = new SimpleStringProperty();
 
     private final SimpleStringProperty receivingAddress = new SimpleStringProperty();
+
+    private final Addresses addresses = new Addresses();
 
     public void setName(String name) {
         this.name.set(name);
@@ -31,5 +36,13 @@ public class CurrentWallet {
 
     public void setReceivingAddress(String receivingAddress) {
         this.receivingAddress.set(receivingAddress);
+    }
+
+    public List<String> getAddressesAsStrings() {
+        return addresses.getAddressesAsStrings();
+    }
+
+    public void setAddresses(List<ExtendedPubkey> extendedPubkeys) {
+        addresses.setAddresses(extendedPubkeys);
     }
 }

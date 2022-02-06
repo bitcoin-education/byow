@@ -2,6 +2,7 @@ package com.byow.wallet.byow.node.listeners;
 
 import com.byow.wallet.byow.node.events.TransactionReceivedEvent;
 import com.byow.wallet.byow.node.services.AddressParser;
+import com.byow.wallet.byow.observables.CurrentWallet;
 import io.github.bitcoineducation.bitcoinjava.Transaction;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -12,8 +13,11 @@ import java.util.List;
 public class TransactionReceivedListener implements ApplicationListener<TransactionReceivedEvent> {
     private final AddressParser addressParser;
 
-    public TransactionReceivedListener(AddressParser addressParser) {
+    private final CurrentWallet currentWallet;
+
+    public TransactionReceivedListener(AddressParser addressParser, CurrentWallet currentWallet) {
         this.addressParser = addressParser;
+        this.currentWallet = currentWallet;
     }
 
     @Override
@@ -22,7 +26,7 @@ public class TransactionReceivedListener implements ApplicationListener<Transact
         List<String> addresses = transaction.getOutputs()
             .stream()
             .map(addressParser::parse)
+            .filter(address -> !address.isEmpty() && currentWallet.getAddressesAsStrings().contains(address))
             .toList();
-        addresses.forEach(System.out::println);
     }
 }
