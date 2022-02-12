@@ -36,6 +36,6 @@ public class AddressSequentialGenerator {
 
     private Address generateAddress(AddressGenerator addressGenerator, ExtendedPubkey extendedPubkey, long index) {
         ExtendedKey extendedChildKey = extendedPubkey.ckd(String.valueOf(index));
-        return new Address(addressGenerator.generate(extendedChildKey), index);
+        return new Address(addressGenerator.generate(extendedChildKey), index, 0, 0);
     }
 }

@@ -7,7 +7,7 @@ public record Wallet(String name, List<ExtendedPubkey> extendedPubkeys, Date cre
     public List<String> getAddresses() {
         return extendedPubkeys.stream()
             .flatMap(extendedPubkey -> extendedPubkey.getAddresses().stream())
-            .map(Address::address)
+            .map(Address::getAddress)
             .toList();
     }
 }

@@ -1,5 +1,6 @@
 package com.byow.wallet.byow.node.listeners;
 
+import com.byow.wallet.byow.gui.services.UpdateUTXOsService;
 import com.byow.wallet.byow.node.events.TransactionReceivedEvent;
 import com.byow.wallet.byow.node.services.AddressParser;
 import com.byow.wallet.byow.observables.CurrentWallet;
@@ -15,9 +16,12 @@ public class TransactionReceivedListener implements ApplicationListener<Transact
 
     private final CurrentWallet currentWallet;
 
-    public TransactionReceivedListener(AddressParser addressParser, CurrentWallet currentWallet) {
+    private final UpdateUTXOsService updateUTXOsService;
+
+    public TransactionReceivedListener(AddressParser addressParser, CurrentWallet currentWallet, UpdateUTXOsService updateUTXOsService) {
         this.addressParser = addressParser;
         this.currentWallet = currentWallet;
+        this.updateUTXOsService = updateUTXOsService;
     }
 
     @Override
@@ -28,5 +32,8 @@ public class TransactionReceivedListener implements ApplicationListener<Transact
             .map(addressParser::parse)
             .filter(address -> !address.isEmpty() && currentWallet.getAddressesAsStrings().contains(address))
             .toList();
+        if (!addresses.isEmpty()) {
+            updateUTXOsService.update(addresses, currentWallet.getName());
+        }
     }
 }

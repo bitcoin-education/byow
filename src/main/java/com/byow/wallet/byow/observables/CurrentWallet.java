@@ -45,4 +45,16 @@ public class CurrentWallet {
     public void setAddresses(List<ExtendedPubkey> extendedPubkeys) {
         addresses.setAddresses(extendedPubkeys);
     }
+
+    public void setAddressBalance(String address, double sum) {
+        addresses.setAddressBalance(address, sum);
+    }
+
+    public void setAddressConfirmations(String address, long confirmations) {
+        addresses.setAddressConfirmations(address, confirmations);
+    }
+
+    public void markAddressAsUsed(String address) {
+        addresses.markAsUsed(address);
+    }
 }

@@ -29,8 +29,27 @@ public class Addresses {
                     extendedPubkey -> AddressType.valueOf(extendedPubkey.getType()),
                     extendedPubkey -> extendedPubkey.getAddresses()
                         .stream()
-                        .collect(toMap(Address::address, Function.identity(), (a, b) -> a, LinkedHashMap::new))
+                        .collect(toMap(Address::getAddress, Function.identity(), (a, b) -> a, LinkedHashMap::new))
                 )
             );
+    }
+
+    public void setAddressBalance(String address, double sum) {
+        getAddressesAsMap().get(address).setBalance(sum);
+    }
+
+    private Map<String, Address> getAddressesAsMap() {
+        return addresses.values()
+            .stream()
+            .flatMap(addressMap -> addressMap.entrySet().stream())
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public void setAddressConfirmations(String address, long confirmations) {
+        getAddressesAsMap().get(address).setConfirmations(confirmations);
+    }
+
+    public void markAsUsed(String address) {
+        getAddressesAsMap().get(address).markAsUsed();
     }
 }
