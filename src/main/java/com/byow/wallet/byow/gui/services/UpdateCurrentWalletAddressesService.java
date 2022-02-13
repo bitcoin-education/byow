@@ -24,6 +24,7 @@ public class UpdateCurrentWalletAddressesService {
             setBalance(address, utxoList);
             setConfirmations(address, utxoList);
             markAsUsed(address);
+            currentWallet.setAddressRow(address);
         });
     }
 

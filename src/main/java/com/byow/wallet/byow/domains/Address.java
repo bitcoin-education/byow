@@ -37,4 +37,8 @@ public final class Address {
     public void markAsUsed() {
         used = true;
     }
+
+    public long getConfirmations() {
+        return confirmations;
+    }
 }

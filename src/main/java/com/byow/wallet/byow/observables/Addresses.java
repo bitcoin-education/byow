@@ -35,7 +35,7 @@ public class Addresses {
     }
 
     public void setAddressBalance(String address, double sum) {
-        getAddressesAsMap().get(address).setBalance(sum);
+        getAddress(address).setBalance(sum);
     }
 
     private Map<String, Address> getAddressesAsMap() {
@@ -46,10 +46,15 @@ public class Addresses {
     }
 
     public void setAddressConfirmations(String address, long confirmations) {
-        getAddressesAsMap().get(address).setConfirmations(confirmations);
+        getAddress(address).setConfirmations(confirmations);
+    }
+
+    public Address getAddress(String address) {
+        return getAddressesAsMap().get(address);
     }
 
     public void markAsUsed(String address) {
-        getAddressesAsMap().get(address).markAsUsed();
+        getAddress(address).markAsUsed();
     }
+
 }
