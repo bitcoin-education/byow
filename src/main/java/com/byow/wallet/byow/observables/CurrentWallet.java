@@ -1,5 +1,7 @@
 package com.byow.wallet.byow.observables;
 
+import com.byow.wallet.byow.domains.Address;
+import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.ExtendedPubkey;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
@@ -68,5 +70,17 @@ public class CurrentWallet {
 
     public ObservableList<AddressRow> getObservableAddressRows() {
         return addressRows.getObservableAddressRows();
+    }
+
+    public long findNextAddressIndex(AddressType addressType) {
+        return addresses.findNextAddressIndex(addressType);
+    }
+
+    public AddressType getAddressType(String address) {
+        return addresses.getAddressType(address);
+    }
+
+    public String getAddressAt(long addressIndex, AddressType addressType) {
+        return addresses.getAddressAt(addressIndex, addressType);
     }
 }

@@ -6,12 +6,14 @@ public final class Address {
     private double balance;
     private long confirmations;
     private boolean used;
+    private final AddressType addressType;
 
-    public Address(String address, Long index, double balance, long confirmations) {
+    public Address(String address, Long index, double balance, long confirmations, AddressType addressType) {
         this.address = address;
         this.index = index;
         this.balance = balance;
         this.confirmations = confirmations;
+        this.addressType = addressType;
     }
 
     public String getAddress() {
@@ -40,5 +42,13 @@ public final class Address {
 
     public long getConfirmations() {
         return confirmations;
+    }
+
+    public AddressType getAddressType() {
+        return addressType;
+    }
+
+    public boolean getUsed() {
+        return used;
     }
 }
