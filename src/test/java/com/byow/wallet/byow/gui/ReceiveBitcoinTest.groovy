@@ -113,7 +113,7 @@ class ReceiveBitcoinTest extends GuiTest {
             addressIsValid(nextAddress, mnemonicSeed, 1)
     }
 
-    def "should receive bitcoins in four transactions to different addresses"() {
+    def "should receive bitcoins in seven transactions to different addresses"() {
         when:
             clickOn("New")
             clickOn("Wallet")
