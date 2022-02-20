@@ -4,10 +4,7 @@ import com.byow.wallet.byow.domains.Address;
 import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.ExtendedPubkey;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
@@ -57,4 +54,30 @@ public class Addresses {
         getAddress(address).markAsUsed();
     }
 
+    public AddressType getAddressType(String address) {
+        return getAddress(address).getAddressType();
+    }
+
+    public long findNextAddressIndex(AddressType addressType) {
+        Address address = addresses.get(addressType)
+            .values()
+            .stream()
+            .sorted(Comparator.comparing(Address::getIndex, Comparator.reverseOrder()))
+            .filter(Address::isUsed)
+            .findFirst()
+            .orElse(null);
+        if (address == null) {
+            return 0;
+        }
+        return address.getIndex() + 1;
+    }
+
+    public String getAddressAt(Long addressIndex, AddressType addressType) {
+        return addresses.get(addressType)
+            .values()
+            .stream()
+            .toList()
+            .get(addressIndex.intValue())
+            .getAddress();
+    }
 }

@@ -1,7 +1,9 @@
 package com.byow.wallet.byow.gui.services;
 
+import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.observables.CurrentWallet;
+import javafx.application.Platform;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +26,18 @@ public class UpdateCurrentWalletAddressesService {
             setBalance(address, utxoList);
             setConfirmations(address, utxoList);
             markAsUsed(address);
-            currentWallet.setAddressRow(address);
+            Platform.runLater(() -> {
+                currentWallet.setAddressRow(address);
+                updateReceivingAddress(address);
+            });
         });
+    }
+
+    private void updateReceivingAddress(String address) {
+        AddressType addressType = currentWallet.getAddressType(address);
+        long nextAddressIndex = currentWallet.findNextAddressIndex(addressType);
+        String nextAddress = currentWallet.getAddressAt(nextAddressIndex, addressType);
+        currentWallet.setReceivingAddress(nextAddress);
     }
 
     private void markAsUsed(String address) {

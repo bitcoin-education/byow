@@ -1,6 +1,7 @@
 package com.byow.wallet.byow.api.services;
 
 import com.byow.wallet.byow.domains.Address;
+import com.byow.wallet.byow.domains.AddressType;
 import io.github.bitcoineducation.bitcoinjava.ExtendedKey;
 import io.github.bitcoineducation.bitcoinjava.ExtendedPubkey;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,12 +31,12 @@ public class AddressSequentialGenerator {
             throw new RuntimeException(e);
         }
         return LongStream.range(0, initialNumberOfGeneratedAddresses)
-            .mapToObj(i -> generateAddress(addressGeneratorFactory.get(addressType), extendedPubkey, i))
+            .mapToObj(i -> generateAddress(addressGeneratorFactory.get(addressType), extendedPubkey, i, AddressType.valueOf(addressType)))
             .toList();
     }
 
-    private Address generateAddress(AddressGenerator addressGenerator, ExtendedPubkey extendedPubkey, long index) {
+    private Address generateAddress(AddressGenerator addressGenerator, ExtendedPubkey extendedPubkey, long index, AddressType addressType) {
         ExtendedKey extendedChildKey = extendedPubkey.ckd(String.valueOf(index));
-        return new Address(addressGenerator.generate(extendedChildKey), index, 0, 0);
+        return new Address(addressGenerator.generate(extendedChildKey), index, 0, 0, addressType);
     }
 }
