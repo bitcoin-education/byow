@@ -113,6 +113,45 @@ class ReceiveBitcoinTest extends GuiTest {
             addressIsValid(nextAddress, mnemonicSeed, 1)
     }
 
+    def "should receive bitcoins in four transactions to different addresses"() {
+        when:
+            clickOn("New")
+            clickOn("Wallet")
+            clickOn("#name")
+            write("My Test Wallet 4")
+            clickOn("Create")
+            def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
+            clickOn("OK")
+            clickOn("Receive")
+            String firstAddress = lookup("#receivingAddress").queryAs(TextField).text
+            sleep(TIMEOUT, SECONDS)
+            sendBitcoinAndWait(firstAddress)
+            String secondAddress = lookup("#receivingAddress").queryAs(TextField).text
+            sendBitcoinAndWait(secondAddress, "1.0", 2)
+            String thirdAddress = lookup("#receivingAddress").queryAs(TextField).text
+            sendBitcoinAndWait(thirdAddress, "1.0", 3)
+            sleep(TIMEOUT, SECONDS)
+            String fourthAddress = lookup("#receivingAddress").queryAs(TextField).text
+            sendBitcoinAndWait(fourthAddress, "1.0", 4)
+            String fifthAddress = lookup("#receivingAddress").queryAs(TextField).text
+            sendBitcoinAndWait(fifthAddress, "1.0", 5)
+            String sixthAddress = lookup("#receivingAddress").queryAs(TextField).text
+            sendBitcoinAndWait(sixthAddress, "1.0", 6)
+            sleep(TIMEOUT, SECONDS)
+            String seventhAddress = lookup("#receivingAddress").queryAs(TextField).text
+            sendBitcoinAndWait(seventhAddress, "1.0", 7)
+            TableView tableView = lookup("#addressesTable").queryAs(TableView)
+        then:
+            tableView.items.size() == 7
+            addressIsValid(firstAddress, mnemonicSeed, 0)
+            addressIsValid(secondAddress, mnemonicSeed, 1)
+            addressIsValid(thirdAddress, mnemonicSeed, 2)
+            addressIsValid(fourthAddress, mnemonicSeed, 3)
+            addressIsValid(fifthAddress, mnemonicSeed, 4)
+            addressIsValid(sixthAddress, mnemonicSeed, 5)
+            addressIsValid(seventhAddress, mnemonicSeed, 6)
+    }
+
     private void sendBitcoinAndWait(String address, String expectedTotalAmount = "1.0", int expectedTotalSize = 1) {
         nodeSendToAddressClient.sendToAddress(TESTWALLET, address, 1.0)
         waitFor(TIMEOUT, SECONDS, {

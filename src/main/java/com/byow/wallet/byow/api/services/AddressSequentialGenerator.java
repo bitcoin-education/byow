@@ -23,14 +23,14 @@ public class AddressSequentialGenerator {
         this.addressGeneratorFactory = addressGeneratorFactory;
     }
 
-    public List<Address> generate(String key, String addressType) {
+    public List<Address> generate(String key, String addressType, long fromIndex) {
         ExtendedPubkey extendedPubkey;
         try {
             extendedPubkey = ExtendedPubkey.unserialize(key);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return LongStream.range(0, initialNumberOfGeneratedAddresses)
+        return LongStream.range(fromIndex, fromIndex + initialNumberOfGeneratedAddresses)
             .mapToObj(i -> generateAddress(addressGeneratorFactory.get(addressType), extendedPubkey, i, AddressType.valueOf(addressType)))
             .toList();
     }
@@ -39,4 +39,5 @@ public class AddressSequentialGenerator {
         ExtendedKey extendedChildKey = extendedPubkey.ckd(String.valueOf(index));
         return new Address(addressGenerator.generate(extendedChildKey), index, 0, 0, addressType);
     }
+
 }

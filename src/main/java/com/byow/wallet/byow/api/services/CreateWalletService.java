@@ -16,12 +16,12 @@ import static io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes.MAINNET
 public class CreateWalletService {
     private final List<AddressConfig> addressConfigs;
     private final ExtendedPubkeyService extendedPubkeyService;
-    private final AddressSequentialGenerator addressSequentialGenerator;
+    private final AddAddressService addAddressService;
 
-    public CreateWalletService(List<AddressConfig> addressConfigs, ExtendedPubkeyService extendedPubkeyService, AddressSequentialGenerator addressSequentialGenerator) {
+    public CreateWalletService(List<AddressConfig> addressConfigs, ExtendedPubkeyService extendedPubkeyService, AddAddressService addAddressService) {
         this.addressConfigs = addressConfigs;
         this.extendedPubkeyService = extendedPubkeyService;
-        this.addressSequentialGenerator = addressSequentialGenerator;
+        this.addAddressService = addAddressService;
     }
 
     public Wallet create(String name, String password, String mnemonicSeedString) {
@@ -30,11 +30,8 @@ public class CreateWalletService {
         List<ExtendedPubkey> extendedPubkeys = addressConfigs.stream()
             .map(addressConfig -> extendedPubkeyService.create(masterKey, addressConfig.derivationPath(), addressConfig.addressType()))
             .toList();
-        extendedPubkeys.forEach(this::generateAddresses);
+        addAddressService.addAddresses(extendedPubkeys, 0);
         return new Wallet(name, extendedPubkeys, new Date());
     }
 
-    private void generateAddresses(ExtendedPubkey extendedPubkey) {
-        extendedPubkey.setAddresses(addressSequentialGenerator.generate(extendedPubkey.getKey(), extendedPubkey.getType()));
-    }
 }

@@ -19,6 +19,15 @@ public class Addresses {
             .toList();
     }
 
+    public List<String> getAddressesAsStrings(long fromIndex, long toIndex) {
+        return addresses.values()
+            .stream()
+            .flatMap(addressMap -> addressMap.values().stream())
+            .filter(address -> address.getIndex() >= fromIndex && address.getIndex() < toIndex)
+            .map(Address::getAddress)
+            .toList();
+    }
+
     public void setAddresses(List<ExtendedPubkey> extendedPubkeys) {
         addresses = extendedPubkeys.stream()
             .collect(
@@ -79,5 +88,9 @@ public class Addresses {
             .toList()
             .get(addressIndex.intValue())
             .getAddress();
+    }
+
+    public int getAddressCount(AddressType addressType) {
+        return addresses.get(addressType).size();
     }
 }
