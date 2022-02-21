@@ -19,6 +19,8 @@ import static java.util.stream.Collectors.groupingBy;
 @Service
 public class UpdateCurrentWalletAddressesService {
 
+    public static final AddressType MAIN_ADDRESS = AddressType.SEGWIT;
+
     private final CurrentWallet currentWallet;
 
     private final int initialNumberOfGeneratedAddresses;
@@ -60,8 +62,10 @@ public class UpdateCurrentWalletAddressesService {
             List<String> addressStrings = currentWallet.getAddressesAsStrings(nextAddressIndex, nextAddressIndex + initialNumberOfGeneratedAddresses);
             nodeMultiImportAddressClient.importAddresses(currentWallet.getName(), addressStrings, new Date());
         }
-        String nextAddress = currentWallet.getAddressAt(nextAddressIndex, addressType);
-        Platform.runLater(() -> currentWallet.setReceivingAddress(nextAddress));
+        if (addressType == MAIN_ADDRESS) {
+            String nextAddress = currentWallet.getAddressAt(nextAddressIndex, addressType);
+            Platform.runLater(() -> currentWallet.setReceivingAddress(nextAddress));
+        }
     }
 
     private boolean mustImportAddresses(long nextAddressIndex, AddressType addressType) {
