@@ -6,12 +6,14 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
+import org.springframework.test.context.ActiveProfiles
 import org.testfx.api.FxToolkit
 import org.testfx.framework.spock.ApplicationSpec
 
 import java.security.Security
 
 @SpringBootTest
+@ActiveProfiles('test')
 abstract class GuiTest extends ApplicationSpec {
 
     @Autowired
