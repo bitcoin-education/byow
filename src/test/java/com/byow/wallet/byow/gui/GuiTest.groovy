@@ -92,10 +92,10 @@ abstract class GuiTest extends ApplicationSpec {
         }
     }
 
-    protected void sendBitcoinAndWait(String address, String expectedTotalAmount = "1.0", int expectedTotalSize = 1) {
+    protected void sendBitcoinAndWait(String address, String expectedTotalAmount = "1.0", int expectedTotalSize = 1, String lookupElement = "#addressesTable") {
         nodeSendToAddressClient.sendToAddress(TESTWALLET, address, 1.0)
         waitFor(TIMEOUT, SECONDS, {
-            TableView tableView = lookup("#addressesTable").queryAs(TableView)
+            TableView tableView = lookup(lookupElement).queryAs(TableView)
             return tableView.items.size() == expectedTotalSize && tableView.items[expectedTotalSize - 1].balance == expectedTotalAmount
         })
     }

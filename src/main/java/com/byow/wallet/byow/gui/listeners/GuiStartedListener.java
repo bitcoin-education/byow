@@ -2,6 +2,7 @@ package com.byow.wallet.byow.gui.listeners;
 
 import com.byow.wallet.byow.gui.controllers.AddressesTableController;
 import com.byow.wallet.byow.gui.controllers.ReceiveTabController;
+import com.byow.wallet.byow.gui.controllers.TransactionsTableController;
 import com.byow.wallet.byow.gui.events.GuiStartedEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
@@ -16,11 +17,19 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Set;
 
 @Component
 public class GuiStartedListener implements ApplicationListener<GuiStartedEvent> {
     private final Resource fxml;
+
     private final ApplicationContext context;
+
+    private static final Set<Class<?>> customComponents = Set.of(
+        ReceiveTabController.class,
+        AddressesTableController.class,
+        TransactionsTableController.class
+    );
 
     public GuiStartedListener(
         @Value("classpath:/fxml/main_window.fxml") Resource fxml,
@@ -45,7 +54,7 @@ public class GuiStartedListener implements ApplicationListener<GuiStartedEvent> 
             fxmlLoader.setLocation(this.fxml.getURL());
             fxmlLoader.setControllerFactory(context::getBean);
             fxmlLoader.setBuilderFactory(type -> {
-                if (type.equals(ReceiveTabController.class) || type.equals(AddressesTableController.class)) {
+                if (customComponents.contains(type)) {
                     return (Builder<Object>) () -> context.getBean(type);
                 }
                 JavaFXBuilderFactory defaultFactory = new JavaFXBuilderFactory();
