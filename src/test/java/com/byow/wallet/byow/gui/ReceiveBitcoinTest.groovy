@@ -1,55 +1,15 @@
 package com.byow.wallet.byow.gui
 
-import com.byow.wallet.byow.api.services.ExtendedPubkeyService
-import com.byow.wallet.byow.api.services.SegwitAddressGenerator
-import com.byow.wallet.byow.api.services.node.NodeLoadOrCreateWalletService
-import com.byow.wallet.byow.api.services.node.client.NodeGenerateToAddressClient
-import com.byow.wallet.byow.api.services.node.client.NodeGetBalanceClient
-import com.byow.wallet.byow.api.services.node.client.NodeGetNewAddressClient
-import com.byow.wallet.byow.api.services.node.client.NodeSendToAddressClient
-import com.byow.wallet.byow.domains.AddressType
-import io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes
-import io.github.bitcoineducation.bitcoinjava.ExtendedPrivateKey
-import io.github.bitcoineducation.bitcoinjava.ExtendedPubkey
-import io.github.bitcoineducation.bitcoinjava.MnemonicSeed
 import javafx.scene.control.TableView
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
-import org.springframework.beans.factory.annotation.Autowired
 
 import static java.util.concurrent.TimeUnit.SECONDS
-import static org.testfx.util.WaitForAsyncUtils.waitFor
 
 class ReceiveBitcoinTest extends GuiTest {
 
-    public static final String TESTWALLET = "testwallet"
-
-    public static final int TIMEOUT = 10
-
-    @Autowired
-    private NodeSendToAddressClient nodeSendToAddressClient
-
-    @Autowired
-    private NodeLoadOrCreateWalletService nodeLoadOrCreateWalletService
-
-    @Autowired
-    private NodeGetBalanceClient nodeGetBalanceClient
-
-    @Autowired
-    private NodeGetNewAddressClient nodeGetNewAddressClient
-
-    @Autowired
-    private NodeGenerateToAddressClient nodeGenerateToAddressClient
-
-    @Autowired
-    ExtendedPubkeyService extendedPubkeyService
-
-    @Autowired
-    SegwitAddressGenerator segwitAddressGenerator
-
     def setup() {
-        nodeLoadOrCreateWalletService.loadOrCreateWallet(TESTWALLET)
-        createBalanceIfNecessary()
+        loadWalletAndAddBalance()
     }
 
     def "should receive bitcoin"() {
@@ -152,28 +112,4 @@ class ReceiveBitcoinTest extends GuiTest {
             addressIsValid(seventhAddress, mnemonicSeed, 6)
     }
 
-    private void sendBitcoinAndWait(String address, String expectedTotalAmount = "1.0", int expectedTotalSize = 1) {
-        nodeSendToAddressClient.sendToAddress(TESTWALLET, address, 1.0)
-        waitFor(TIMEOUT, SECONDS, {
-            TableView tableView = lookup("#addressesTable").queryAs(TableView)
-            return tableView.items.size() == expectedTotalSize && tableView.items[expectedTotalSize - 1].balance == expectedTotalAmount
-        })
-    }
-
-    private void createBalanceIfNecessary() {
-        double balance = nodeGetBalanceClient.get(TESTWALLET)
-        if (balance < 50) {
-            String address = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
-            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 150, address)
-        }
-    }
-
-    boolean addressIsValid(String address, String mnemonicSeedString, Integer index) {
-        MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString)
-        ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey("", ExtendedKeyPrefixes.MAINNET_PREFIX.getPrivatePrefix())
-        String extendedPubkeyString = extendedPubkeyService.create(masterKey, "84'/0'/0'/0/".concat(index.toString()), AddressType.SEGWIT).getKey()
-        ExtendedPubkey extendedPubkey = ExtendedPubkey.unserialize(extendedPubkeyString)
-        String expectedAddress = segwitAddressGenerator.generate(extendedPubkey)
-        return expectedAddress == address
-    }
 }
