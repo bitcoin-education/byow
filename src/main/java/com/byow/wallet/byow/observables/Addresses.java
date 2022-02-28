@@ -80,4 +80,17 @@ public class Addresses {
             .get(addressIndex.intValue())
             .getAddress();
     }
+
+    public int getAddressesCount(AddressType addressType) {
+        return addresses.get(addressType).size();
+    }
+
+    public List<String> getAddressesAsStrings(long fromIndex, long toIndex) {
+        return addresses.values()
+            .stream()
+            .flatMap(addressMap -> addressMap.values().stream())
+            .filter(address -> address.getIndex() >= fromIndex && address.getIndex() < toIndex)
+            .map(Address::getAddress)
+            .toList();
+    }
 }

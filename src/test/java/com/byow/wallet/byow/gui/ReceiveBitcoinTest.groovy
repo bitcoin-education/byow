@@ -130,12 +130,14 @@ class ReceiveBitcoinTest extends GuiTest {
             sendBitcoinAndWait(secondAddress, "1.0", 2)
             String thirdAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(thirdAddress, "1.0", 3)
+            sleep(TIMEOUT, SECONDS)
             String fourthAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(fourthAddress, "1.0", 4)
             String fifthAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(fifthAddress, "1.0", 5)
             String sixthAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(sixthAddress, "1.0", 6)
+            sleep(TIMEOUT, SECONDS)
             String seventhAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(seventhAddress, "1.0", 7)
             TableView tableView = lookup("#addressesTable").queryAs(TableView)

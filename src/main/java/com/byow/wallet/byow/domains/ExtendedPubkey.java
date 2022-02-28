@@ -1,11 +1,11 @@
 package com.byow.wallet.byow.domains;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class ExtendedPubkey {
     private final String key;
     private final String type;
-    private List<Address> addresses;
+    private final ArrayList<Address> addresses = new ArrayList<>();
 
     public ExtendedPubkey(String key, String type) {
         this.key = key;
@@ -20,11 +20,11 @@ public class ExtendedPubkey {
         return type;
     }
 
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
+    public ArrayList<Address> getAddresses() {
+        return addresses;
     }
 
-    public List<Address> getAddresses() {
-        return addresses;
+    public void addAddresses(ArrayList<Address> addresses) {
+        this.addresses.addAll(addresses);
     }
 }

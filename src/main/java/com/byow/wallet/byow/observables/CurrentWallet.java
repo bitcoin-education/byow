@@ -18,6 +18,8 @@ public class CurrentWallet {
 
     private AddressRows addressRows = new AddressRows();
 
+    private List<ExtendedPubkey> extendedPubkeys;
+
     public void setName(String name) {
         this.name.set(name);
     }
@@ -48,6 +50,9 @@ public class CurrentWallet {
 
     public void setAddresses(List<ExtendedPubkey> extendedPubkeys) {
         addresses.setAddresses(extendedPubkeys);
+    }
+
+    public void clearAddressRows() {
         addressRows.clear();
     }
 
@@ -81,5 +86,21 @@ public class CurrentWallet {
 
     public String getAddressAt(long addressIndex, AddressType addressType) {
         return addresses.getAddressAt(addressIndex, addressType);
+    }
+
+    public int getAddressesCount(AddressType addressType) {
+        return addresses.getAddressesCount(addressType);
+    }
+
+    public List<ExtendedPubkey> getExtendedPubkeys() {
+        return extendedPubkeys;
+    }
+
+    public void setExtendedPubkeys(List<ExtendedPubkey> extendedPubkeys) {
+        this.extendedPubkeys = extendedPubkeys;
+    }
+
+    public List<String> getAddressesAsStrings(long fromIndex, long toIndex) {
+        return addresses.getAddressesAsStrings(fromIndex, toIndex);
     }
 }

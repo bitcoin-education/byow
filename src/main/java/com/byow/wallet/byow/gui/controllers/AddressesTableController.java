@@ -3,6 +3,7 @@ package com.byow.wallet.byow.gui.controllers;
 import com.byow.wallet.byow.domains.Address;
 import com.byow.wallet.byow.observables.AddressRow;
 import com.byow.wallet.byow.observables.CurrentWallet;
+import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -57,6 +58,7 @@ public class AddressesTableController extends TableView<Address> {
                 addressRow -> new BigDecimal(addressRow.getBalance()).doubleValue() > 0
             )
         );
+        currentWallet.getObservableAddressRows().addListener((ListChangeListener<AddressRow>) c -> addressesTable.refresh());
         columnAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
         columnBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));
         columnConfirmations.setCellValueFactory(new PropertyValueFactory<>("confirmations"));
