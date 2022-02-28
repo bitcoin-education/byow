@@ -17,6 +17,7 @@ public class UpdateCurrentWalletService {
         currentWallet.setExtendedPubkeys(wallet.extendedPubkeys());
         currentWallet.setAddresses(wallet.extendedPubkeys());
         currentWallet.clearAddressRows();
+        currentWallet.clearTransactions();
         currentWallet.setReceivingAddress(wallet.extendedPubkeys().get(0).getAddresses().get(0).getAddress());
     }
 }
