@@ -6,6 +6,7 @@
 <?import javafx.geometry.Insets?>
 <?import com.byow.wallet.byow.gui.controllers.ReceiveTabController?>
 <?import com.byow.wallet.byow.gui.controllers.AddressesTableController?>
+<?import com.byow.wallet.byow.gui.controllers.TransactionsTableController?>
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="770" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.byow.wallet.byow.gui.controllers.MainWindowController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
@@ -31,6 +32,11 @@
                      <Tab text="Addresses" fx:id="addressesTab">
                          <content>
                              <AddressesTableController />
+                         </content>
+                     </Tab>
+                     <Tab text="Transactions" fx:id="transactionsTab">
+                         <content>
+                             <TransactionsTableController />
                          </content>
                      </Tab>
                  </tabs>
