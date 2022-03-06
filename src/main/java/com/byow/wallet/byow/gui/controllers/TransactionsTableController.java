@@ -3,6 +3,7 @@ package com.byow.wallet.byow.gui.controllers;
 import com.byow.wallet.byow.observables.CurrentWallet;
 import com.byow.wallet.byow.observables.TransactionRow;
 import javafx.collections.ListChangeListener;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Comparator;
 
 @Component
 public class TransactionsTableController extends TableView<TransactionRow> {
@@ -53,7 +56,12 @@ public class TransactionsTableController extends TableView<TransactionRow> {
     }
 
     public void initialize() {
-        transactionsTable.setItems(currentWallet.getObservableTransactionRows());
+        transactionsTable.setItems(
+            new SortedList<>(
+                currentWallet.getObservableTransactionRows(),
+                Comparator.comparing((TransactionRow t) -> Instant.parse(t.getDate()), Comparator.reverseOrder())
+            )
+        );
         currentWallet.getObservableTransactionRows().addListener((ListChangeListener<TransactionRow>) c -> transactionsTable.refresh());
         columnTransactionId.setCellValueFactory(new PropertyValueFactory<>("id"));
         columnTransactionBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));

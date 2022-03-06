@@ -25,9 +25,12 @@ class ReceiveBitcoinTest extends GuiTest {
             String address = lookup("#receivingAddress").queryAs(TextField).text
             sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address)
-            TableView tableView = lookup("#addressesTable").queryAs(TableView)
+            TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
+            clickOn("Transactions")
+            TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
         then:
-            tableView.items.size() == 1
+            addressesTableView.items.size() == 1
+            transactionsTableView.items.size() == 1
             addressIsValid(address, mnemonicSeed, 0)
     }
 
@@ -45,9 +48,12 @@ class ReceiveBitcoinTest extends GuiTest {
             sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address)
             sendBitcoinAndWait(address, "2.0")
-            TableView tableView = lookup("#addressesTable").queryAs(TableView)
+            TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
+            clickOn("Transactions")
+            TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
         then:
-            tableView.items.size() == 1
+            addressesTableView.items.size() == 1
+            transactionsTableView.items.size() == 2
             addressIsValid(address, mnemonicSeed, 0)
     }
 
@@ -66,9 +72,12 @@ class ReceiveBitcoinTest extends GuiTest {
             sendBitcoinAndWait(address)
             String nextAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(nextAddress, "1.0", 2)
-            TableView tableView = lookup("#addressesTable").queryAs(TableView)
+            TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
+            clickOn("Transactions")
+            TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
         then:
-            tableView.items.size() == 2
+            addressesTableView.items.size() == 2
+            transactionsTableView.items.size() == 2
             addressIsValid(address, mnemonicSeed, 0)
             addressIsValid(nextAddress, mnemonicSeed, 1)
     }
@@ -100,9 +109,12 @@ class ReceiveBitcoinTest extends GuiTest {
             sleep(TIMEOUT, SECONDS)
             String seventhAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(seventhAddress, "1.0", 7)
-            TableView tableView = lookup("#addressesTable").queryAs(TableView)
+            TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
+            clickOn("Transactions")
+            TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
         then:
-            tableView.items.size() == 7
+            addressesTableView.items.size() == 7
+            transactionsTableView.items.size() == 7
             addressIsValid(firstAddress, mnemonicSeed, 0)
             addressIsValid(secondAddress, mnemonicSeed, 1)
             addressIsValid(thirdAddress, mnemonicSeed, 2)
