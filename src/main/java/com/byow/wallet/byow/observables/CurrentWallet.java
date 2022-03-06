@@ -16,9 +16,11 @@ public class CurrentWallet {
 
     private final Addresses addresses = new Addresses();
 
-    private AddressRows addressRows = new AddressRows();
+    private final AddressRows addressRows = new AddressRows();
 
     private List<ExtendedPubkey> extendedPubkeys;
+
+    private final TransactionRows transactionRows = new TransactionRows();
 
     public void setName(String name) {
         this.name.set(name);
@@ -102,5 +104,17 @@ public class CurrentWallet {
 
     public List<String> getAddressesAsStrings(long fromIndex, long toIndex) {
         return addresses.getAddressesAsStrings(fromIndex, toIndex);
+    }
+
+    public void addTransactionRows(List<TransactionRow> transactionRows) {
+        this.transactionRows.addTransactionRows(transactionRows);
+    }
+
+    public ObservableList<TransactionRow> getObservableTransactionRows() {
+        return transactionRows.getObservableTransactionRowList();
+    }
+
+    public void clearTransactions() {
+        transactionRows.clear();
     }
 }
