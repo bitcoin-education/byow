@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Comparator;
 
+import static com.byow.wallet.byow.utils.Copy.copy;
+
 @Component
 public class TransactionsTableController extends TableView<TransactionRow> {
     @FXML
@@ -68,4 +70,10 @@ public class TransactionsTableController extends TableView<TransactionRow> {
         columnTransactionConfirmations.setCellValueFactory(new PropertyValueFactory<>("confirmations"));
         columnTransactionDate.setCellValueFactory(new PropertyValueFactory<>("date"));
     }
+
+    public void copyTransactionId() {
+        TransactionRow item = transactionsTable.getSelectionModel().getSelectedItem();
+        copy(item.getId());
+    }
+
 }

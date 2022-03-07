@@ -3,6 +3,8 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.MenuItem?>
 <fx:root type="javafx.scene.control.TableView" xmlns:fx="http://javafx.com/fxml" fx:id="transactionsTable">
     <placeholder>
         <Label />
@@ -16,4 +18,11 @@
     <columnResizePolicy>
         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
     </columnResizePolicy>
+    <contextMenu>
+        <ContextMenu>
+            <items>
+                <MenuItem text="Copy" onAction="#copyTransactionId"/>
+            </items>
+        </ContextMenu>
+    </contextMenu>
 </fx:root>
