@@ -2,6 +2,9 @@ package com.byow.wallet.byow.node;
 
 import com.byow.wallet.byow.node.events.TransactionReceivedEvent;
 import io.github.bitcoineducation.bitcoinjava.Transaction;
+import org.bouncycastle.util.encoders.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
@@ -20,6 +23,8 @@ public class NodeTask {
     private final String zmqUrl;
 
     private final ApplicationEventPublisher applicationEventPublisher;
+
+    private static final Logger logger = LoggerFactory.getLogger(NodeTask.class);
 
     public NodeTask(
         Socket subscriber,
@@ -43,7 +48,13 @@ public class NodeTask {
                 continue;
             }
             byte[] contents = subscriber.recv();
-            Transaction transaction = Transaction.fromByteStream(new ByteArrayInputStream(contents));
+            Transaction transaction;
+            try {
+                transaction = Transaction.fromByteStream(new ByteArrayInputStream(contents));
+            } catch (Exception e) {
+                logger.warn("Unable to parse content {}", Hex.toHexString(contents), e);
+                continue;
+            }
 
             applicationEventPublisher.publishEvent(new TransactionReceivedEvent(this, transaction));
         }

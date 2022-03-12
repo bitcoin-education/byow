@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.Objects;
 
 public class TransactionRow {
@@ -26,7 +26,7 @@ public class TransactionRow {
     }
 
     public static TransactionRow from(Utxo utxo) {
-        return new TransactionRow(utxo.txid(), Double.toString(utxo.amount()), utxo.confirmations(), new Date().toString());
+        return new TransactionRow(utxo.txid(), Double.toString(utxo.amount()), utxo.confirmations(), Instant.now().toString());
     }
 
     public String getId() {

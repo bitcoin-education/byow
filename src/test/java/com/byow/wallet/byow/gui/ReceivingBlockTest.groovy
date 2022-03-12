@@ -26,11 +26,15 @@ class ReceivingBlockTest extends GuiTest {
             sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address)
             mineBlocks(confirmations)
-            TableView tableView = lookup("#addressesTable").queryAs(TableView)
+            TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
+            clickOn("Transactions")
+            TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
         then:
-            tableView.items.size() == 1
-            tableView.items[0].confirmations == confirmations
+            addressesTableView.items.size() == 1
+            addressesTableView.items[0].confirmations == confirmations
             addressIsValid(address, mnemonicSeed, 0)
+            transactionsTableView.items.size() == 1
+            transactionsTableView.items[0].confirmations == confirmations
         where:
             confirmations   |   x
             1               |   null
@@ -54,12 +58,18 @@ class ReceivingBlockTest extends GuiTest {
             mineBlocks(confirmations)
             sendBitcoinAndWait(address)
             mineBlocks(confirmations - 1)
-            TableView tableView = lookup("#addressesTable").queryAs(TableView)
+            int totalConfirmations = confirmations + confirmations - 1
+            TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
+            clickOn("Transactions")
+            TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
         then:
-            tableView.items.size() == 1
-            tableView.items[0].confirmations == confirmations - 1
+            addressesTableView.items.size() == 1
+            addressesTableView.items[0].confirmations == confirmations - 1
             addressIsValid(address, mnemonicSeed, 0)
-            where:
+            transactionsTableView.items.size() == 2
+            transactionsTableView.items[0].confirmations == confirmations - 1
+            transactionsTableView.items[1].confirmations == totalConfirmations
+        where:
             confirmations   |   x
             2               |   null
             3               |   null
@@ -70,7 +80,7 @@ class ReceivingBlockTest extends GuiTest {
         nodeGenerateToAddressClient.generateToAddress(TESTWALLET, blocks, nodeAddress)
         waitFor(TIMEOUT, SECONDS, {
             TableView tableView = lookup("#addressesTable").queryAs(TableView)
-            return tableView.items[0].confirmations == blocks
+            return tableView?.items?[0]?.confirmations == blocks
         })
     }
 }
