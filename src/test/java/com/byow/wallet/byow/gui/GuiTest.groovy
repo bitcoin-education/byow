@@ -9,6 +9,7 @@ import com.byow.wallet.byow.api.services.node.client.NodeGetNewAddressClient
 import com.byow.wallet.byow.api.services.node.client.NodeSendToAddressClient
 import com.byow.wallet.byow.domains.AddressType
 import com.byow.wallet.byow.gui.events.GuiStartedEvent
+import com.byow.wallet.byow.utils.BitcoinFormatter
 import io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes
 import io.github.bitcoineducation.bitcoinjava.ExtendedPrivateKey
 import io.github.bitcoineducation.bitcoinjava.ExtendedPubkey
@@ -84,11 +85,11 @@ abstract class GuiTest extends ApplicationSpec {
         createBalanceIfNecessary()
     }
 
-    protected void sendBitcoinAndWait(String address, String expectedTotalAmount = "1.0", int expectedTotalSize = 1, String lookupComponent="#addressesTable") {
-        nodeSendToAddressClient.sendToAddress(TESTWALLET, address, 1.0)
+    protected void sendBitcoinAndWait(String address, double expectedTotalAmount = 1.0, int expectedTotalSize = 1, String lookupComponent = "#addressesTable", double amount = 1.0) {
+        nodeSendToAddressClient.sendToAddress(TESTWALLET, address, amount)
         waitFor(TIMEOUT, SECONDS, {
             TableView tableView = lookup(lookupComponent).queryAs(TableView)
-            return tableView.items.size() == expectedTotalSize && tableView.items[expectedTotalSize - 1].balance == expectedTotalAmount
+            return tableView.items.size() == expectedTotalSize && tableView.items[expectedTotalSize - 1].balance == BitcoinFormatter.format(expectedTotalAmount)
         })
     }
 

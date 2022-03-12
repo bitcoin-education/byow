@@ -24,7 +24,7 @@ class ReceiveBitcoinTest extends GuiTest {
             clickOn("Receive")
             String address = lookup("#receivingAddress").queryAs(TextField).text
             sleep(TIMEOUT, SECONDS)
-            sendBitcoinAndWait(address)
+            sendBitcoinAndWait(address, 0.00001, 1, "#addressesTable", 0.00001)
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
@@ -47,7 +47,7 @@ class ReceiveBitcoinTest extends GuiTest {
             String address = lookup("#receivingAddress").queryAs(TextField).text
             sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address)
-            sendBitcoinAndWait(address, "2.0")
+            sendBitcoinAndWait(address, 2.0)
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
@@ -71,7 +71,7 @@ class ReceiveBitcoinTest extends GuiTest {
             sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address)
             String nextAddress = lookup("#receivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(nextAddress, "1.0", 2)
+            sendBitcoinAndWait(nextAddress, 1.0, 2)
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
@@ -96,19 +96,19 @@ class ReceiveBitcoinTest extends GuiTest {
             sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(firstAddress)
             String secondAddress = lookup("#receivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(secondAddress, "1.0", 2)
+            sendBitcoinAndWait(secondAddress, 1.0, 2)
             String thirdAddress = lookup("#receivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(thirdAddress, "1.0", 3)
+            sendBitcoinAndWait(thirdAddress, 1.0, 3)
             sleep(TIMEOUT, SECONDS)
             String fourthAddress = lookup("#receivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(fourthAddress, "1.0", 4)
+            sendBitcoinAndWait(fourthAddress, 1.0, 4)
             String fifthAddress = lookup("#receivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(fifthAddress, "1.0", 5)
+            sendBitcoinAndWait(fifthAddress, 1.0, 5)
             String sixthAddress = lookup("#receivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(sixthAddress, "1.0", 6)
+            sendBitcoinAndWait(sixthAddress, 1.0, 6)
             sleep(TIMEOUT, SECONDS)
             String seventhAddress = lookup("#receivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(seventhAddress, "1.0", 7)
+            sendBitcoinAndWait(seventhAddress, 1.0, 7)
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)

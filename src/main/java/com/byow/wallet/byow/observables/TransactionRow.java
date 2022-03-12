@@ -1,6 +1,7 @@
 package com.byow.wallet.byow.observables;
 
 import com.byow.wallet.byow.domains.Utxo;
+import com.byow.wallet.byow.utils.BitcoinFormatter;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,7 +27,7 @@ public class TransactionRow {
     }
 
     public static TransactionRow from(Utxo utxo) {
-        return new TransactionRow(utxo.txid(), Double.toString(utxo.amount()), utxo.confirmations(), Instant.now().toString());
+        return new TransactionRow(utxo.txid(), BitcoinFormatter.format(utxo.amount()), utxo.confirmations(), Instant.now().toString());
     }
 
     public String getId() {

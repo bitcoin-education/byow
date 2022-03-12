@@ -24,7 +24,7 @@ class ReceivingTransactionTest extends GuiTest {
             String address = lookup("#receivingAddress").queryAs(TextField).text
             sleep(TIMEOUT, SECONDS)
             clickOn("#transactionsTab")
-            sendBitcoinAndWait(address, "1.0", 1, "#transactionsTable")
+            sendBitcoinAndWait(address, 1.0, 1, "#transactionsTable")
             TableView tableView = lookup("#transactionsTable").queryAs(TableView)
         then:
             tableView.items.size() == 1

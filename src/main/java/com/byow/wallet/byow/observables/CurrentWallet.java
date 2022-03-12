@@ -117,4 +117,8 @@ public class CurrentWallet {
     public void clearTransactions() {
         transactionRows.clear();
     }
+
+    public List<String> getTransactionIds() {
+        return transactionRows.getTransactionIds();
+    }
 }
