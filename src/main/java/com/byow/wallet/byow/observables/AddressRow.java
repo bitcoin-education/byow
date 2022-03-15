@@ -1,6 +1,7 @@
 package com.byow.wallet.byow.observables;
 
 import com.byow.wallet.byow.domains.Address;
+import com.byow.wallet.byow.utils.BitcoinFormatter;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,7 +23,7 @@ public class AddressRow {
     }
 
     public static AddressRow from(Address address) {
-        return new AddressRow(Double.toString(address.getBalance()), address.getConfirmations(), address.getAddress());
+        return new AddressRow(BitcoinFormatter.format(address.getBalance()), address.getConfirmations(), address.getAddress());
     }
 
     public String getBalance() {

@@ -45,4 +45,10 @@ public class TransactionRows {
         transactionRowMap.clear();
         transactionRowList.clear();
     }
+
+    public List<String> getTransactionIds() {
+        return transactionRowList.stream()
+            .map(TransactionRow::getId)
+            .toList();
+    }
 }

@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -116,5 +117,9 @@ public class CurrentWallet {
 
     public void clearTransactions() {
         transactionRows.clear();
+    }
+
+    public List<String> getTransactionIds() {
+        return transactionRows.getTransactionIds();
     }
 }
