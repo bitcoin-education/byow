@@ -1,0 +1,9 @@
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root fx:id="totalBalance" type="javafx.scene.control.Label" xmlns:fx="http://javafx.com/fxml" >
+    <VBox.margin>
+        <Insets bottom="10.0" left="10.0" top="10.0" />
+    </VBox.margin>
+</fx:root>
