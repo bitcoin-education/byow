@@ -42,7 +42,6 @@ public class UpdateCurrentWalletAddressesService {
         this.nodeMultiImportAddressClient = nodeMultiImportAddressClient;
     }
 
-    @Async("defaultExecutorService")
     public void update(List<Utxo> utxos) {
         Map<String, List<Utxo>> groupedUtxos = utxos.stream().collect(groupingBy(Utxo::address));
         groupedUtxos.forEach((address, utxoList) -> {
