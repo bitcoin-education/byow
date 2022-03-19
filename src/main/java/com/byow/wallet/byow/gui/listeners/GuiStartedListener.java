@@ -2,6 +2,7 @@ package com.byow.wallet.byow.gui.listeners;
 
 import com.byow.wallet.byow.gui.controllers.AddressesTableController;
 import com.byow.wallet.byow.gui.controllers.ReceiveTabController;
+import com.byow.wallet.byow.gui.controllers.TotalBalanceController;
 import com.byow.wallet.byow.gui.controllers.TransactionsTableController;
 import com.byow.wallet.byow.gui.events.GuiStartedEvent;
 import javafx.fxml.FXMLLoader;
@@ -24,7 +25,8 @@ public class GuiStartedListener implements ApplicationListener<GuiStartedEvent> 
     private static final Set<Class<?>> customComponents = Set.of(
         ReceiveTabController.class,
         AddressesTableController.class,
-        TransactionsTableController.class
+        TransactionsTableController.class,
+        TotalBalanceController.class
     );
 
     private final Resource fxml;

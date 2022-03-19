@@ -48,6 +48,11 @@
                         </Tab>
                     </tabs>
                 </TabPane>
+                <Label>
+                    <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" top="10.0"/>
+                    </VBox.margin>
+                </Label>
             <TabPane prefHeight="355.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                 <Tab text="Addresses" fx:id="addressesTab">
