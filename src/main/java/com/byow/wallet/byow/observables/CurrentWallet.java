@@ -23,6 +23,8 @@ public class CurrentWallet {
 
     private final TransactionRows transactionRows = new TransactionRows();
 
+    private final Balances balances = new Balances();
+
     public void setName(String name) {
         this.name.set(name);
     }
@@ -121,5 +123,17 @@ public class CurrentWallet {
 
     public List<String> getTransactionIds() {
         return transactionRows.getTransactionIds();
+    }
+
+    public void setBalances(Double unconfirmedBalance, Double confirmedBalance) {
+        balances.setBalances(unconfirmedBalance, confirmedBalance);
+    }
+
+    public Balances getBalances() {
+        return balances;
+    }
+
+    public void clearBalances() {
+        balances.clear();
     }
 }

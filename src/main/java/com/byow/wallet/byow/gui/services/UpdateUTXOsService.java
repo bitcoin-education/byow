@@ -14,15 +14,18 @@ public class UpdateUTXOsService {
 
     private final UpdateCurrentWalletAddressesService updateCurrentWalletAddressesService;
     private final UpdateCurrentWalletTransactionsService updateCurrentWalletTransactionsService;
+    private final UpdateCurrentWalletBalanceService updateCurrentWalletBalanceService;
 
     public UpdateUTXOsService(
         NodeListUnspentClient nodeListUnspentClient,
         UpdateCurrentWalletAddressesService updateCurrentWalletAddressesService,
-        UpdateCurrentWalletTransactionsService updateCurrentWalletTransactionsService
+        UpdateCurrentWalletTransactionsService updateCurrentWalletTransactionsService,
+        UpdateCurrentWalletBalanceService updateCurrentWalletBalanceService
     ) {
         this.nodeListUnspentClient = nodeListUnspentClient;
         this.updateCurrentWalletAddressesService = updateCurrentWalletAddressesService;
         this.updateCurrentWalletTransactionsService = updateCurrentWalletTransactionsService;
+        this.updateCurrentWalletBalanceService = updateCurrentWalletBalanceService;
     }
 
     @Async("defaultExecutorService")
@@ -30,5 +33,6 @@ public class UpdateUTXOsService {
         List<Utxo> utxos = nodeListUnspentClient.listUnspent(addresses, name);
         updateCurrentWalletAddressesService.update(utxos);
         updateCurrentWalletTransactionsService.update(utxos);
+        updateCurrentWalletBalanceService.update();
     }
 }

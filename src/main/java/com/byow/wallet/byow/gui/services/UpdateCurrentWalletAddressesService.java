@@ -8,7 +8,6 @@ import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.observables.CurrentWallet;
 import javafx.application.Platform;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -42,7 +41,6 @@ public class UpdateCurrentWalletAddressesService {
         this.nodeMultiImportAddressClient = nodeMultiImportAddressClient;
     }
 
-    @Async("defaultExecutorService")
     public void update(List<Utxo> utxos) {
         Map<String, List<Utxo>> groupedUtxos = utxos.stream().collect(groupingBy(Utxo::address));
         groupedUtxos.forEach((address, utxoList) -> {

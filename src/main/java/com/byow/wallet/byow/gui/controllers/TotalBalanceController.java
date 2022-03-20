@@ -12,6 +12,8 @@ import java.io.IOException;
 
 @Component
 public class TotalBalanceController extends Label {
+    private static final String BALANCE_TEXT = "Total Balance: %s BTC (confirmed: %s, unconfirmed: %s)";
+
     private final CurrentWallet currentWallet;
 
     public TotalBalanceController(
@@ -32,6 +34,19 @@ public class TotalBalanceController extends Label {
     }
 
     public void initialize() {
-        setText("test");
+        currentWallet.getBalances().unconfirmedBalanceProperty().addListener(observable -> updateText());
+        currentWallet.getBalances().confirmedBalanceProperty().addListener(observable -> updateText());
+        currentWallet.getBalances().totalBalanceProperty().addListener(observable -> updateText());
+    }
+
+    private void updateText() {
+        setText(
+            String.format(
+                BALANCE_TEXT,
+                currentWallet.getBalances().getTotalBalance(),
+                currentWallet.getBalances().getConfirmedBalance(),
+                currentWallet.getBalances().getUnconfirmedBalance()
+            )
+        );
     }
 }
