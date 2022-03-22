@@ -1,5 +1,6 @@
 package com.byow.wallet.byow.gui
 
+import javafx.scene.control.Label
 import javafx.scene.control.TableView
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
@@ -28,10 +29,12 @@ class ReceiveBitcoinTest extends GuiTest {
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
+            String labelText = lookup("#totalBalance").queryAs(Label).getText()
         then:
             addressesTableView.items.size() == 1
             transactionsTableView.items.size() == 1
             addressIsValid(address, mnemonicSeed, 0)
+            labelText == "Total Balance: 0.00001000 BTC (confirmed: 0.00000000, unconfirmed: 0.00001000)"
     }
 
     def "should receive bitcoins in two transactions to the same address"() {
@@ -51,10 +54,12 @@ class ReceiveBitcoinTest extends GuiTest {
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
+            String labelText = lookup("#totalBalance").queryAs(Label).getText()
         then:
             addressesTableView.items.size() == 1
             transactionsTableView.items.size() == 2
             addressIsValid(address, mnemonicSeed, 0)
+            labelText == "Total Balance: 2.00000000 BTC (confirmed: 0.00000000, unconfirmed: 2.00000000)"
     }
 
     def "should receive bitcoins in two transactions to different addresses"() {
@@ -75,11 +80,13 @@ class ReceiveBitcoinTest extends GuiTest {
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
+            String labelText = lookup("#totalBalance").queryAs(Label).getText()
         then:
             addressesTableView.items.size() == 2
             transactionsTableView.items.size() == 2
             addressIsValid(address, mnemonicSeed, 0)
             addressIsValid(nextAddress, mnemonicSeed, 1)
+            labelText == "Total Balance: 2.00000000 BTC (confirmed: 0.00000000, unconfirmed: 2.00000000)"
     }
 
     def "should receive bitcoins in seven transactions to different addresses"() {
@@ -112,6 +119,7 @@ class ReceiveBitcoinTest extends GuiTest {
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
+            String labelText = lookup("#totalBalance").queryAs(Label).getText()
         then:
             addressesTableView.items.size() == 7
             transactionsTableView.items.size() == 7
@@ -122,6 +130,7 @@ class ReceiveBitcoinTest extends GuiTest {
             addressIsValid(fifthAddress, mnemonicSeed, 4)
             addressIsValid(sixthAddress, mnemonicSeed, 5)
             addressIsValid(seventhAddress, mnemonicSeed, 6)
+            labelText == "Total Balance: 7.00000000 BTC (confirmed: 0.00000000, unconfirmed: 7.00000000)"
     }
 
 }
