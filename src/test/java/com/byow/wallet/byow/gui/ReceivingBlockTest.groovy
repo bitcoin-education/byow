@@ -1,5 +1,6 @@
 package com.byow.wallet.byow.gui
 
+import javafx.scene.control.Label
 import javafx.scene.control.TableView
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
@@ -29,12 +30,14 @@ class ReceivingBlockTest extends GuiTest {
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
+            String labelText = lookup("#totalBalance").queryAs(Label).getText()
         then:
             addressesTableView.items.size() == 1
             addressesTableView.items[0].confirmations == confirmations
             addressIsValid(address, mnemonicSeed, 0)
             transactionsTableView.items.size() == 1
             transactionsTableView.items[0].confirmations == confirmations
+            labelText == "Total Balance: 1.00000000 BTC (confirmed: 1.00000000, unconfirmed: 0.00000000)"
         where:
             confirmations   |   x
             1               |   null
@@ -62,6 +65,7 @@ class ReceivingBlockTest extends GuiTest {
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
+            String labelText = lookup("#totalBalance").queryAs(Label).getText()
         then:
             addressesTableView.items.size() == 1
             addressesTableView.items[0].confirmations == confirmations - 1
@@ -69,6 +73,7 @@ class ReceivingBlockTest extends GuiTest {
             transactionsTableView.items.size() == 2
             transactionsTableView.items[0].confirmations == confirmations - 1
             transactionsTableView.items[1].confirmations == totalConfirmations
+            labelText == "Total Balance: 2.00000000 BTC (confirmed: 2.00000000, unconfirmed: 0.00000000)"
         where:
             confirmations   |   x
             2               |   null
