@@ -1,9 +1,6 @@
 package com.byow.wallet.byow.gui.listeners;
 
-import com.byow.wallet.byow.gui.controllers.AddressesTableController;
-import com.byow.wallet.byow.gui.controllers.ReceiveTabController;
-import com.byow.wallet.byow.gui.controllers.TotalBalanceController;
-import com.byow.wallet.byow.gui.controllers.TransactionsTableController;
+import com.byow.wallet.byow.gui.controllers.*;
 import com.byow.wallet.byow.gui.events.GuiStartedEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
@@ -26,7 +23,8 @@ public class GuiStartedListener implements ApplicationListener<GuiStartedEvent> 
         ReceiveTabController.class,
         AddressesTableController.class,
         TransactionsTableController.class,
-        TotalBalanceController.class
+        TotalBalanceController.class,
+        SendTabController.class
     );
 
     private final Resource fxml;
