@@ -44,7 +44,7 @@
                     <GridPane.margin>
                         <Insets left="10.0" top="10.0" />
                     </GridPane.margin></HBox>
-                <Button mnemonicParsing="false" text="Send" GridPane.rowIndex="2" fx:id="send">
+                <Button mnemonicParsing="false" text="Send" GridPane.rowIndex="2" fx:id="send" onAction="#send">
                     <GridPane.margin>
                         <Insets left="10.0" top="10.0" />
                     </GridPane.margin>

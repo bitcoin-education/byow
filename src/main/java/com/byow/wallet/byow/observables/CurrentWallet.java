@@ -1,12 +1,13 @@
 package com.byow.wallet.byow.observables;
 
+import com.byow.wallet.byow.domains.Address;
 import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.ExtendedPubkey;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -24,6 +25,10 @@ public class CurrentWallet {
     private final TransactionRows transactionRows = new TransactionRows();
 
     private final Balances balances = new Balances();
+
+    private String changeAddress;
+
+    private String mnemonicSeed;
 
     public void setName(String name) {
         this.name.set(name);
@@ -61,7 +66,7 @@ public class CurrentWallet {
         addressRows.clear();
     }
 
-    public void setAddressBalance(String address, double sum) {
+    public void setAddressBalance(String address, BigDecimal sum) {
         addresses.setAddressBalance(address, sum);
     }
 
@@ -125,7 +130,7 @@ public class CurrentWallet {
         return transactionRows.getTransactionIds();
     }
 
-    public void setBalances(Double unconfirmedBalance, Double confirmedBalance) {
+    public void setBalances(BigDecimal unconfirmedBalance, BigDecimal confirmedBalance) {
         balances.setBalances(unconfirmedBalance, confirmedBalance);
     }
 
@@ -135,5 +140,25 @@ public class CurrentWallet {
 
     public void clearBalances() {
         balances.clear();
+    }
+
+    public void setChangeAddress(String address) {
+        changeAddress = address;
+    }
+
+    public String getChangeAddress() {
+        return changeAddress;
+    }
+
+    public void setMnemonicSeed(String mnemonicSeed) {
+        this.mnemonicSeed = mnemonicSeed;
+    }
+
+    public String getMnemonicSeed() {
+        return mnemonicSeed;
+    }
+
+    public Address getAddress(String address) {
+        return addresses.getAddress(address);
     }
 }

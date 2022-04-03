@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.LongStream;
 
@@ -37,6 +38,6 @@ public class AddressSequentialGenerator {
 
     private Address generateAddress(AddressGenerator addressGenerator, ExtendedPubkey extendedPubkey, long index, AddressType addressType) {
         ExtendedKey extendedChildKey = extendedPubkey.ckd(String.valueOf(index));
-        return new Address(addressGenerator.generate(extendedChildKey), index, 0, 0, addressType);
+        return new Address(addressGenerator.generate(extendedChildKey), index, BigDecimal.ZERO, 0, addressType);
     }
 }

@@ -22,15 +22,18 @@ class SendBitcoinTest extends GuiTest {
             String address = lookup("#receivingAddress").queryAs(TextField).text
             sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", 1.0)
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, address)
             clickOn("#sendTab")
             clickOn("#amountToSend")
             write("0.5")
             clickOn("#addressToSend")
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
             write(nodeAddress)
             clickOn("#send")
+            sleep(TIMEOUT, SECONDS)
             clickOn("OK")
             clickOn("#transactionsTab")
+            sleep(TIMEOUT, SECONDS)
             TableView tableView = lookup("#transactionsTable").queryAs(TableView)
         then:
             tableView.items.size() == 2
