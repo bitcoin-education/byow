@@ -4,11 +4,9 @@ import com.byow.wallet.byow.domains.UtxoDto;
 import com.byow.wallet.byow.utils.Satoshi;
 import io.github.bitcoineducation.bitcoinjava.*;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
-import org.bouncycastle.util.BigIntegers;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.IntStream;

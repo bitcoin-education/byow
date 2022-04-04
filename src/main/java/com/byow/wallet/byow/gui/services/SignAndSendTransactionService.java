@@ -2,12 +2,11 @@ package com.byow.wallet.byow.gui.services;
 
 import com.byow.wallet.byow.api.services.TransactionSignerService;
 import com.byow.wallet.byow.api.services.node.client.NodeSendRawTransactionClient;
-import com.byow.wallet.byow.domains.AddressConfig;
-import com.byow.wallet.byow.domains.AddressType;
-import com.byow.wallet.byow.domains.Utxo;
-import com.byow.wallet.byow.domains.UtxoDto;
+import com.byow.wallet.byow.domains.*;
+import com.byow.wallet.byow.gui.events.TransactionSentEvent;
 import com.byow.wallet.byow.observables.CurrentWallet;
-import io.github.bitcoineducation.bitcoinjava.Transaction;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,28 +22,34 @@ public class SignAndSendTransactionService {
 
     private final NodeSendRawTransactionClient nodeSendRawTransactionClient;
 
+    private final ApplicationEventPublisher applicationEventPublisher;
+
     public SignAndSendTransactionService(
         CurrentWallet currentWallet,
         TransactionSignerService transactionSignerService,
         List<AddressConfig> addressConfigs,
-        NodeSendRawTransactionClient nodeSendRawTransactionClient
+        NodeSendRawTransactionClient nodeSendRawTransactionClient,
+        ApplicationEventPublisher applicationEventPublisher
     ) {
         this.currentWallet = currentWallet;
         this.transactionSignerService = transactionSignerService;
         this.addressConfigs = addressConfigs;
         this.nodeSendRawTransactionClient = nodeSendRawTransactionClient;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public void signAndSend(Transaction transaction, String password, List<Utxo> utxos) {
-        List<UtxoDto> utxoDtos = utxos.stream()
+    @Async("defaultExecutorService")
+    public void signAndSend(TransactionDto transactionDto, String password) {
+        List<UtxoDto> utxoDtos = transactionDto.selectedUtxos().stream()
             .map(this::buildUtxoDto)
             .toList();
-        transactionSignerService.sign(transaction, currentWallet.getMnemonicSeed(), password, utxoDtos);
+        transactionSignerService.sign(transactionDto.transaction(), currentWallet.getMnemonicSeed(), password, utxoDtos);
         try {
-            nodeSendRawTransactionClient.send(transaction.serialize());
+            nodeSendRawTransactionClient.send(transactionDto.transaction().serialize());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        applicationEventPublisher.publishEvent(new TransactionSentEvent(this, transactionDto));
     }
 
     private UtxoDto buildUtxoDto(Utxo utxo) {

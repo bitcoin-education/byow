@@ -26,7 +26,7 @@
                   <Font size="16.0" />
                </font></Label>
                 <Label text="Amount to send:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Label fx:id="amountToSend" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label fx:id="amountToSendDialog" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <Label text="Total Fees:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                 <Label fx:id="totalFee" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <Label text="Total:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
@@ -34,7 +34,7 @@
                 <Label text="Fee rate:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
                 <Label fx:id="feeRate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <Label text="Address to send:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                <Label fx:id="addressToSend" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Label fx:id="addressToSendDialog" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                 <Label text="Wallet Password" GridPane.rowIndex="6" />
                 <PasswordField fx:id="sendTransactionPassword" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             </children>

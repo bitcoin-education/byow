@@ -1,9 +1,17 @@
 package com.byow.wallet.byow.gui
 
+import com.byow.wallet.byow.observables.AddressRow
+import com.byow.wallet.byow.observables.TransactionRow
+import com.byow.wallet.byow.utils.BitcoinFormatter
+import javafx.scene.control.DialogPane
+import javafx.scene.control.Label
 import javafx.scene.control.TableView
 import javafx.scene.control.TextField
 
+import java.util.stream.IntStream
+
 import static java.util.concurrent.TimeUnit.SECONDS
+import static org.testfx.util.WaitForAsyncUtils.waitFor
 
 class SendBitcoinTest extends GuiTest {
     def setup() {
@@ -19,23 +27,55 @@ class SendBitcoinTest extends GuiTest {
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            String address = lookup("#receivingAddress").queryAs(TextField).text
             sleep(TIMEOUT, SECONDS)
-            sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", 1.0)
+            BigDecimal funds = 0
+            IntStream.range(0, previousUtxosNumber).forEach {
+                String address = lookup("#receivingAddress").queryAs(TextField).text
+                BigDecimal amount = 1.0
+                sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", amount)
+                funds += amount
+            }
             String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
-            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, address)
+            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             clickOn("#amountToSend")
-            write("0.5")
+            write(amountToSend)
             clickOn("#addressToSend")
             write(nodeAddress)
             clickOn("#send")
-            sleep(TIMEOUT, SECONDS)
+            waitForDialog()
+            String amountToSendLabel = lookup("#amountToSendDialog").queryAs(Label).text
+            String totalFeeLabel = lookup("#totalFee").queryAs(Label).text
+            String totalLabel = lookup("#total").queryAs(Label).text
+            String feeRateLabel = lookup("#feeRate").queryAs(Label).text
+            String addressToSendLabel = lookup("#addressToSendDialog").queryAs(Label).text
             clickOn("OK")
-            clickOn("#transactionsTab")
             sleep(TIMEOUT, SECONDS)
-            TableView tableView = lookup("#transactionsTable").queryAs(TableView)
+            TableView<AddressRow> addressesTable = lookup("#addressesTable").queryAs(TableView)
+            clickOn("#transactionsTab")
+            TableView<TransactionRow> transactionsTable = lookup("#transactionsTable").queryAs(TableView)
+            String labelText = lookup("#totalBalance").queryAs(Label).getText()
         then:
-            tableView.items.size() == 2
+            addressesTable.items.size() == 1
+            addressesTable.items[0].balance == changeAmount
+            transactionsTable.items.size() == previousUtxosNumber + 1
+            transactionsTable.items[0].balance == "-".concat(totalSpent)
+            amountToSendLabel == BitcoinFormatter.format(new BigDecimal(amountToSend))
+            totalFeeLabel == totalFee
+            totalLabel == totalSpent
+            feeRateLabel == feeRate
+            addressToSendLabel == nodeAddress
+            labelText == "Total Balance: $changeAmount BTC (confirmed: ${BitcoinFormatter.format(funds)}, unconfirmed: ${"-".concat(totalSpent)})"
+        where:
+            previousUtxosNumber | amountToSend | totalFee         | totalSpent    | changeAmount | feeRate
+            1                   | "0.5"        | "0.00002679"     | "0.50002679"  | "0.49997321" | "0.0002 BTC/kvByte"
+            2                   | "1.5"        | "0.00003971"     | "1.50003971"  | "0.49996029" | "0.0002 BTC/kvByte"
+    }
+
+    private waitForDialog() {
+        waitFor(TIMEOUT, SECONDS, {
+            DialogPane dialogPane = lookup("#dialogPane").queryAs(DialogPane)
+            return dialogPane != null
+        })
     }
 }

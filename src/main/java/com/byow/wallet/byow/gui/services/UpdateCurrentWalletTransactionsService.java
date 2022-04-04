@@ -23,4 +23,8 @@ public class UpdateCurrentWalletTransactionsService {
             .toList();
         Platform.runLater(() -> currentWallet.addTransactionRows(transactionRows));
     }
+
+    public void update(TransactionRow transactionRow) {
+        Platform.runLater(() -> currentWallet.addTransactionRow(transactionRow));
+    }
 }

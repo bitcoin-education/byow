@@ -13,7 +13,7 @@ public record TransactionDialog(
 ) {
     public static TransactionDialog from(TransactionDto transactionDto) {
         return new TransactionDialog(
-            format(transactionDto.amount()),
+            format(transactionDto.amountToSend()),
             format(transactionDto.totalFee()),
             format(transactionDto.totalSpent()),
             transactionDto.feeRate(),

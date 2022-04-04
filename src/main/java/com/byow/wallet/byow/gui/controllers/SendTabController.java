@@ -54,6 +54,8 @@ public class SendTabController extends Tab {
         BigDecimal amount = new BigDecimal(amountToSend.getText());
         TransactionDto transactionDto = createTransactionService.create(addressToSend.getText(), amount);
         openDialog(transactionDto);
+        addressToSend.clear();
+        amountToSend.clear();
     }
 
     private void openDialog(TransactionDto transactionDto) {

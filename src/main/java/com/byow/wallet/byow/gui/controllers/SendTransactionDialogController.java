@@ -20,7 +20,7 @@ public class SendTransactionDialogController extends DialogPane {
     @FXML
     private ButtonType cancel;
     @FXML
-    private Label amountToSend;
+    private Label amountToSendDialog;
     @FXML
     private Label totalFee;
     @FXML
@@ -28,7 +28,7 @@ public class SendTransactionDialogController extends DialogPane {
     @FXML
     private Label feeRate;
     @FXML
-    private Label addressToSend;
+    private Label addressToSendDialog;
     @FXML
     private PasswordField sendTransactionPassword;
 
@@ -43,11 +43,11 @@ public class SendTransactionDialogController extends DialogPane {
     public void setTransaction(TransactionDto transactionDto) {
         this.transactionDto = transactionDto;
         TransactionDialog transactionDialog = TransactionDialog.from(transactionDto);
-        amountToSend.setText(transactionDialog.amountToSend());
+        amountToSendDialog.setText(transactionDialog.amountToSend());
         totalFee.setText(transactionDialog.totalFee());
         total.setText(transactionDialog.total());
-        feeRate.setText(transactionDialog.feeRate().toString().concat(" BTC/KvByte"));
-        addressToSend.setText(transactionDialog.addressToSend());
+        feeRate.setText(transactionDialog.feeRate().toString().concat(" BTC/kvByte"));
+        addressToSendDialog.setText(transactionDialog.addressToSend());
     }
 
     public void initialize() {
@@ -58,7 +58,7 @@ public class SendTransactionDialogController extends DialogPane {
     }
 
     private void signAndSendTransaction() {
-        signAndSendTransactionService.signAndSend(transactionDto.transaction(), sendTransactionPassword.getText(), transactionDto.selectedUtxos());
+        signAndSendTransactionService.signAndSend(transactionDto, sendTransactionPassword.getText());
         dialogPane.getScene().getWindow().hide();
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 public record TransactionDto(
     Transaction transaction,
     BigDecimal feeRate,
-    BigDecimal amount,
+    BigDecimal amountToSend,
     BigDecimal totalFee,
     BigDecimal totalSpent,
     String address,
