@@ -22,6 +22,8 @@ public class UpdateCurrentWalletAddressesService {
 
     private static final AddressType MAIN_ADDRESS = AddressType.SEGWIT;
 
+    private static final AddressType CHANGE_ADDRESS = AddressType.SEGWIT_CHANGE;
+
     private final CurrentWallet currentWallet;
 
     private final AddAddressService addAddressService;
@@ -63,9 +65,13 @@ public class UpdateCurrentWalletAddressesService {
             List<String> addressStrings = currentWallet.getAddressesAsStrings(nextAddressIndex, nextAddressIndex + initialNumberOfGeneratedAddresses);
             nodeMultiImportAddressClient.importAddresses(currentWallet.getName(), addressStrings, new Date());
         }
+        String nextAddress = currentWallet.getAddressAt(nextAddressIndex, addressType);
         if (addressType == MAIN_ADDRESS) {
-            String nextAddress = currentWallet.getAddressAt(nextAddressIndex, addressType);
             Platform.runLater(() -> currentWallet.setReceivingAddress(nextAddress));
+            return;
+        }
+        if (addressType == CHANGE_ADDRESS) {
+            currentWallet.setChangeAddress(nextAddress);
         }
     }
 
