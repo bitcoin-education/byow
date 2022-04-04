@@ -66,12 +66,15 @@ public class CreateTransactionService {
         );
 
         BigInteger totalFee = totalFee(transaction, feeRate);
-        BigInteger totalSpent = totalSpent(transaction, totalFee);
+        BigInteger totalSpent = totalSpent(transaction, totalFee, address);
         return new TransactionDto(transaction, feeRate, amount, Satoshi.toBtc(totalFee), Satoshi.toBtc(totalSpent), address, selectedUtxos);
     }
 
-    private BigInteger totalSpent(Transaction transaction, BigInteger totalFee) {
-        return totalFee.add(transaction.getOutputs().get(0).getAmount());
+    private BigInteger totalSpent(Transaction transaction, BigInteger totalFee, String address) {
+        if (!currentWallet.getAddressesAsStrings().contains(address)) {
+            return totalFee.add(transaction.getOutputs().get(0).getAmount());
+        }
+        return totalFee;
     }
 
 }
