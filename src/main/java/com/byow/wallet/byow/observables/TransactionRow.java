@@ -1,7 +1,7 @@
 package com.byow.wallet.byow.observables;
 
 import com.byow.wallet.byow.domains.TransactionDto;
-import com.byow.wallet.byow.domains.Utxo;
+import com.byow.wallet.byow.domains.node.NodeTransaction;
 import com.byow.wallet.byow.utils.BitcoinFormatter;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -28,16 +28,16 @@ public class TransactionRow {
         setDate(date);
     }
 
-    public static TransactionRow from(Utxo utxo) {
-        return new TransactionRow(utxo.txid(), BitcoinFormatter.format(utxo.amount()), utxo.confirmations(), Instant.now().toString());
-    }
-
     public static TransactionRow from(TransactionDto transactionDto) {
         try {
             return new TransactionRow(transactionDto.transaction().id(), BitcoinFormatter.format(transactionDto.totalSpent().negate()), 0L, Instant.now().toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static TransactionRow from(NodeTransaction nodeTransaction) {
+        return new TransactionRow(nodeTransaction.txid(), BitcoinFormatter.format(nodeTransaction.amount()), nodeTransaction.confirmations(), nodeTransaction.time().toString());
     }
 
     public String getId() {
@@ -100,4 +100,5 @@ public class TransactionRow {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
 }

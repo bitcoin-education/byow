@@ -1,6 +1,7 @@
-package com.byow.wallet.byow.node.events;
+package com.byow.wallet.byow.node.listeners;
 
 import com.byow.wallet.byow.gui.services.UpdateUTXOsService;
+import com.byow.wallet.byow.node.events.BlockReceivedEvent;
 import com.byow.wallet.byow.observables.CurrentWallet;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
