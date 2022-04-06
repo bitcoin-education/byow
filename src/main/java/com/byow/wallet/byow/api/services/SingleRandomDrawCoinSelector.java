@@ -17,8 +17,11 @@ public class SingleRandomDrawCoinSelector implements CoinSelector {
 
     private final TransactionSizeCalculator transactionSizeCalculator;
 
-    public SingleRandomDrawCoinSelector(TransactionSizeCalculator transactionSizeCalculator) {
+    private final DustCalculator dustCalculator;
+
+    public SingleRandomDrawCoinSelector(TransactionSizeCalculator transactionSizeCalculator, DustCalculator dustCalculator) {
         this.transactionSizeCalculator = transactionSizeCalculator;
+        this.dustCalculator = dustCalculator;
     }
 
     @Override
@@ -42,19 +45,28 @@ public class SingleRandomDrawCoinSelector implements CoinSelector {
                 .toList();
             BigInteger totalFee = totalFee(feeRateInSatoshisPerVByte, inputAddresses, outputAddresses);
             BigInteger adjustedTarget = amountToSend.add(totalFee);
-            if(totalInputBalance == adjustedTarget.longValue()) {
+
+            outputAddresses.add(changeAddress);
+            BigInteger totalFeeWithChange = totalFee(feeRateInSatoshisPerVByte, inputAddresses, outputAddresses);
+            BigInteger adjustedTargetWithChange = amountToSend.add(totalFeeWithChange);
+
+            if (inputBalanceFulfilledTransaction(totalInputBalance, adjustedTarget, adjustedTargetWithChange)) {
                 break;
             }
 
-            outputAddresses.add(changeAddress);
-            totalFee = totalFee(feeRateInSatoshisPerVByte, inputAddresses, outputAddresses);
-            adjustedTarget = amountToSend.add(totalFee);
-            if(totalInputBalance >= adjustedTarget.longValue()) {
-                break;
-            }
         }
 
         return selectedUtxos;
+    }
+
+    private boolean inputBalanceFulfilledTransaction(long totalInputBalance, BigInteger adjustedTarget, BigInteger adjustedTargetWithChange) {
+        return totalInputBalance >= adjustedTarget.longValue()
+            && (changeIsDust(totalInputBalance, adjustedTarget) || changeIsDust(totalInputBalance, adjustedTargetWithChange))
+            || totalInputBalance >= adjustedTargetWithChange.longValue();
+    }
+
+    private boolean changeIsDust(long totalInputBalance, BigInteger adjustedTarget) {
+        return dustCalculator.isDust(BigInteger.valueOf(totalInputBalance - adjustedTarget.longValue()));
     }
 
     private BigInteger totalFee(BigInteger feeRateInSatoshisPerVByte, List<String> inputAddresses, List<String> outputAddresses) {

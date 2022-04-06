@@ -45,6 +45,8 @@ class TransactionCreatorServiceTest extends Specification {
             1               | 1                | 1.00002383  | 100_000_000  | 110          | true // dustChange = 293
             1               | 1                | 1.00002972  | 100_000_000  | 110          | true // dustChange = 293
             1               | 1                | 1.00002679  | 100_000_000  | 110          | true // total fee = 2679, dustChange = 0
+            3               | 2                | 1.00000000  | 250_000_000  | 277          | false // total fee = 5263
+            3               | 1                | 1.00001755  | 300_000_000  | 246          | true // total fee = 5263, dustChange = 2
     }
 
     private List<Utxo> createUtxo(int numberOfUtxos, BigDecimal amount) {

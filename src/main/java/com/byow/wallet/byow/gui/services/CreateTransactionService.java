@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
-import static com.byow.wallet.byow.utils.Fee.totalFee;
+import static com.byow.wallet.byow.utils.Fee.totalActualFee;
 
 @Service
 public class CreateTransactionService {
@@ -65,7 +65,7 @@ public class CreateTransactionService {
             feeRate
         );
 
-        BigInteger totalFee = totalFee(transaction, feeRate);
+        BigInteger totalFee = totalActualFee(transaction, selectedUtxos);
         BigInteger totalSpent = totalSpent(transaction, totalFee, address);
         return new TransactionDto(transaction, feeRate, amount, Satoshi.toBtc(totalFee), Satoshi.toBtc(totalSpent), address, selectedUtxos);
     }

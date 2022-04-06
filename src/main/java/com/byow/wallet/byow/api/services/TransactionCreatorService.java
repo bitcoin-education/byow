@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.byow.wallet.byow.utils.Fee.totalFee;
+import static com.byow.wallet.byow.utils.Fee.totalCalculatedFee;
 
 @Service
 public class TransactionCreatorService {
@@ -32,7 +32,7 @@ public class TransactionCreatorService {
         ArrayList<TransactionOutput> transactionOutputs = new ArrayList<>(List.of(addressToSendOutput));
         Transaction transaction = new Transaction(BigInteger.ONE, transactionInputs, transactionOutputs, BigInteger.ZERO, true);
 
-        BigInteger totalFee = totalFee(transaction, feeRate);
+        BigInteger totalFee = totalCalculatedFee(transaction, feeRate);
         BigInteger inputSum = utxos.stream()
             .map(Utxo::amount)
             .reduce(BigDecimal::add)
@@ -45,7 +45,7 @@ public class TransactionCreatorService {
         }
 
         transactionOutputs.add(buildOutput(changeAddress, BigInteger.ONE));
-        totalFee = totalFee(transaction, feeRate);
+        totalFee = totalCalculatedFee(transaction, feeRate);
         change = inputSum.subtract(amountToSend).subtract(totalFee);
 
         transactionOutputs.remove(1);
