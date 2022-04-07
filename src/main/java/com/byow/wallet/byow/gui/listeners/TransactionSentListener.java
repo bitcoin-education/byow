@@ -4,6 +4,7 @@ import com.byow.wallet.byow.domains.TransactionDto;
 import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.gui.events.TransactionSentEvent;
 import com.byow.wallet.byow.gui.services.UpdateCurrentWalletAddressesService;
+import com.byow.wallet.byow.gui.services.UpdateCurrentWalletBalanceService;
 import com.byow.wallet.byow.gui.services.UpdateCurrentWalletTransactionsService;
 import com.byow.wallet.byow.observables.TransactionRow;
 import org.springframework.context.ApplicationListener;
@@ -18,12 +19,16 @@ public class TransactionSentListener implements ApplicationListener<TransactionS
 
     private final UpdateCurrentWalletTransactionsService updateCurrentWalletTransactionsService;
 
+    private final UpdateCurrentWalletBalanceService updateCurrentWalletBalanceService;
+
     public TransactionSentListener(
         UpdateCurrentWalletAddressesService updateCurrentWalletAddressesService,
-        UpdateCurrentWalletTransactionsService updateCurrentWalletTransactionsService
+        UpdateCurrentWalletTransactionsService updateCurrentWalletTransactionsService,
+        UpdateCurrentWalletBalanceService updateCurrentWalletBalanceService
     ) {
         this.updateCurrentWalletAddressesService = updateCurrentWalletAddressesService;
         this.updateCurrentWalletTransactionsService = updateCurrentWalletTransactionsService;
+        this.updateCurrentWalletBalanceService = updateCurrentWalletBalanceService;
     }
 
     @Override
@@ -43,5 +48,6 @@ public class TransactionSentListener implements ApplicationListener<TransactionS
             )).toList();
         updateCurrentWalletAddressesService.update(utxos);
         updateCurrentWalletTransactionsService.update(TransactionRow.from(transactionDto));
+        updateCurrentWalletBalanceService.update();
     }
 }
