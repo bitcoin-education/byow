@@ -1,7 +1,11 @@
 package com.byow.wallet.byow.gui.controllers;
 
 import com.byow.wallet.byow.domains.TransactionDto;
+import com.byow.wallet.byow.domains.Utxo;
+import com.byow.wallet.byow.gui.services.AlertErrorService;
 import com.byow.wallet.byow.gui.services.CreateTransactionService;
+import com.byow.wallet.byow.utils.Satoshi;
+import io.github.bitcoineducation.bitcoinjava.TransactionOutput;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
@@ -30,15 +34,19 @@ public class SendTabController extends Tab {
 
     private final ApplicationContext context;
 
+    private final AlertErrorService alertErrorService;
+
     public SendTabController(
         @Value("fxml/send_tab.fxml") Resource fxml,
         @Value("fxml/send_transaction_dialog.fxml") Resource dialogFxml,
         ApplicationContext context,
-        CreateTransactionService createTransactionService
+        CreateTransactionService createTransactionService,
+        AlertErrorService alertErrorService
     ) throws IOException {
         this.context = context;
         this.createTransactionService = createTransactionService;
         this.dialogFxml = dialogFxml;
+        this.alertErrorService = alertErrorService;
         FXMLLoader fxmlLoader = new FXMLLoader(
             fxml.getURL(),
             null,
@@ -53,9 +61,22 @@ public class SendTabController extends Tab {
     public void send() {
         BigDecimal amount = new BigDecimal(amountToSend.getText());
         TransactionDto transactionDto = createTransactionService.create(addressToSend.getText(), amount);
-        openDialog(transactionDto);
+        if (fundsAreValid(transactionDto)) {
+            openDialog(transactionDto);
+        }
         addressToSend.clear();
         amountToSend.clear();
+    }
+
+    private boolean fundsAreValid(TransactionDto transactionDto) {
+        BigDecimal inputSum = transactionDto.getInputSum();
+        BigDecimal outputSum = transactionDto.getOutputSum();
+
+        if (inputSum.compareTo(outputSum.add(transactionDto.totalCalculatedFee())) < 0) {
+            alertErrorService.alertError("Could not send transaction: not enough funds");
+            return false;
+        }
+        return true;
     }
 
     private void openDialog(TransactionDto transactionDto) {

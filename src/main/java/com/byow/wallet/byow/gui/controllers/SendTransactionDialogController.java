@@ -2,14 +2,15 @@ package com.byow.wallet.byow.gui.controllers;
 
 import com.byow.wallet.byow.domains.TransactionDialog;
 import com.byow.wallet.byow.domains.TransactionDto;
+import com.byow.wallet.byow.gui.services.AlertErrorService;
 import com.byow.wallet.byow.gui.services.SignAndSendTransactionService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
+import javafx.scene.control.*;
 import org.springframework.stereotype.Component;
+import com.byow.wallet.byow.domains.Error;
+
+import java.util.concurrent.Future;
 
 @Component
 public class SendTransactionDialogController extends DialogPane {
@@ -36,8 +37,11 @@ public class SendTransactionDialogController extends DialogPane {
 
     private TransactionDto transactionDto;
 
-    public SendTransactionDialogController(SignAndSendTransactionService signAndSendTransactionService) {
+    private final AlertErrorService alertErrorService;
+
+    public SendTransactionDialogController(SignAndSendTransactionService signAndSendTransactionService, AlertErrorService alertErrorService) {
         this.signAndSendTransactionService = signAndSendTransactionService;
+        this.alertErrorService = alertErrorService;
     }
 
     public void setTransaction(TransactionDto transactionDto) {
@@ -58,7 +62,9 @@ public class SendTransactionDialogController extends DialogPane {
     }
 
     private void signAndSendTransaction() {
-        signAndSendTransactionService.signAndSend(transactionDto, sendTransactionPassword.getText());
+        Future<Error> result = signAndSendTransactionService.signAndSend(transactionDto, sendTransactionPassword.getText());
+        alertErrorService.handleError(result);
         dialogPane.getScene().getWindow().hide();
     }
+
 }
