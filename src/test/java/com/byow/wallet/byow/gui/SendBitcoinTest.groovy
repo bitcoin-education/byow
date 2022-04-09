@@ -1,5 +1,6 @@
 package com.byow.wallet.byow.gui
 
+import com.byow.wallet.byow.api.services.NodeEstimateFeeService
 import com.byow.wallet.byow.observables.AddressRow
 import com.byow.wallet.byow.observables.TransactionRow
 import com.byow.wallet.byow.utils.BitcoinFormatter
@@ -8,16 +9,22 @@ import javafx.scene.control.DialogPane
 import javafx.scene.control.Label
 import javafx.scene.control.TableView
 import javafx.scene.control.TextField
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.testfx.service.query.NodeQuery
 
 import java.util.stream.IntStream
 
 import static java.util.concurrent.TimeUnit.SECONDS
+import static org.mockito.Mockito.when
 import static org.testfx.util.WaitForAsyncUtils.waitFor
 
 class SendBitcoinTest extends GuiTest {
+    @MockBean
+    NodeEstimateFeeService nodeEstimateFeeService
+
     def setup() {
         loadWalletAndAddBalance()
+        when(nodeEstimateFeeService.estimate()).thenReturn(0.0002)
     }
 
     def "should send bitcoin"() {

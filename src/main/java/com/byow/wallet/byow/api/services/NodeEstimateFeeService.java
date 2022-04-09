@@ -24,9 +24,9 @@ public class NodeEstimateFeeService implements EstimateFeeService {
     @Override
     public BigDecimal estimate() {
         NodeFee nodeFee = nodeEstimateSmartFeeClient.estimateFee(1);
-        if (nodeFee.feeRate() == null) {
+        if (nodeFee.feerate() == null) {
             return fallbackFeeRate;
         }
-        return BigDecimal.valueOf(nodeFee.feeRate());
+        return BigDecimal.valueOf(nodeFee.feerate());
     }
 }
