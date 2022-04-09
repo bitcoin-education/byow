@@ -1,11 +1,10 @@
 package com.byow.wallet.byow.gui.controllers;
 
 import com.byow.wallet.byow.domains.TransactionDto;
-import com.byow.wallet.byow.domains.Utxo;
+import com.byow.wallet.byow.domains.node.ErrorMessages;
+import com.byow.wallet.byow.gui.exceptions.CreateTransactionException;
 import com.byow.wallet.byow.gui.services.AlertErrorService;
 import com.byow.wallet.byow.gui.services.CreateTransactionService;
-import com.byow.wallet.byow.utils.Satoshi;
-import io.github.bitcoineducation.bitcoinjava.TransactionOutput;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
@@ -60,9 +59,13 @@ public class SendTabController extends Tab {
 
     public void send() {
         BigDecimal amount = new BigDecimal(amountToSend.getText());
-        TransactionDto transactionDto = createTransactionService.create(addressToSend.getText(), amount);
-        if (fundsAreValid(transactionDto)) {
-            openDialog(transactionDto);
+        try {
+            TransactionDto transactionDto = createTransactionService.create(addressToSend.getText(), amount);
+            if (fundsAreValid(transactionDto)) {
+                openDialog(transactionDto);
+            }
+        } catch (CreateTransactionException exception) {
+            alertErrorService.alertError(exception.getMessage());
         }
         addressToSend.clear();
         amountToSend.clear();
@@ -73,7 +76,7 @@ public class SendTabController extends Tab {
         BigDecimal outputSum = transactionDto.getOutputSum();
 
         if (inputSum.compareTo(outputSum.add(transactionDto.totalCalculatedFee())) < 0) {
-            alertErrorService.alertError("Could not send transaction: not enough funds");
+            alertErrorService.alertError(ErrorMessages.NOT_ENOUGH_FUNDS);
             return false;
         }
         return true;

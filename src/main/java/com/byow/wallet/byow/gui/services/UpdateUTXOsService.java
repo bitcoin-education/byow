@@ -2,11 +2,14 @@ package com.byow.wallet.byow.gui.services;
 
 import com.byow.wallet.byow.api.services.node.client.NodeListTransactionsClient;
 import com.byow.wallet.byow.api.services.node.client.NodeListUnspentClient;
+import com.byow.wallet.byow.domains.TransactionDto;
 import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.domains.node.NodeTransaction;
+import com.byow.wallet.byow.observables.TransactionRow;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -42,6 +45,24 @@ public class UpdateUTXOsService {
         updateCurrentWalletAddressesService.update(utxos);
         List<NodeTransaction> nodeTransactions = nodeListTransactionsClient.listTransactions(name);
         updateCurrentWalletTransactionsService.updateNodeTransactions(nodeTransactions);
+        updateCurrentWalletBalanceService.update();
+    }
+
+    public void update(TransactionDto transactionDto) {
+        List<Utxo> utxos = transactionDto.selectedUtxos().stream()
+            .map(utxo -> new Utxo(
+                utxo.txid(),
+                utxo.vout(),
+                utxo.address(),
+                utxo.label(),
+                utxo.scriptPubKey(),
+                BigDecimal.ZERO,
+                utxo.confirmations(),
+                utxo.redeemScript(),
+                utxo.witnessScript()
+            )).toList();
+        updateCurrentWalletAddressesService.update(utxos);
+        updateCurrentWalletTransactionsService.update(TransactionRow.from(transactionDto));
         updateCurrentWalletBalanceService.update();
     }
 }

@@ -11,8 +11,10 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.byow.wallet.byow.utils.Fee.totalCalculatedFee;
+import static io.github.bitcoineducation.bitcoinjava.AddressConstants.*;
 
 @Service
 public class TransactionCreatorService {
@@ -58,8 +60,20 @@ public class TransactionCreatorService {
     }
 
     private TransactionOutput buildOutput(String address, BigInteger amount) {
-        Script script = Script.p2wpkhScript(Bech32.decode("bcrt", address)[1]);
+        String prefix = parsePrefix(address);
+        Script script = Script.p2wpkhScript(Bech32.decode(prefix, address)[1]);
         return new TransactionOutput(amount, script);
+    }
+
+    private String parsePrefix(String address) {
+        return Stream.of(
+            REGTEST_P2WPKH_ADDRESS_PREFIX,
+            TESTNET_P2WPKH_ADDRESS_PREFIX,
+            MAINNET_P2WPKH_ADDRESS_PREFIX
+        )
+        .filter(address::startsWith)
+        .findFirst()
+        .orElse("");
     }
 
     private ArrayList<TransactionInput> buildInputs(List<Utxo> selectedUtxos) {
