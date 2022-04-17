@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -61,7 +61,7 @@ public class CurrentWallet {
         addressRows.clear();
     }
 
-    public void setAddressBalance(String address, double sum) {
+    public void setAddressBalance(String address, BigDecimal sum) {
         addresses.setAddressBalance(address, sum);
     }
 
@@ -125,7 +125,7 @@ public class CurrentWallet {
         return transactionRows.getTransactionIds();
     }
 
-    public void setBalances(Double unconfirmedBalance, Double confirmedBalance) {
+    public void setBalances(BigDecimal unconfirmedBalance, BigDecimal confirmedBalance) {
         balances.setBalances(unconfirmedBalance, confirmedBalance);
     }
 

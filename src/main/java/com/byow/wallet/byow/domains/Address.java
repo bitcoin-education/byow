@@ -1,14 +1,16 @@
 package com.byow.wallet.byow.domains;
 
+import java.math.BigDecimal;
+
 public final class Address {
     private final String address;
     private final Long index;
-    private double balance;
+    private BigDecimal balance;
     private long confirmations;
     private boolean used;
     private final AddressType addressType;
 
-    public Address(String address, Long index, double balance, long confirmations, AddressType addressType) {
+    public Address(String address, Long index, BigDecimal balance, long confirmations, AddressType addressType) {
         this.address = address;
         this.index = index;
         this.balance = balance;
@@ -24,11 +26,11 @@ public final class Address {
         return index;
     }
 
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

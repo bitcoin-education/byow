@@ -4,6 +4,8 @@ import com.byow.wallet.byow.utils.BitcoinFormatter;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import java.math.BigDecimal;
+
 public class Balances {
     private final StringProperty unconfirmedBalance = new SimpleStringProperty();
 
@@ -11,16 +13,16 @@ public class Balances {
 
     private final StringProperty totalBalance = new SimpleStringProperty();
 
-    public void setBalances(Double unconfirmedBalance, Double confirmedBalance) {
+    public void setBalances(BigDecimal unconfirmedBalance, BigDecimal confirmedBalance) {
         this.unconfirmedBalance.set(BitcoinFormatter.format(unconfirmedBalance));
         this.confirmedBalance.set(BitcoinFormatter.format(confirmedBalance));
-        this.totalBalance.set(BitcoinFormatter.format(unconfirmedBalance + confirmedBalance));
+        this.totalBalance.set(BitcoinFormatter.format(unconfirmedBalance.add(confirmedBalance)));
     }
 
     public void clear() {
-        unconfirmedBalance.set(BitcoinFormatter.format(0));
-        confirmedBalance.set(BitcoinFormatter.format(0));
-        totalBalance.set(BitcoinFormatter.format(0));
+        unconfirmedBalance.set(BitcoinFormatter.format(BigDecimal.ZERO));
+        confirmedBalance.set(BitcoinFormatter.format(BigDecimal.ZERO));
+        totalBalance.set(BitcoinFormatter.format(BigDecimal.ZERO));
     }
 
     public String getUnconfirmedBalance() {

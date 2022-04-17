@@ -4,6 +4,7 @@ import com.byow.wallet.byow.domains.Address;
 import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.ExtendedPubkey;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 
@@ -31,7 +32,7 @@ public class Addresses {
             );
     }
 
-    public void setAddressBalance(String address, double sum) {
+    public void setAddressBalance(String address, BigDecimal sum) {
         getAddress(address).setBalance(sum);
     }
 
