@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -85,9 +86,10 @@ public class UpdateCurrentWalletAddressesService {
     }
 
     private void setBalance(String address, List<Utxo> utxoList) {
-        double sum = utxoList.stream()
-            .mapToDouble(Utxo::amount)
-            .sum();
+        BigDecimal sum = utxoList.stream()
+            .map(Utxo::amount)
+            .reduce(BigDecimal::add)
+            .orElse(BigDecimal.ZERO);
         currentWallet.setAddressBalance(address, sum);
     }
 }
