@@ -15,5 +15,4 @@ class SingleRandomDrawCoinSelectorTest extends Specification {
     def "should select #expectedNInputs coins for transaction with #expectedNOutputs outputs"() {
 
     }
-
 }

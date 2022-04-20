@@ -22,5 +22,4 @@ public class SingleRandomDrawCoinSelector implements CoinSelector {
     public List<Utxo> select(List<Utxo> utxos, BigInteger amountToSend, BigDecimal feeRate, String addressToSend, String changeAddress) {
         return null;
     }
-
 }
