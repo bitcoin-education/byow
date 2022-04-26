@@ -16,6 +16,8 @@ public class CurrentWallet {
 
     private final SimpleStringProperty receivingAddress = new SimpleStringProperty();
 
+    private String changeAddress;
+
     private final Addresses addresses = new Addresses();
 
     private final AddressRows addressRows = new AddressRows();
@@ -136,5 +138,13 @@ public class CurrentWallet {
 
     public void clearBalances() {
         balances.clear();
+    }
+
+    public void setChangeAddress(String address) {
+        changeAddress = address;
+    }
+
+    public String getChangeAddress() {
+        return changeAddress;
     }
 }
