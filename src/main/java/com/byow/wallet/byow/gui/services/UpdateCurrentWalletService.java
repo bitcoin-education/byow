@@ -21,6 +21,5 @@ public class UpdateCurrentWalletService {
         currentWallet.clearBalances();
         currentWallet.setReceivingAddress(wallet.extendedPubkeys().get(0).getAddresses().get(0).getAddress());
         currentWallet.setChangeAddress(wallet.extendedPubkeys().get(1).getAddresses().get(0).getAddress());
-        currentWallet.setMnemonicSeed(wallet.mnemonicSeed());
     }
 }

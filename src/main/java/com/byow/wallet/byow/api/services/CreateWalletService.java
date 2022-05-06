@@ -31,7 +31,7 @@ public class CreateWalletService {
             .map(addressConfig -> extendedPubkeyService.create(masterKey, addressConfig.derivationPath(), addressConfig.addressType()))
             .toList();
         addAddressService.addAddresses(extendedPubkeys, 0);
-        return new Wallet(name, extendedPubkeys, new Date(), mnemonicSeedString);
+        return new Wallet(name, extendedPubkeys, new Date());
     }
 
 }

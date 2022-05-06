@@ -31,15 +31,10 @@ public class TransactionRows {
         transactionRows.forEach(transactionRow -> {
             if (transactionRowMap.containsKey(transactionRow.getId())) {
                 transactionRow.setDate(transactionRowMap.get(transactionRow.getId()).getDate());
-                transactionRow.setBalance(transactionRowMap.get(transactionRow.getId()).getBalance());
             }
             transactionRowMap.remove(transactionRow.getId());
             transactionRowMap.put(transactionRow.getId(), transactionRow);
         });
-    }
-
-    public void addTransactionRow(TransactionRow transactionRow) {
-        transactionRowMap.put(transactionRow.getId(), transactionRow);
     }
 
     public ObservableList<TransactionRow> getObservableTransactionRowList() {
@@ -56,5 +51,4 @@ public class TransactionRows {
             .map(TransactionRow::getId)
             .toList();
     }
-
 }

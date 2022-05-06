@@ -1,7 +1,6 @@
 package com.byow.wallet.byow.gui
 
 import com.byow.wallet.byow.api.services.NodeEstimateFeeService
-import com.byow.wallet.byow.observables.AddressRow
 import com.byow.wallet.byow.observables.TransactionRow
 import com.byow.wallet.byow.utils.BitcoinFormatter
 import javafx.scene.control.DialogPane
@@ -36,12 +35,10 @@ class SendBitcoinTest extends GuiTest {
             clickOn("Receive")
             sleep(TIMEOUT, SECONDS)
 
-            BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach{
                 String address = lookup("#receivingAddress").queryAs(TextField).text
                 BigDecimal amount = 1.0
                 sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", amount)
-                funds += amount
             }
 
             String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
@@ -61,27 +58,19 @@ class SendBitcoinTest extends GuiTest {
             String addressToSendLabel = lookup("#addressToSendDialog").queryAs(Label).text
 
             clickOn("OK")
-            sleep(TIMEOUT, SECONDS)
-
-            TableView<AddressRow> addressesTable = lookup("#addressesTable").queryAs(TableView)
             clickOn("#transactionsTab")
             TableView<TransactionRow> transactionsTable = lookup("#transactionsTable").queryAs(TableView)
-            String totalBalanceText = lookup("#totalBalance").queryAs(Label).getText()
         then:
-            addressesTable.items.size() == 1
-            addressesTable.items[0].balance == changeAmount
             amountToSendLabel == BitcoinFormatter.format(new BigDecimal(amountToSend))
             totalFeeLabel == totalFee
             totalLabel == totalSpent
             feeRateLabel == feeRate
             addressToSendLabel == nodeAddress
             transactionsTable.items.size() == previousUtxosNumber + 1
-            transactionsTable.items[0].balance == "-".concat(totalSpent)
-            totalBalanceText == "Total Balance: $changeAmount BTC (confirmed: ${BitcoinFormatter.format(funds)}, unconfirmed: ${"-".concat(totalSpent)})"
         where:
-            previousUtxosNumber | amountToSend | totalFee       | totalSpent    | changeAmount | feeRate
-            1                   | "0.5"        | "0.00002679"   | "0.50002679"  | "0.49997321" | "0.0002 BTC/kvByte"
-            2                   | "1.5"        | "0.00003971"   | "1.50003971"  | "0.49996029" | "0.0002 BTC/kvByte"
+            previousUtxosNumber | amountToSend | totalFee       | totalSpent    | feeRate
+            1                   | "0.5"        | "0.00002679"   | "0.50002679"  | "0.0002 BTC/kvByte"
+            2                   | "1.5"        | "0.00003971"   | "1.50003971"  | "0.0002 BTC/kvByte"
     }
 
     void waitForDialog() {

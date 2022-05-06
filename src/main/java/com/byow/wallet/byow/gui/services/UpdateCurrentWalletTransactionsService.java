@@ -1,6 +1,6 @@
 package com.byow.wallet.byow.gui.services;
 
-import com.byow.wallet.byow.domains.node.NodeTransaction;
+import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.observables.CurrentWallet;
 import com.byow.wallet.byow.observables.TransactionRow;
 import javafx.application.Platform;
@@ -16,13 +16,9 @@ public class UpdateCurrentWalletTransactionsService {
         this.currentWallet = currentWallet;
     }
 
-    public void update(TransactionRow transactionRow) {
-        Platform.runLater(() -> currentWallet.addTransactionRow(transactionRow));
-    }
-
-    public void updateNodeTransactions(List<NodeTransaction> nodeTransactions) {
-        List<TransactionRow> transactionRows = nodeTransactions.stream()
-            .filter(nodeTransaction -> currentWallet.getAddressesAsStrings().contains(nodeTransaction.address()) || currentWallet.getTransactionIds().contains(nodeTransaction.txid()))
+    public void update(List<Utxo> utxos) {
+        List<TransactionRow> transactionRows = utxos.stream()
+            .filter(utxo -> currentWallet.getAddressesAsStrings().contains(utxo.address()))
             .map(TransactionRow::from)
             .toList();
         Platform.runLater(() -> currentWallet.addTransactionRows(transactionRows));
