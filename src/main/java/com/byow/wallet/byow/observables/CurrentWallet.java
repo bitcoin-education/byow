@@ -1,5 +1,6 @@
 package com.byow.wallet.byow.observables;
 
+import com.byow.wallet.byow.domains.Address;
 import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.ExtendedPubkey;
 import javafx.beans.property.SimpleStringProperty;
@@ -7,7 +8,6 @@ import javafx.collections.ObservableList;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -17,6 +17,8 @@ public class CurrentWallet {
     private final SimpleStringProperty receivingAddress = new SimpleStringProperty();
 
     private String changeAddress;
+
+    private String mnemonicSeed;
 
     private final Addresses addresses = new Addresses();
 
@@ -116,6 +118,10 @@ public class CurrentWallet {
         this.transactionRows.addTransactionRows(transactionRows);
     }
 
+    public void addTransactionRow(TransactionRow transactionRow) {
+        this.transactionRows.addTransactionRow(transactionRow);
+    }
+
     public ObservableList<TransactionRow> getObservableTransactionRows() {
         return transactionRows.getObservableTransactionRowList();
     }
@@ -147,4 +153,17 @@ public class CurrentWallet {
     public void setChangeAddress(String changeAddress) {
         this.changeAddress = changeAddress;
     }
+
+    public String getMnemonicSeed() {
+        return mnemonicSeed;
+    }
+
+    public void setMnemonicSeed(String mnemonicSeed) {
+        this.mnemonicSeed = mnemonicSeed;
+    }
+
+    public Address getAddress(String address) {
+        return addresses.getAddress(address);
+    }
+
 }
