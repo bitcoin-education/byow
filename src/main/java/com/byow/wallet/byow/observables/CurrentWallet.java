@@ -1,5 +1,6 @@
 package com.byow.wallet.byow.observables;
 
+import com.byow.wallet.byow.domains.Address;
 import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.ExtendedPubkey;
 import javafx.beans.property.SimpleStringProperty;
@@ -27,6 +28,8 @@ public class CurrentWallet {
     private final TransactionRows transactionRows = new TransactionRows();
 
     private final Balances balances = new Balances();
+
+    private String mnemonicSeed;
 
     public void setName(String name) {
         this.name.set(name);
@@ -146,5 +149,17 @@ public class CurrentWallet {
 
     public void setChangeAddress(String changeAddress) {
         this.changeAddress = changeAddress;
+    }
+
+    public Address getAddress(String address) {
+        return addresses.getAddress(address);
+    }
+
+    public String getMnemonicSeed() {
+        return mnemonicSeed;
+    }
+
+    public void setMnemonicSeed(String mnemonicSeed) {
+        this.mnemonicSeed = mnemonicSeed;
     }
 }
