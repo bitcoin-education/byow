@@ -119,6 +119,10 @@ public class CurrentWallet {
         this.transactionRows.addTransactionRows(transactionRows);
     }
 
+    public void addTransactionRow(TransactionRow transactionRow) {
+        this.transactionRows.addTransactionRow(transactionRow);
+    }
+
     public ObservableList<TransactionRow> getObservableTransactionRows() {
         return transactionRows.getObservableTransactionRowList();
     }
@@ -162,4 +166,5 @@ public class CurrentWallet {
     public void setMnemonicSeed(String mnemonicSeed) {
         this.mnemonicSeed = mnemonicSeed;
     }
+
 }
