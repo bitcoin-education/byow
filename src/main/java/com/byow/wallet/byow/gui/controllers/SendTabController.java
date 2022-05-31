@@ -1,6 +1,8 @@
 package com.byow.wallet.byow.gui.controllers;
 
 import com.byow.wallet.byow.domains.TransactionDto;
+import com.byow.wallet.byow.gui.exceptions.CreateTransactionException;
+import com.byow.wallet.byow.gui.services.AlertErrorService;
 import com.byow.wallet.byow.gui.services.CreateTransactionService;
 import com.byow.wallet.byow.observables.CurrentWallet;
 import javafx.fxml.FXML;
@@ -33,17 +35,21 @@ public class SendTabController extends Tab {
 
     private final ApplicationContext context;
 
+    private final AlertErrorService alertErrorService;
+
     public SendTabController(
         @Value("fxml/send_tab.fxml") Resource fxml,
         ApplicationContext context,
         CurrentWallet currentWallet,
         CreateTransactionService createTransactionService,
-        @Value("fxml/send_transaction_dialog.fxml") Resource dialogFxml
+        @Value("fxml/send_transaction_dialog.fxml") Resource dialogFxml,
+        AlertErrorService alertErrorService
     ) throws IOException {
         this.currentWallet = currentWallet;
         this.createTransactionService = createTransactionService;
         this.dialogFxml = dialogFxml;
         this.context = context;
+        this.alertErrorService = alertErrorService;
         FXMLLoader fxmlLoader = new FXMLLoader(
             fxml.getURL(),
             null,
@@ -57,8 +63,12 @@ public class SendTabController extends Tab {
 
     public void send() {
         BigDecimal amount = new BigDecimal(amountToSend.getText());
-        TransactionDto transactionDto = createTransactionService.create(addressToSend.getText(), amount);
-        openDialog(transactionDto);
+        try {
+            TransactionDto transactionDto = createTransactionService.create(addressToSend.getText(), amount);
+            openDialog(transactionDto);
+        } catch (CreateTransactionException exception) {
+            alertErrorService.alertError(exception.getMessage());
+        }
         addressToSend.clear();
         amountToSend.clear();
     }

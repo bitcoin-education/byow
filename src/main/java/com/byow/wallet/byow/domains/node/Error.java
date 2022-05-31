@@ -6,7 +6,8 @@ public record Error(String message) {
     private static final String DEFAULT_MESSAGE = "An error occurred";
 
     private static Map<String, String> errorMessages = Map.of(
-        "non-mandatory-script-verify-flag (Script failed an OP_EQUALVERIFY operation)", ErrorMessages.WRONG_PASSWORD
+        "non-mandatory-script-verify-flag (Script failed an OP_EQUALVERIFY operation)", ErrorMessages.WRONG_PASSWORD,
+        "dust", ErrorMessages.DUST
     );
 
     public static Error from(NodeError error) {

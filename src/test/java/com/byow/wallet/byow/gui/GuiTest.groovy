@@ -14,6 +14,7 @@ import io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes
 import io.github.bitcoineducation.bitcoinjava.ExtendedPrivateKey
 import io.github.bitcoineducation.bitcoinjava.ExtendedPubkey
 import io.github.bitcoineducation.bitcoinjava.MnemonicSeed
+import javafx.scene.control.DialogPane
 import javafx.scene.control.TableView
 import javafx.stage.Stage
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -109,4 +110,11 @@ abstract class GuiTest extends ApplicationSpec {
         String expectedAddress = segwitAddressGenerator.generate(extendedPubkey)
         return expectedAddress == address
     }
+
+   protected void waitForDialog() {
+       waitFor(TIMEOUT, SECONDS, {
+           DialogPane dialogPane = lookup("#dialogPane").queryAs(DialogPane)
+           return dialogPane != null
+       })
+   }
 }

@@ -4,19 +4,16 @@ import com.byow.wallet.byow.api.services.NodeEstimateFeeService
 import com.byow.wallet.byow.observables.AddressRow
 import com.byow.wallet.byow.observables.TransactionRow
 import com.byow.wallet.byow.utils.BitcoinFormatter
-import javafx.scene.control.DialogPane
 import javafx.scene.control.Label
 import javafx.scene.control.TableView
 import javafx.scene.control.TextField
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.testfx.service.query.NodeQuery
-import spock.lang.Ignore
 
 import java.util.stream.IntStream
 
 import static java.util.concurrent.TimeUnit.SECONDS
 import static org.mockito.Mockito.when
-import static org.testfx.util.WaitForAsyncUtils.waitFor
 
 class SendBitcoinTest extends GuiTest {
     @MockBean
@@ -27,7 +24,6 @@ class SendBitcoinTest extends GuiTest {
         when(nodeEstimateFeeService.estimate()).thenReturn(0.0002)
     }
 
-    @Ignore
     def "should send bitcoin"() {
         when:
             clickOn("New")
@@ -88,7 +84,6 @@ class SendBitcoinTest extends GuiTest {
             2                   | "1.5"        | "0.00003971"   | "1.50003971"  | "0.49996029" | "0.0002 BTC/kvByte"
     }
 
-    @Ignore
     def "should send bitcoin 2 times"() {
         when:
             clickOn("New")
@@ -216,6 +211,102 @@ class SendBitcoinTest extends GuiTest {
             1                   | "0.5"        | "0.00002679"   | "0.50002679"  | "0.49997321" | "0.0002 BTC/kvByte"
     }
 
+    def "should not send bitcoin without funds greater than amount + fee"() {
+        when:
+            clickOn("New")
+            clickOn("Wallet")
+            clickOn("#name")
+            write("My Test Wallet 12")
+            clickOn("Create")
+            clickOn("OK")
+            clickOn("Receive")
+            sleep(TIMEOUT, SECONDS)
+            BigDecimal funds = 0
+            IntStream.range(0, previousUtxosNumber).forEach {
+                String address = lookup("#receivingAddress").queryAs(TextField).text
+                sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
+                funds += previousAmount
+            }
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
+            clickOn("#sendTab")
+            clickOn("#amountToSend")
+            write(amountToSend)
+            clickOn("#addressToSend")
+            write(nodeAddress)
+            clickOn("#send")
+            String errorMessage = "Could not send transaction: not enough funds"
+            NodeQuery nodeQuery = lookup(errorMessage)
+            clickOn("OK")
+        then:
+            nodeQuery.queryLabeled().getText() == errorMessage
+        where:
+            previousUtxosNumber | amountToSend | previousAmount
+            1                   | "0.5"        | 0.1
+            1                   | "0.5"        | 0.50002089
+    }
+
+    def "should not send bitcoin without any funds"() {
+        when:
+            clickOn("New")
+            clickOn("Wallet")
+            clickOn("#name")
+            write("My Test Wallet 13")
+            clickOn("Create")
+            clickOn("OK")
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            clickOn("#sendTab")
+            clickOn("#amountToSend")
+            write(amountToSend)
+            clickOn("#addressToSend")
+            write(nodeAddress)
+            clickOn("#send")
+            String errorMessage = "Could not send transaction: not enough funds"
+            NodeQuery nodeQuery = lookup(errorMessage)
+            clickOn("OK")
+        then:
+            nodeQuery.queryLabeled().getText() == errorMessage
+        where:
+            previousUtxosNumber | amountToSend | previousAmount
+            1                   | "0.5"        | 0.1
+    }
+
+    def "should not send dust bitcoin"() {
+        when:
+            clickOn("New")
+            clickOn("Wallet")
+            clickOn("#name")
+            write("My Test Wallet 14")
+            clickOn("Create")
+            clickOn("OK")
+            clickOn("Receive")
+            sleep(TIMEOUT, SECONDS)
+            BigDecimal funds = 0
+            IntStream.range(0, previousUtxosNumber).forEach {
+                String address = lookup("#receivingAddress").queryAs(TextField).text
+                sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
+                funds += previousAmount
+            }
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
+            clickOn("#sendTab")
+            clickOn("#amountToSend")
+            write(amountToSend)
+            clickOn("#addressToSend")
+            write(nodeAddress)
+            clickOn("#send")
+            waitForDialog()
+            clickOn("OK")
+            String errorMessage = "Could not send transaction: amount to send is dust"
+            NodeQuery nodeQuery = lookup(errorMessage)
+            clickOn("OK")
+        then:
+            nodeQuery.queryLabeled().getText() == errorMessage
+        where:
+            previousUtxosNumber | amountToSend | previousAmount
+            1                   | "0.00000293" | 0.1
+    }
+
     private void sendBitcoin(String nodeAddress, String amountToSend) {
         clickOn("#amountToSend")
         write(amountToSend)
@@ -225,10 +316,4 @@ class SendBitcoinTest extends GuiTest {
         waitForDialog()
     }
 
-    void waitForDialog() {
-        waitFor(TIMEOUT, SECONDS, {
-            DialogPane dialogPane = lookup("#dialogPane").queryAs(DialogPane)
-            return dialogPane != null
-        })
-    }
 }
