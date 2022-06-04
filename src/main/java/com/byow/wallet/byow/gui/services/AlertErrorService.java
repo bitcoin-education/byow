@@ -20,7 +20,7 @@ public class AlertErrorService {
         }
     }
 
-    private void alertError(String message) {
+    public void alertError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText("Error");
