@@ -6,6 +6,7 @@ import com.byow.wallet.byow.api.services.AddressPrefixFactory
 import com.byow.wallet.byow.api.services.AddressSequentialGenerator
 import com.byow.wallet.byow.api.services.CreateWalletService
 import com.byow.wallet.byow.api.services.ExtendedPubkeyService
+import com.byow.wallet.byow.api.services.NestedSegwitAddressGenerator
 import com.byow.wallet.byow.api.services.SegwitAddressGenerator
 import com.byow.wallet.byow.domains.AddressConfig
 import com.byow.wallet.byow.domains.Wallet
@@ -15,6 +16,8 @@ import spock.lang.Specification
 import java.security.Security
 
 import static com.byow.wallet.byow.api.services.AddressPrefixFactory.MAINNET
+import static com.byow.wallet.byow.domains.AddressType.NESTED_SEGWIT
+import static com.byow.wallet.byow.domains.AddressType.NESTED_SEGWIT_CHANGE
 import static com.byow.wallet.byow.domains.AddressType.SEGWIT
 import static com.byow.wallet.byow.domains.AddressType.SEGWIT_CHANGE
 
@@ -38,12 +41,14 @@ class CreateWalletServiceTest extends Specification {
         Security.addProvider(new BouncyCastleProvider())
         addressConfigs = [
             new AddressConfig(SEGWIT, "84'/0'/0'/0"),
-            new AddressConfig(SEGWIT_CHANGE, "84'/0'/0'/1")
+            new AddressConfig(SEGWIT_CHANGE, "84'/0'/0'/1"),
+            new AddressConfig(NESTED_SEGWIT, "49'/0'/0'/0"),
+            new AddressConfig(NESTED_SEGWIT_CHANGE, "49'/0'/0'/1")
         ]
         extendedPubkeyService = new ExtendedPubkeyService()
         addressPrefixFactory = new AddressPrefixFactory(MAINNET)
         segwitAddressGenerator = new SegwitAddressGenerator(addressPrefixFactory)
-        addressGeneratorFactory = new AddressGeneratorFactory(segwitAddressGenerator)
+        addressGeneratorFactory = new AddressGeneratorFactory(new SegwitAddressGenerator(addressPrefixFactory), new NestedSegwitAddressGenerator(addressPrefixFactory))
         addressSequentialGenerator = new AddressSequentialGenerator(20, addressGeneratorFactory)
         AddAddressService addAddressService = new AddAddressService(addressSequentialGenerator)
         createWalletService = new CreateWalletService(addressConfigs, extendedPubkeyService, addAddressService)
@@ -58,8 +63,10 @@ class CreateWalletServiceTest extends Specification {
             Wallet wallet = createWalletService.create(name, password, mnemonicSeed)
         then:
             wallet.name() == name
-            wallet.extendedPubkeys().size() == 2
+            wallet.extendedPubkeys().size() == 4
             wallet.extendedPubkeys()[0].addresses.size() == 20
             wallet.extendedPubkeys()[1].addresses.size() == 20
+            wallet.extendedPubkeys()[2].addresses.size() == 20
+            wallet.extendedPubkeys()[3].addresses.size() == 20
     }
 }

@@ -9,10 +9,15 @@ import java.util.Map;
 public class AddressGeneratorFactory {
     private final Map<String, AddressGenerator> addressGeneratorMap;
 
-    public AddressGeneratorFactory(SegwitAddressGenerator segwitAddressGenerator) {
+    public AddressGeneratorFactory(
+        SegwitAddressGenerator segwitAddressGenerator,
+        NestedSegwitAddressGenerator nestedSegwitAddressGenerator
+    ) {
         this.addressGeneratorMap = Map.of(
             AddressType.SEGWIT.toString(), segwitAddressGenerator,
-            AddressType.SEGWIT_CHANGE.toString(), segwitAddressGenerator
+            AddressType.SEGWIT_CHANGE.toString(), segwitAddressGenerator,
+            AddressType.NESTED_SEGWIT.toString(), nestedSegwitAddressGenerator,
+            AddressType.NESTED_SEGWIT_CHANGE.toString(), nestedSegwitAddressGenerator
         );
     }
 

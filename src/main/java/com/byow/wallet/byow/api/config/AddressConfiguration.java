@@ -22,6 +22,16 @@ public class AddressConfiguration {
         return new AddressConfig(AddressType.SEGWIT_CHANGE, "84'/0'/0'/1");
     }
 
+    @Bean("NESTED_SEGWIT")
+    AddressConfig nestedSegwitConfig() {
+        return new AddressConfig(AddressType.NESTED_SEGWIT, "49'/0'/0'/0");
+    }
+
+    @Bean("NESTED_SEGWIT_CHANGE")
+    AddressConfig nestedSegwitChangeConfig() {
+        return new AddressConfig(AddressType.NESTED_SEGWIT_CHANGE, "49'/0'/0'/1");
+    }
+
     @Bean
     Integer initialNumberOfGeneratedAddresses() {
         return initialNumberOfGeneratedAddresses;

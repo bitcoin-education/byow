@@ -20,6 +20,7 @@ import static io.github.bitcoineducation.bitcoinjava.AddressConstants.*;
 public class TransactionCreatorService {
     private static final String DUMMY_SIGNATURE = "0".repeat(144);
     private static final String DUMMY_PUBKEY = "0".repeat(66);
+    private static final String DUMMY_SCRIPT_SIG_NESTED_SEGWIT = "0".repeat(44);
 
     private final DustCalculator dustCalculator;
 
@@ -42,7 +43,7 @@ public class TransactionCreatorService {
             .orElse(BigInteger.ZERO);
         BigInteger change = inputSum.subtract(amountToSend).subtract(totalFee);
 
-        if (dustCalculator.isDust(change)) {
+        if (dustCalculator.isDust(change, changeAddress)) {
             return transaction;
         }
 
@@ -51,7 +52,7 @@ public class TransactionCreatorService {
         change = inputSum.subtract(amountToSend).subtract(totalFee);
 
         transactionOutputs.remove(1);
-        if (dustCalculator.isDust(change)) {
+        if (dustCalculator.isDust(change, changeAddress)) {
             return transaction;
         }
         transactionOutputs.add(buildOutput(changeAddress, change));
@@ -61,6 +62,10 @@ public class TransactionCreatorService {
 
     private TransactionOutput buildOutput(String address, BigInteger amount) {
         String prefix = parsePrefix(address);
+        if (prefix.equals("")) {
+            Script script = Script.p2shScript(Base58.decodeWithChecksumToHex(address));
+            return new TransactionOutput(amount, script);
+        }
         Script script = Script.p2wpkhScript(Bech32.decode(prefix, address)[1]);
         return new TransactionOutput(amount, script);
     }
@@ -78,13 +83,23 @@ public class TransactionCreatorService {
 
     private ArrayList<TransactionInput> buildInputs(List<Utxo> utxos) {
         return utxos.stream()
-            .map(utxo -> new TransactionInput(
-                utxo.txid(),
-                BigInteger.valueOf(utxo.vout()),
-                new Script(List.of()),
-                new BigInteger(1, Hex.decode("ffffffff"))
-            )).peek(transactionInput -> {
+            .map(this::buildInput)
+            .peek(transactionInput -> {
                 transactionInput.setWitness(new Witness(List.of(DUMMY_SIGNATURE, DUMMY_PUBKEY)));
             }).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private TransactionInput buildInput(Utxo utxo) {
+        Script script = new Script(new ArrayList<>());
+        String prefix = parsePrefix(utxo.address());
+        if (prefix.equals("")) {
+            script.appendCommand(DUMMY_SCRIPT_SIG_NESTED_SEGWIT);
+        }
+        return new TransactionInput(
+            utxo.txid(),
+            BigInteger.valueOf(utxo.vout()),
+            script,
+            new BigInteger(1, Hex.decode("ffffffff"))
+        );
     }
 }

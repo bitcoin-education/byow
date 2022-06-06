@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -17,7 +16,11 @@ public class CurrentWallet {
 
     private final SimpleStringProperty receivingAddress = new SimpleStringProperty();
 
+    private final SimpleStringProperty nestedSegwitReceivingAddress = new SimpleStringProperty();
+
     private String changeAddress;
+
+    private String nestedSegwitChangeAddress;
 
     private final Addresses addresses = new Addresses();
 
@@ -53,6 +56,18 @@ public class CurrentWallet {
 
     public void setReceivingAddress(String receivingAddress) {
         this.receivingAddress.set(receivingAddress);
+    }
+
+    public String getNestedSegwitReceivingAddress() {
+        return nestedSegwitReceivingAddress.get();
+    }
+
+    public SimpleStringProperty nestedSegwitReceivingAddressProperty() {
+        return nestedSegwitReceivingAddress;
+    }
+
+    public void setNestedSegwitReceivingAddress(String nestedSegwitReceivingAddress) {
+        this.nestedSegwitReceivingAddress.set(nestedSegwitReceivingAddress);
     }
 
     public List<String> getAddressesAsStrings() {
@@ -153,6 +168,14 @@ public class CurrentWallet {
 
     public void setChangeAddress(String changeAddress) {
         this.changeAddress = changeAddress;
+    }
+
+    public String getNestedSegwitChangeAddress() {
+        return nestedSegwitChangeAddress;
+    }
+
+    public void setNestedSegwitChangeAddress(String nestedSegwitChangeAddress) {
+        this.nestedSegwitChangeAddress = nestedSegwitChangeAddress;
     }
 
     public Address getAddress(String address) {

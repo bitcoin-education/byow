@@ -47,7 +47,7 @@ public class SingleRandomDrawCoinSelector implements CoinSelector {
             BigInteger totalFeeWithChange = totalFee(feeRateInSatoshisPerVByte, inputAddresses, outputAddresses);
             BigInteger adjustedTargetWithChange = amountToSend.add(totalFeeWithChange);
 
-            if (inputBalanceFulfilledTransaction(totalInputBalance, adjustedTarget, adjustedTargetWithChange)) {
+            if (inputBalanceFulfilledTransaction(totalInputBalance, adjustedTarget, adjustedTargetWithChange, changeAddress)) {
                 break;
             }
         }
@@ -55,14 +55,14 @@ public class SingleRandomDrawCoinSelector implements CoinSelector {
         return selectedUtxos;
     }
 
-    private boolean inputBalanceFulfilledTransaction(long totalInputBalance, BigInteger adjustedTarget, BigInteger adjustedTargetWithChange) {
+    private boolean inputBalanceFulfilledTransaction(long totalInputBalance, BigInteger adjustedTarget, BigInteger adjustedTargetWithChange, String changeAddress) {
         return totalInputBalance >= adjustedTarget.longValue()
-            && changeIsDust(totalInputBalance, adjustedTargetWithChange)
+            && changeIsDust(totalInputBalance, adjustedTargetWithChange, changeAddress)
             || totalInputBalance >= adjustedTargetWithChange.longValue();
     }
 
-    private boolean changeIsDust(long totalInputBalance, BigInteger adjustedTargetWithChange) {
-        return dustCalculator.isDust(BigInteger.valueOf(totalInputBalance - adjustedTargetWithChange.longValue()));
+    private boolean changeIsDust(long totalInputBalance, BigInteger adjustedTargetWithChange, String changeAddress) {
+        return dustCalculator.isDust(BigInteger.valueOf(totalInputBalance - adjustedTargetWithChange.longValue()), changeAddress);
     }
 
     private BigInteger totalFee(BigInteger feeRateInSatoshisPerVByte, List<String> inputAddresses, ArrayList<String> outputAddresses) {

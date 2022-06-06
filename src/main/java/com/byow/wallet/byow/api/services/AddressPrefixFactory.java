@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static com.byow.wallet.byow.domains.AddressType.NESTED_SEGWIT;
 import static com.byow.wallet.byow.domains.AddressType.SEGWIT;
 import static io.github.bitcoineducation.bitcoinjava.AddressConstants.*;
 
@@ -20,6 +21,11 @@ public class AddressPrefixFactory {
             MAINNET, MAINNET_P2WPKH_ADDRESS_PREFIX,
             TESTNET, TESTNET_P2WPKH_ADDRESS_PREFIX,
             REGTEST, REGTEST_P2WPKH_ADDRESS_PREFIX
+        ),
+        NESTED_SEGWIT, Map.of(
+            MAINNET, MAINNET_P2SH_ADDRESS_PREFIX,
+            TESTNET, TESTNET_P2SH_ADDRESS_PREFIX,
+            REGTEST, TESTNET_P2SH_ADDRESS_PREFIX
         )
     );
 

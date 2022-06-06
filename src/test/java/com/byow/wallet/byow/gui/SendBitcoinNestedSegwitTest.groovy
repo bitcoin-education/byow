@@ -15,7 +15,7 @@ import java.util.stream.IntStream
 import static java.util.concurrent.TimeUnit.SECONDS
 import static org.mockito.Mockito.when
 
-class SendBitcoinTest extends GuiTest {
+class SendBitcoinNestedSegwitTest extends GuiTest {
     @MockBean
     NodeEstimateFeeService nodeEstimateFeeService
 
@@ -24,12 +24,12 @@ class SendBitcoinTest extends GuiTest {
         when(nodeEstimateFeeService.estimate()).thenReturn(0.0002)
     }
 
-    def "should send bitcoin"() {
+    def "should send bitcoin with nested segwit inputs and nested segwit outputs"() {
         when:
             clickOn("New")
             clickOn("Wallet")
             clickOn("#name")
-            write("My Test Wallet 9")
+            write("My Test Wallet 23")
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
@@ -37,13 +37,13 @@ class SendBitcoinTest extends GuiTest {
 
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach{
-                String address = lookup("#receivingAddress").queryAs(TextField).text
+                String address = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
                 BigDecimal amount = 1.0
                 sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", amount)
                 funds += amount
             }
 
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "p2sh-segwit")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             clickOn("#amountToSend")
@@ -80,16 +80,16 @@ class SendBitcoinTest extends GuiTest {
             totalBalanceText == "Total Balance: $changeAmount BTC (confirmed: ${BitcoinFormatter.format(funds)}, unconfirmed: ${"-".concat(totalSpent)})"
         where:
             previousUtxosNumber | amountToSend | totalFee       | totalSpent    | changeAmount | feeRate
-            1                   | "0.5"        | "0.00002679"   | "0.50002679"  | "0.49997321" | "0.0002 BTC/kvByte"
-            2                   | "1.5"        | "0.00003971"   | "1.50003971"  | "0.49996029" | "0.0002 BTC/kvByte"
+            1                   | "0.5"        | "0.00003154"   | "0.50003154"  | "0.49996846" | "0.0002 BTC/kvByte"
+            2                   | "1.5"        | "0.00004883"   | "1.50004883"  | "0.49995117" | "0.0002 BTC/kvByte"
     }
 
-    def "should send bitcoin 2 times"() {
+    def "should send bitcoin 2 times with nested segwit inputs and nested segwit outputs"() {
         when:
             clickOn("New")
             clickOn("Wallet")
             clickOn("#name")
-            write("My Test Wallet 10")
+            write("My Test Wallet 24")
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
@@ -97,13 +97,13 @@ class SendBitcoinTest extends GuiTest {
 
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach{
-                String address = lookup("#receivingAddress").queryAs(TextField).text
+                String address = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
                 BigDecimal amount = 1.0
                 sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", amount)
                 funds += amount
             }
 
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "p2sh-segwit")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             sendBitcoin(nodeAddress, amountToSend)
@@ -144,148 +144,26 @@ class SendBitcoinTest extends GuiTest {
             totalBalanceText == "Total Balance: $changeAmount BTC (confirmed: ${BitcoinFormatter.format(funds - new BigDecimal(totalSpent))}, unconfirmed: ${"-".concat(totalSpent)})"
         where:
             previousUtxosNumber | amountToSend  | totalFee       | totalSpent    | changeAmount | feeRate
-            1                   | "0.25"        | "0.00002679"   | "0.25002679"  | "0.49994642" | "0.0002 BTC/kvByte"
+            1                   | "0.25"        | "0.00003154"   | "0.25003154"  | "0.49993692" | "0.0002 BTC/kvByte"
     }
 
-    def "should not send bitcoin with wrong password"() {
+    def "should not send dust bitcoin nested segwit"() {
         when:
             clickOn("New")
             clickOn("Wallet")
             clickOn("#name")
-            write("My Test Wallet 11")
-            clickOn("#password")
-            String password = "mytestpassword"
-            write(password)
-            clickOn("Create")
-            clickOn("OK")
-            clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
-
-            BigDecimal funds = 0
-            IntStream.range(0, previousUtxosNumber).forEach{
-                String address = lookup("#receivingAddress").queryAs(TextField).text
-                BigDecimal amount = 1.0
-                sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", amount)
-                funds += amount
-            }
-            String formattedFunds = BitcoinFormatter.format(funds)
-
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
-            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
-            clickOn("#sendTab")
-            sendBitcoin(nodeAddress, amountToSend)
-
-            String amountToSendLabel = lookup("#amountToSendDialog").queryAs(Label).text
-            String totalFeeLabel = lookup("#totalFees").queryAs(Label).text
-            String totalLabel = lookup("#total").queryAs(Label).text
-            String feeRateLabel = lookup("#feeRate").queryAs(Label).text
-            String addressToSendLabel = lookup("#addressToSendDialog").queryAs(Label).text
-
-            clickOn("#walletPassword")
-            write("wrong password")
-
-            clickOn("OK")
-            String errorMessage = "Could not send transaction: wrong password."
-            NodeQuery nodeQuery = lookup(errorMessage)
-            clickOn("OK")
-
-            TableView<AddressRow> addressesTable = lookup("#addressesTable").queryAs(TableView)
-
-            clickOn("#transactionsTab")
-            TableView<TransactionRow> transactionsTable = lookup("#transactionsTable").queryAs(TableView)
-            String totalBalanceText = lookup("#totalBalance").queryAs(Label).getText()
-        then:
-            nodeQuery.queryLabeled().getText() == errorMessage
-            addressesTable.items.size() == 1
-            addressesTable.items[0].balance == formattedFunds
-            amountToSendLabel == BitcoinFormatter.format(new BigDecimal(amountToSend))
-            totalFeeLabel == totalFee
-            totalLabel == totalSpent
-            feeRateLabel == feeRate
-            addressToSendLabel == nodeAddress
-            transactionsTable.items.size() == 1
-            transactionsTable.items[0].balance == formattedFunds
-            totalBalanceText == "Total Balance: $formattedFunds BTC (confirmed: $formattedFunds, unconfirmed: 0.00000000)"
-        where:
-            previousUtxosNumber | amountToSend | totalFee       | totalSpent    | changeAmount | feeRate
-            1                   | "0.5"        | "0.00002679"   | "0.50002679"  | "0.49997321" | "0.0002 BTC/kvByte"
-    }
-
-    def "should not send bitcoin without funds greater than amount + fee"() {
-        when:
-            clickOn("New")
-            clickOn("Wallet")
-            clickOn("#name")
-            write("My Test Wallet 12")
-            clickOn("Create")
-            clickOn("OK")
-            clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
-
-            BigDecimal funds = 0
-            IntStream.range(0, previousUtxosNumber).forEach{
-                String address = lookup("#receivingAddress").queryAs(TextField).text
-                sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
-                funds += previousAmount
-            }
-
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
-            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
-            clickOn("#sendTab")
-            sendBitcoin(nodeAddress, amountToSend, false)
-            String errorMessage = "Could not send transaction: not enough funds."
-            NodeQuery nodeQuery = lookup(errorMessage)
-            clickOn("OK")
-        then:
-            nodeQuery.queryLabeled().getText() == errorMessage
-        where:
-            previousUtxosNumber | amountToSend | previousAmount
-            1                   | "0.5"        | 0.1
-            1                   | "0.5"        | 0.50002089
-    }
-
-    def "should not send bitcoin without any funds"() {
-        when:
-            clickOn("New")
-            clickOn("Wallet")
-            clickOn("#name")
-            write("My Test Wallet 13")
-            clickOn("Create")
-            clickOn("OK")
-            clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
-
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
-            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
-            clickOn("#sendTab")
-            sendBitcoin(nodeAddress, amountToSend, false)
-            String errorMessage = "Could not send transaction: not enough funds."
-            NodeQuery nodeQuery = lookup(errorMessage)
-            clickOn("OK")
-        then:
-            nodeQuery.queryLabeled().getText() == errorMessage
-        where:
-            amountToSend | _
-            "0.5"        | _
-    }
-
-    def "should not send dust bitcoin"() {
-        when:
-            clickOn("New")
-            clickOn("Wallet")
-            clickOn("#name")
-            write("My Test Wallet 18")
+            write("My Test Wallet 25")
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
             sleep(TIMEOUT, SECONDS)
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach {
-                String address = lookup("#receivingAddress").queryAs(TextField).text
+                String address = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
                 sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
                 funds += previousAmount
             }
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "p2sh-segwit")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             clickOn("#amountToSend")
@@ -302,7 +180,6 @@ class SendBitcoinTest extends GuiTest {
             nodeQuery.queryLabeled().getText() == errorMessage
         where:
             previousUtxosNumber | amountToSend | previousAmount
-            1                   | "0.00000293" | 0.1
+            1                   | "0.00000539" | 0.1
     }
-
 }

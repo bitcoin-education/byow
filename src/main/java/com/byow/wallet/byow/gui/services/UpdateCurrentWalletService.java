@@ -20,7 +20,9 @@ public class UpdateCurrentWalletService {
         currentWallet.clearTransactions();
         currentWallet.clearBalances();
         currentWallet.setReceivingAddress(wallet.extendedPubkeys().get(0).getAddresses().get(0).getAddress());
+        currentWallet.setNestedSegwitReceivingAddress(wallet.extendedPubkeys().get(2).getAddresses().get(0).getAddress());
         currentWallet.setChangeAddress(wallet.extendedPubkeys().get(1).getAddresses().get(0).getAddress());
+        currentWallet.setNestedSegwitChangeAddress(wallet.extendedPubkeys().get(3).getAddresses().get(0).getAddress());
         currentWallet.setMnemonicSeed(wallet.mnemonicSeed());
     }
 }

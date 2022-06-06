@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public record UtxoDto(
     String derivationPath,
-    BigDecimal amount
+    BigDecimal amount,
+    AddressType addressType
 ) {
 }

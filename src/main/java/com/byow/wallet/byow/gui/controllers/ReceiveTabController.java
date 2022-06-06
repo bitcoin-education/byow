@@ -19,6 +19,9 @@ public class ReceiveTabController extends Tab {
     @FXML
     private TextField receivingAddress;
 
+    @FXML
+    private TextField nestedSegwitReceivingAddress;
+
     public ReceiveTabController(
         @Value("fxml/receive_tab.fxml") Resource fxml,
         ApplicationContext context,
@@ -39,6 +42,9 @@ public class ReceiveTabController extends Tab {
     public void initialize() {
         currentWallet.receivingAddressProperty().addListener((observable, oldValue, newValue) ->
             receivingAddress.setText(newValue)
+        );
+        currentWallet.nestedSegwitReceivingAddressProperty().addListener((observable, oldValue, newValue) ->
+            nestedSegwitReceivingAddress.setText(newValue)
         );
     }
 }

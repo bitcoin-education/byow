@@ -44,7 +44,7 @@ class SendBitcoinAdditionalTest extends GuiTest {
                 sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", amount)
                 funds += amount
             }
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             clickOn("#amountToSend")
@@ -98,7 +98,7 @@ class SendBitcoinAdditionalTest extends GuiTest {
                 sendBitcoinAndWait(address, fundAmount, 1, "#addressesTable", fundAmount)
                 funds += fundAmount
             }
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             clickOn("#amountToSend")
@@ -156,7 +156,7 @@ class SendBitcoinAdditionalTest extends GuiTest {
                 funds += amount
                 lastUsedAddress = address
             }
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             clickOn("#amountToSend")
@@ -215,7 +215,7 @@ class SendBitcoinAdditionalTest extends GuiTest {
                 sendBitcoinAndWait(address, amount, it+1, "#addressesTable", amount)
                 funds += amount
             }
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             clickOn("#amountToSend")

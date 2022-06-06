@@ -24,7 +24,7 @@ public class UtxoDtoBuilder {
         Long addressIndex = currentWallet.getAddress(utxo.address()).getIndex();
         AddressType addressType = currentWallet.getAddress(utxo.address()).getAddressType();
         String derivationPath = buildDerivationPath(addressType, addressIndex);
-        return new UtxoDto(derivationPath, utxo.amount());
+        return new UtxoDto(derivationPath, utxo.amount(), addressType);
     }
 
     private String buildDerivationPath(AddressType addressType, Long addressIndex) {

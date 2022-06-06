@@ -1,6 +1,7 @@
 package com.byow.wallet.byow.gui
 
 import com.byow.wallet.byow.api.services.ExtendedPubkeyService
+import com.byow.wallet.byow.api.services.NestedSegwitAddressGenerator
 import com.byow.wallet.byow.api.services.SegwitAddressGenerator
 import com.byow.wallet.byow.api.services.node.NodeLoadOrCreateWalletService
 import com.byow.wallet.byow.api.services.node.client.NodeGenerateToAddressClient
@@ -60,6 +61,9 @@ abstract class GuiTest extends ApplicationSpec {
     protected SegwitAddressGenerator segwitAddressGenerator
 
     @Autowired
+    protected NestedSegwitAddressGenerator nestedSegwitAddressGenerator
+
+    @Autowired
     protected ApplicationContext context
 
     protected Stage stage
@@ -97,17 +101,26 @@ abstract class GuiTest extends ApplicationSpec {
     protected void createBalanceIfNecessary() {
         double balance = nodeGetBalanceClient.get(TESTWALLET)
         if (balance < 50) {
-            String address = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            String address = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 150, address)
         }
     }
 
-   protected boolean addressIsValid(String address, String mnemonicSeedString, Integer index) {
+    protected boolean addressIsValid(String address, String mnemonicSeedString, Integer index) {
         MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString)
         ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey("", ExtendedKeyPrefixes.MAINNET_PREFIX.getPrivatePrefix())
         String extendedPubkeyString = extendedPubkeyService.create(masterKey, "84'/0'/0'/0/".concat(index.toString()), AddressType.SEGWIT).getKey()
         ExtendedPubkey extendedPubkey = ExtendedPubkey.unserialize(extendedPubkeyString)
         String expectedAddress = segwitAddressGenerator.generate(extendedPubkey)
+        return expectedAddress == address
+    }
+
+    protected boolean nestedSegwitAddressIsValid(String address, String mnemonicSeedString, Integer index) {
+        MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString)
+        ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey("", ExtendedKeyPrefixes.MAINNET_PREFIX.getPrivatePrefix())
+        String extendedPubkeyString = extendedPubkeyService.create(masterKey, "49'/0'/0'/0/".concat(index.toString()), AddressType.NESTED_SEGWIT).getKey()
+        ExtendedPubkey extendedPubkey = ExtendedPubkey.unserialize(extendedPubkeyString)
+        String expectedAddress = nestedSegwitAddressGenerator.generate(extendedPubkey)
         return expectedAddress == address
     }
 
@@ -117,4 +130,16 @@ abstract class GuiTest extends ApplicationSpec {
            return dialogPane != null
        })
    }
+
+    protected void sendBitcoin(String nodeAddress, String amountToSend, boolean waitForDialog = true) {
+        clickOn("#amountToSend")
+        write(amountToSend)
+        clickOn("#addressToSend")
+        write(nodeAddress)
+        clickOn("#send")
+        if (waitForDialog) {
+            this.waitForDialog()
+        }
+    }
+
 }

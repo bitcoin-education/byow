@@ -11,12 +11,18 @@ import com.byow.wallet.byow.gui.exceptions.CreateTransactionException;
 import com.byow.wallet.byow.observables.CurrentWallet;
 import com.byow.wallet.byow.utils.Fee;
 import com.byow.wallet.byow.utils.Satoshi;
+import io.github.bitcoineducation.bitcoinjava.Script;
 import io.github.bitcoineducation.bitcoinjava.Transaction;
+import io.github.bitcoineducation.bitcoinjava.TransactionInput;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
+
+import static io.github.bitcoineducation.bitcoinjava.AddressConstants.*;
 
 @Service
 public class CreateTransactionService {
@@ -55,12 +61,13 @@ public class CreateTransactionService {
 
         List<Utxo> utxos = nodeListUnspentClient.listUnspent(addresses, currentWallet.getName());
 
-        List<Utxo> selectedUtxos = coinSelector.select(utxos, Satoshi.toSatoshis(amount), feeRate, address, currentWallet.getChangeAddress());
+        String changeAddress = findChangeAddress(address);
+        List<Utxo> selectedUtxos = coinSelector.select(utxos, Satoshi.toSatoshis(amount), feeRate, address, changeAddress);
         Transaction transaction = transactionCreatorService.create(
             selectedUtxos,
             address,
             Satoshi.toSatoshis(amount),
-            currentWallet.getChangeAddress(),
+            changeAddress,
             feeRate
         );
 
@@ -78,7 +85,29 @@ public class CreateTransactionService {
             selectedUtxos
         );
         validateFunds(transactionDto);
+
+        gambiarra(transactionDto.transaction().getInputs());//TODO: corrigir lib e remover
+
         return transactionDto;
+    }
+
+    private void gambiarra(ArrayList<TransactionInput> transactionInputs) {
+        transactionInputs.forEach(transactionInput -> transactionInput.setScriptSig(new Script(new ArrayList<>())));
+    }
+
+    private String findChangeAddress(String address) {
+        if (isSegwit(address)) {
+            return currentWallet.getChangeAddress();
+        }
+        return currentWallet.getNestedSegwitChangeAddress();
+    }
+
+    private boolean isSegwit(String address) {
+        return Stream.of(
+            REGTEST_P2WPKH_ADDRESS_PREFIX,
+            TESTNET_P2WPKH_ADDRESS_PREFIX,
+            MAINNET_P2WPKH_ADDRESS_PREFIX
+        ).anyMatch(address::startsWith);
     }
 
     private void validateFunds(TransactionDto transactionDto) {

@@ -3,6 +3,7 @@ package com.byow.wallet.byow.api
 import com.byow.wallet.byow.api.services.AddressGeneratorFactory
 import com.byow.wallet.byow.api.services.AddressPrefixFactory
 import com.byow.wallet.byow.api.services.AddressSequentialGenerator
+import com.byow.wallet.byow.api.services.NestedSegwitAddressGenerator
 import com.byow.wallet.byow.api.services.SegwitAddressGenerator
 import com.byow.wallet.byow.domains.Address
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -21,7 +22,7 @@ class AddressSequentialGeneratorTest extends Specification {
     def setup() {
         Security.addProvider(new BouncyCastleProvider())
         addressPrefixFactory = new AddressPrefixFactory(MAINNET)
-        addressGeneratorFactory = new AddressGeneratorFactory(new SegwitAddressGenerator(addressPrefixFactory))
+        addressGeneratorFactory = new AddressGeneratorFactory(new SegwitAddressGenerator(addressPrefixFactory), new NestedSegwitAddressGenerator(addressPrefixFactory))
         addressSequentialGenerator = new AddressSequentialGenerator(20, addressGeneratorFactory)
     }
 

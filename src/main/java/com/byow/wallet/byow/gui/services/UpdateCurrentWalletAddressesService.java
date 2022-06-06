@@ -24,6 +24,10 @@ public class UpdateCurrentWalletAddressesService {
 
     private static final AddressType CHANGE_ADDRESS = AddressType.SEGWIT_CHANGE;
 
+    private static final AddressType NESTED_SEGWIT_ADDRESS = AddressType.NESTED_SEGWIT;
+
+    private static final AddressType NESTED_SEGWIT_CHANGE_ADDRESS = AddressType.NESTED_SEGWIT_CHANGE;
+
     private final CurrentWallet currentWallet;
 
     private final AddAddressService addAddressService;
@@ -72,6 +76,14 @@ public class UpdateCurrentWalletAddressesService {
         }
         if (addressType == CHANGE_ADDRESS) {
             currentWallet.setChangeAddress(nextAddress);
+            return;
+        }
+        if (addressType == NESTED_SEGWIT_ADDRESS) {
+            Platform.runLater(() -> currentWallet.setNestedSegwitReceivingAddress(nextAddress));
+            return;
+        }
+        if (addressType == NESTED_SEGWIT_CHANGE_ADDRESS) {
+            currentWallet.setNestedSegwitChangeAddress(nextAddress);
         }
     }
 

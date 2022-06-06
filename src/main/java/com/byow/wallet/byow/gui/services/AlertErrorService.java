@@ -13,7 +13,7 @@ public class AlertErrorService {
         try {
             error = result.get();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.fillInStackTrace());
         }
         if (error != null) {
             alertError(error.message());

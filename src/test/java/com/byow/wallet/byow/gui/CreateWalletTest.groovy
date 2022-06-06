@@ -15,10 +15,12 @@ class CreateWalletTest extends GuiTest {
             clickOn("OK")
             clickOn("Receive")
             String address = lookup("#receivingAddress").queryAs(TextField.class).getText()
+            String nestedSegwitAddress = lookup("#nestedSegwitReceivingAddress").queryAs(TextField.class).getText()
         then:
             mnemonicSeed
             stage.title == "BYOW Wallet - " + "My Test Wallet"
             address
+            nestedSegwitAddress
     }
 
     def "should cancel wallet creation"() {
