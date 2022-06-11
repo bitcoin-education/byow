@@ -11,6 +11,7 @@ import com.byow.wallet.byow.api.services.node.client.NodeSendToAddressClient
 import com.byow.wallet.byow.domains.AddressType
 import com.byow.wallet.byow.gui.events.GuiStartedEvent
 import com.byow.wallet.byow.utils.BitcoinFormatter
+import io.github.bitcoineducation.bitcoinjava.AddressConstants
 import io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes
 import io.github.bitcoineducation.bitcoinjava.ExtendedPrivateKey
 import io.github.bitcoineducation.bitcoinjava.ExtendedPubkey
@@ -28,6 +29,7 @@ import org.testfx.framework.spock.ApplicationSpec
 
 import java.security.Security
 
+import static io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes.MAINNET_SEGWIT_PREFIX
 import static java.util.concurrent.TimeUnit.SECONDS
 import static org.testfx.util.WaitForAsyncUtils.waitFor
 
@@ -109,18 +111,18 @@ abstract class GuiTest extends ApplicationSpec {
     protected boolean addressIsValid(String address, String mnemonicSeedString, Integer index) {
         MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString)
         ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey("", ExtendedKeyPrefixes.MAINNET_PREFIX.getPrivatePrefix())
-        String extendedPubkeyString = extendedPubkeyService.create(masterKey, "84'/0'/0'/0/".concat(index.toString()), AddressType.SEGWIT).getKey()
+        String extendedPubkeyString = extendedPubkeyService.create(masterKey, "84'/0'/0'/0/".concat(index.toString()), AddressType.SEGWIT, MAINNET_SEGWIT_PREFIX).getKey()
         ExtendedPubkey extendedPubkey = ExtendedPubkey.unserialize(extendedPubkeyString)
-        String expectedAddress = segwitAddressGenerator.generate(extendedPubkey)
+        String expectedAddress = segwitAddressGenerator.generate(extendedPubkey, AddressConstants.REGTEST_P2WPKH_ADDRESS_PREFIX)
         return expectedAddress == address
     }
 
     protected boolean nestedSegwitAddressIsValid(String address, String mnemonicSeedString, Integer index) {
         MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString)
         ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey("", ExtendedKeyPrefixes.MAINNET_PREFIX.getPrivatePrefix())
-        String extendedPubkeyString = extendedPubkeyService.create(masterKey, "49'/0'/0'/0/".concat(index.toString()), AddressType.NESTED_SEGWIT).getKey()
+        String extendedPubkeyString = extendedPubkeyService.create(masterKey, "49'/0'/0'/0/".concat(index.toString()), AddressType.NESTED_SEGWIT, MAINNET_SEGWIT_PREFIX).getKey()
         ExtendedPubkey extendedPubkey = ExtendedPubkey.unserialize(extendedPubkeyString)
-        String expectedAddress = nestedSegwitAddressGenerator.generate(extendedPubkey)
+        String expectedAddress = nestedSegwitAddressGenerator.generate(extendedPubkey, AddressConstants.TESTNET_P2SH_ADDRESS_PREFIX)
         return expectedAddress == address
     }
 

@@ -1,5 +1,7 @@
 package com.byow.wallet.byow.api
 
+import com.byow.wallet.byow.api.config.AddressConfiguration
+import com.byow.wallet.byow.api.services.AddressConfigFinder
 import com.byow.wallet.byow.api.services.TransactionSizeCalculator
 import spock.lang.Specification
 
@@ -9,7 +11,13 @@ class TransactionSizeCalculatorTest extends Specification {
     private TransactionSizeCalculator transactionSizeCalculator
 
     def setup() {
-        transactionSizeCalculator = new TransactionSizeCalculator()
+        AddressConfiguration addressConfiguration = new AddressConfiguration()
+        def addressConfigs = [
+                addressConfiguration.segwitConfig(),
+                addressConfiguration.nestedSegwitConfig()
+        ]
+        def addressConfigFinder = new AddressConfigFinder(addressConfigs)
+        transactionSizeCalculator = new TransactionSizeCalculator(addressConfigFinder)
     }
 
     def "should calculate transaction size for P2WPKH transaction outputs and inputs"() {

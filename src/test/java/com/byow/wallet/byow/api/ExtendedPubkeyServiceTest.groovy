@@ -12,6 +12,7 @@ import java.security.Security
 
 import static com.byow.wallet.byow.domains.AddressType.SEGWIT
 import static com.byow.wallet.byow.domains.AddressType.SEGWIT_CHANGE
+import static io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes.MAINNET_SEGWIT_PREFIX
 
 class ExtendedPubkeyServiceTest extends Specification {
     ExtendedPubkeyService extendedPubkeyService = new ExtendedPubkeyService()
@@ -25,7 +26,7 @@ class ExtendedPubkeyServiceTest extends Specification {
             MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString)
             ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey(password, ExtendedKeyPrefixes.MAINNET_PREFIX.privatePrefix)
         when:
-            ExtendedPubkey extendedPubkey = extendedPubkeyService.create(masterKey, derivationPath, addressType)
+            ExtendedPubkey extendedPubkey = extendedPubkeyService.create(masterKey, derivationPath, addressType, MAINNET_SEGWIT_PREFIX)
         then:
             extendedPubkey.key == expectedExtendedPubkey
         where:

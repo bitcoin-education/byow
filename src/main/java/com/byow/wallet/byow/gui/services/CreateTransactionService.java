@@ -1,9 +1,11 @@
 package com.byow.wallet.byow.gui.services;
 
+import com.byow.wallet.byow.api.services.ChangeAddressTypeFinder;
 import com.byow.wallet.byow.api.services.CoinSelector;
 import com.byow.wallet.byow.api.services.EstimateFeeService;
 import com.byow.wallet.byow.api.services.TransactionCreatorService;
 import com.byow.wallet.byow.api.services.node.client.NodeListUnspentClient;
+import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.TransactionDto;
 import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.domains.node.ErrorMessages;
@@ -20,9 +22,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
-
-import static io.github.bitcoineducation.bitcoinjava.AddressConstants.*;
 
 @Service
 public class CreateTransactionService {
@@ -36,18 +35,22 @@ public class CreateTransactionService {
 
     private final TransactionCreatorService transactionCreatorService;
 
+    private final ChangeAddressTypeFinder changeAddressTypeFinder;
+
     public CreateTransactionService(
         EstimateFeeService estimateFeeService,
         CurrentWallet currentWallet,
         NodeListUnspentClient nodeListUnspentClient,
         CoinSelector coinSelector,
-        TransactionCreatorService transactionCreatorService
+        TransactionCreatorService transactionCreatorService,
+        ChangeAddressTypeFinder changeAddressTypeFinder
     ) {
         this.estimateFeeService = estimateFeeService;
         this.currentWallet = currentWallet;
         this.nodeListUnspentClient = nodeListUnspentClient;
         this.coinSelector = coinSelector;
         this.transactionCreatorService = transactionCreatorService;
+        this.changeAddressTypeFinder = changeAddressTypeFinder;
     }
 
     public TransactionDto create(String address, BigDecimal amount) {
@@ -96,18 +99,8 @@ public class CreateTransactionService {
     }
 
     private String findChangeAddress(String address) {
-        if (isSegwit(address)) {
-            return currentWallet.getChangeAddress();
-        }
-        return currentWallet.getNestedSegwitChangeAddress();
-    }
-
-    private boolean isSegwit(String address) {
-        return Stream.of(
-            REGTEST_P2WPKH_ADDRESS_PREFIX,
-            TESTNET_P2WPKH_ADDRESS_PREFIX,
-            MAINNET_P2WPKH_ADDRESS_PREFIX
-        ).anyMatch(address::startsWith);
+        AddressType addressType = changeAddressTypeFinder.find(address);
+        return currentWallet.getReceivingAddress(addressType);
     }
 
     private void validateFunds(TransactionDto transactionDto) {

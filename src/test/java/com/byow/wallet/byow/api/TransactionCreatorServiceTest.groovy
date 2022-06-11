@@ -1,7 +1,12 @@
 package com.byow.wallet.byow.api
 
 import com.byow.wallet.byow.Utils
+import com.byow.wallet.byow.api.config.AddressConfiguration
+import com.byow.wallet.byow.api.services.AddressConfigFinder
+import com.byow.wallet.byow.api.services.AddressPrefixFactory
 import com.byow.wallet.byow.api.services.DustCalculator
+import com.byow.wallet.byow.api.services.P2SHScriptBuilder
+import com.byow.wallet.byow.api.services.P2WPKHScriptBuilder
 import com.byow.wallet.byow.api.services.TransactionCreatorService
 import com.byow.wallet.byow.domains.Utxo
 import com.byow.wallet.byow.utils.Satoshi
@@ -12,7 +17,18 @@ class TransactionCreatorServiceTest extends Specification {
     TransactionCreatorService transactionCreatorService
 
     def setup() {
-        transactionCreatorService = new TransactionCreatorService(new DustCalculator(3000))
+        AddressConfiguration addressConfiguration = new AddressConfiguration()
+        def addressConfigs = [
+            addressConfiguration.segwitConfig(),
+            addressConfiguration.nestedSegwitConfig()
+        ]
+        def addressConfigFinder = new AddressConfigFinder(addressConfigs)
+        def addressPrefixFactory = new AddressPrefixFactory("regtest", addressConfigFinder)
+        def scriptPubkeyBuilders = [
+            new P2WPKHScriptBuilder(addressPrefixFactory),
+            new P2SHScriptBuilder()
+        ]
+        transactionCreatorService = new TransactionCreatorService(new DustCalculator(3000, addressConfigFinder), scriptPubkeyBuilders, addressConfigFinder)
     }
 
     def "should create transaction with #nInputs inputs and #expectedNOutputs outputs"() {

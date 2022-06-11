@@ -1,29 +1,37 @@
 package com.byow.wallet.byow.api
 
+import com.byow.wallet.byow.api.config.AddressConfiguration
+import com.byow.wallet.byow.api.services.AddressConfigFinder
 import com.byow.wallet.byow.api.services.AddressGeneratorFactory
 import com.byow.wallet.byow.api.services.AddressPrefixFactory
 import com.byow.wallet.byow.api.services.AddressSequentialGenerator
-import com.byow.wallet.byow.api.services.NestedSegwitAddressGenerator
-import com.byow.wallet.byow.api.services.SegwitAddressGenerator
 import com.byow.wallet.byow.domains.Address
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import spock.lang.Specification
 
 import java.security.Security
 
-import static com.byow.wallet.byow.api.services.AddressPrefixFactory.MAINNET
+import static org.mockito.ArgumentMatchers.any
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 class AddressSequentialGeneratorTest extends Specification {
 
     AddressSequentialGenerator addressSequentialGenerator
     AddressGeneratorFactory addressGeneratorFactory
     AddressPrefixFactory addressPrefixFactory
+    AddressConfigFinder addressConfigFinder
 
     def setup() {
         Security.addProvider(new BouncyCastleProvider())
-        addressPrefixFactory = new AddressPrefixFactory(MAINNET)
-        addressGeneratorFactory = new AddressGeneratorFactory(new SegwitAddressGenerator(addressPrefixFactory), new NestedSegwitAddressGenerator(addressPrefixFactory))
-        addressSequentialGenerator = new AddressSequentialGenerator(20, addressGeneratorFactory)
+
+        addressConfigFinder = mock(AddressConfigFinder)
+        def addressConfiguration = new AddressConfiguration()
+        when(addressConfigFinder.findByAddressType(any())).thenReturn(addressConfiguration.segwitConfig())
+
+        addressPrefixFactory = new AddressPrefixFactory("mainnet", addressConfigFinder)
+        addressGeneratorFactory = new AddressGeneratorFactory(addressConfigFinder)
+        addressSequentialGenerator = new AddressSequentialGenerator(20, addressGeneratorFactory, addressPrefixFactory)
     }
 
     def "should generate 20 addresses"() {

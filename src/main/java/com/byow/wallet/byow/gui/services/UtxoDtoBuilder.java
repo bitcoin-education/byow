@@ -1,23 +1,21 @@
 package com.byow.wallet.byow.gui.services;
 
-import com.byow.wallet.byow.domains.AddressConfig;
+import com.byow.wallet.byow.api.services.AddressConfigFinder;
 import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.domains.UtxoDto;
 import com.byow.wallet.byow.observables.CurrentWallet;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class UtxoDtoBuilder {
     private final CurrentWallet currentWallet;
 
-    private final List<AddressConfig> addressConfigs;
+    private final AddressConfigFinder addressConfigFinder;
 
-    public UtxoDtoBuilder(CurrentWallet currentWallet, List<AddressConfig> addressConfigs) {
+    public UtxoDtoBuilder(CurrentWallet currentWallet, AddressConfigFinder addressConfigFinder) {
         this.currentWallet = currentWallet;
-        this.addressConfigs = addressConfigs;
+        this.addressConfigFinder = addressConfigFinder;
     }
 
     public UtxoDto build(Utxo utxo) {
@@ -28,11 +26,9 @@ public class UtxoDtoBuilder {
     }
 
     private String buildDerivationPath(AddressType addressType, Long addressIndex) {
-        return addressConfigs.stream()
-            .filter(addressConfig -> addressConfig.addressType().equals(addressType))
-            .findFirst()
-            .get()
-            .derivationPath()
+        return addressConfigFinder.findByAddressType(addressType.toString())
+            .derivationPaths()
+            .get(addressType)
             .concat("/".concat(addressIndex.toString()));
     }
 }

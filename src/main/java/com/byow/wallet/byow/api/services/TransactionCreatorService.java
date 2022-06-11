@@ -3,7 +3,6 @@ package com.byow.wallet.byow.api.services;
 import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.utils.Satoshi;
 import io.github.bitcoineducation.bitcoinjava.*;
-import org.bouncycastle.util.encoders.Hex;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -11,21 +10,21 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.byow.wallet.byow.utils.Fee.totalCalculatedFee;
-import static io.github.bitcoineducation.bitcoinjava.AddressConstants.*;
 
 @Service
 public class TransactionCreatorService {
-    private static final String DUMMY_SIGNATURE = "0".repeat(144);
-    private static final String DUMMY_PUBKEY = "0".repeat(66);
-    private static final String DUMMY_SCRIPT_SIG_NESTED_SEGWIT = "0".repeat(44);
-
     private final DustCalculator dustCalculator;
 
-    public TransactionCreatorService(DustCalculator dustCalculator) {
+    private final List<ScriptPubkeyBuilder> scriptPubkeyBuilders;
+
+    private final AddressConfigFinder addressConfigFinder;
+
+    public TransactionCreatorService(DustCalculator dustCalculator, List<ScriptPubkeyBuilder> scriptPubkeyBuilders, AddressConfigFinder addressConfigFinder) {
         this.dustCalculator = dustCalculator;
+        this.scriptPubkeyBuilders = scriptPubkeyBuilders;
+        this.addressConfigFinder = addressConfigFinder;
     }
 
     public Transaction create(List<Utxo> utxos, String addressToSend, BigInteger amountToSend, String changeAddress, BigDecimal feeRate) {
@@ -61,45 +60,20 @@ public class TransactionCreatorService {
     }
 
     private TransactionOutput buildOutput(String address, BigInteger amount) {
-        String prefix = parsePrefix(address);
-        if (prefix.equals("")) {
-            Script script = Script.p2shScript(Base58.decodeWithChecksumToHex(address));
-            return new TransactionOutput(amount, script);
-        }
-        Script script = Script.p2wpkhScript(Bech32.decode(prefix, address)[1]);
+        Script script = scriptPubkeyBuilders.stream()
+            .filter(scriptPubkeyBuilder -> scriptPubkeyBuilder.match(address))
+            .findFirst()
+            .orElseThrow()
+            .build(address);
         return new TransactionOutput(amount, script);
-    }
-
-    private String parsePrefix(String address) {
-        return Stream.of(
-            REGTEST_P2WPKH_ADDRESS_PREFIX,
-            TESTNET_P2WPKH_ADDRESS_PREFIX,
-            MAINNET_P2WPKH_ADDRESS_PREFIX
-        )
-        .filter(address::startsWith)
-        .findFirst()
-        .orElse("");
     }
 
     private ArrayList<TransactionInput> buildInputs(List<Utxo> utxos) {
         return utxos.stream()
-            .map(this::buildInput)
-            .peek(transactionInput -> {
-                transactionInput.setWitness(new Witness(List.of(DUMMY_SIGNATURE, DUMMY_PUBKEY)));
-            }).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    private TransactionInput buildInput(Utxo utxo) {
-        Script script = new Script(new ArrayList<>());
-        String prefix = parsePrefix(utxo.address());
-        if (prefix.equals("")) {
-            script.appendCommand(DUMMY_SCRIPT_SIG_NESTED_SEGWIT);
-        }
-        return new TransactionInput(
-            utxo.txid(),
-            BigInteger.valueOf(utxo.vout()),
-            script,
-            new BigInteger(1, Hex.decode("ffffffff"))
-        );
+            .map(utxo -> addressConfigFinder.findByAddress(utxo.address())
+                .orElseThrow()
+                .transactionInputBuilder()
+                .build(utxo)
+            ).collect(Collectors.toCollection(ArrayList::new));
     }
 }

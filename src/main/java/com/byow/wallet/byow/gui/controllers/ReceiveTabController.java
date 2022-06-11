@@ -1,6 +1,8 @@
 package com.byow.wallet.byow.gui.controllers;
 
+import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.observables.CurrentWallet;
+import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
@@ -40,11 +42,14 @@ public class ReceiveTabController extends Tab {
     }
 
     public void initialize() {
-        currentWallet.receivingAddressProperty().addListener((observable, oldValue, newValue) ->
-            receivingAddress.setText(newValue)
-        );
-        currentWallet.nestedSegwitReceivingAddressProperty().addListener((observable, oldValue, newValue) ->
-            nestedSegwitReceivingAddress.setText(newValue)
-        );
+        currentWallet.getObservableReceivingAddresses().addListener((MapChangeListener<AddressType, String>) change -> {
+            if(change.getKey().equals(AddressType.SEGWIT)) {
+                receivingAddress.setText(change.getValueAdded());
+                return;
+            }
+            if(change.getKey().equals(AddressType.NESTED_SEGWIT)) {
+                nestedSegwitReceivingAddress.setText(change.getValueAdded());
+            }
+        });
     }
 }

@@ -6,9 +6,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.NoSuchElementException;
 
-import static io.github.bitcoineducation.bitcoinjava.AddressConstants.*;
+import static com.byow.wallet.byow.utils.AddressMatcher.isNestedSegwit;
+import static com.byow.wallet.byow.utils.AddressMatcher.isSegwit;
 
 @Service
 public class TransactionSizeCalculator {
@@ -22,8 +23,6 @@ public class TransactionSizeCalculator {
     // INPUT
     private static final double OUTPOINT = 36;
     private static final double SCRIPT_SIG_LENGTH = 1; // for up to 252 vbytes
-    private static final double SCRIPT_SIG = 0; // for segwit inputs
-    private static final double SCRIPT_SIG_NESTED_SEGWIT = 23; // for nested segwit inputs
     private static final double N_SEQUENCE = 4;
     private static final double WITNESS_COUNT = 1; // for up to 252 items
     private static final double WITNESS_ITEMS = 107; // for P2WPKH inputs
@@ -33,6 +32,12 @@ public class TransactionSizeCalculator {
     private static final double SCRIPT_PUBKEY_LENGTH = 1; // for up to 252 vbytes
     private static final double SCRIPT_PUBKEY = 22; // for P2WPKH outputs
     private static final double SCRIPT_PUBKEY_NESTED_SEGWIT = 23; // for nested segwit outputs
+
+    private final AddressConfigFinder addressConfigFinder;
+
+    public TransactionSizeCalculator(AddressConfigFinder addressConfigFinder) {
+        this.addressConfigFinder = addressConfigFinder;
+    }
 
     public BigInteger calculate(List<String> inputAddresses, List<String> outputAddresses) {
         double overhead = N_VERSION + INPUT_COUNT + OUTPUT_COUNT + N_LOCKTIME + (SEGWIT_MARKER_AND_FLAG / 4);
@@ -60,28 +65,16 @@ public class TransactionSizeCalculator {
     }
 
     private double scriptPubkeySize(String address) {
-        if (isSegwit(address)) {
+        if (isSegwit.test(address)) {
             return SCRIPT_PUBKEY;
         }
-        return SCRIPT_PUBKEY_NESTED_SEGWIT;
+        if (isNestedSegwit.test(address)) {
+            return SCRIPT_PUBKEY_NESTED_SEGWIT;
+        }
+        throw new NoSuchElementException("Script pubkey size calculation not implemented.");
     }
 
     private double inputSize(String address) {
-        return OUTPOINT + SCRIPT_SIG_LENGTH + scriptSigSize(address) + N_SEQUENCE;
-    }
-
-    private double scriptSigSize(String address) {
-        if (isSegwit(address)) {
-            return SCRIPT_SIG;
-        }
-        return SCRIPT_SIG_NESTED_SEGWIT;
-    }
-
-    private boolean isSegwit(String address) {
-        return Stream.of(
-            REGTEST_P2WPKH_ADDRESS_PREFIX,
-            TESTNET_P2WPKH_ADDRESS_PREFIX,
-            MAINNET_P2WPKH_ADDRESS_PREFIX
-        ).anyMatch(address::startsWith);
+        return OUTPOINT + SCRIPT_SIG_LENGTH + addressConfigFinder.findByAddress(address).orElseThrow().scriptSigSize() + N_SEQUENCE;
     }
 }
