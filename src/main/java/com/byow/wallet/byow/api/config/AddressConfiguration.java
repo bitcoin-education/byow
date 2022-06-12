@@ -2,7 +2,6 @@ package com.byow.wallet.byow.api.config;
 
 import com.byow.wallet.byow.api.services.*;
 import com.byow.wallet.byow.domains.AddressConfig;
-import io.github.bitcoineducation.bitcoinjava.Base58;
 import io.github.bitcoineducation.bitcoinjava.Script;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -68,7 +67,7 @@ public class AddressConfiguration {
             MAINNET_NESTED_SEGWIT_PREFIX,
             isNestedSegwit,
             P2SH,
-            (script, prefix) -> Base58.encodeWithChecksumFromHex(prefix.concat((String) script.getCommands().get(1))), //TODO: passar para lib
+            Script::nestedSegwitAddress,
             new NestedSegwitInputBuilder(),
             180,
             23,

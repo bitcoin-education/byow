@@ -23,6 +23,6 @@ public class P2WPKHScriptBuilder implements ScriptPubkeyBuilder {
     @Override
     public Script build(String address) {
         String prefix = addressPrefixFactory.get(SEGWIT);
-        return Script.p2wpkhScript(Bech32.decode(prefix, address)[1]);
+        return Script.p2wpkhScript(Bech32.decodeToHex(prefix, address));
     }
 }

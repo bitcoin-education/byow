@@ -13,14 +13,11 @@ import com.byow.wallet.byow.gui.exceptions.CreateTransactionException;
 import com.byow.wallet.byow.observables.CurrentWallet;
 import com.byow.wallet.byow.utils.Fee;
 import com.byow.wallet.byow.utils.Satoshi;
-import io.github.bitcoineducation.bitcoinjava.Script;
 import io.github.bitcoineducation.bitcoinjava.Transaction;
-import io.github.bitcoineducation.bitcoinjava.TransactionInput;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -89,13 +86,7 @@ public class CreateTransactionService {
         );
         validateFunds(transactionDto);
 
-        gambiarra(transactionDto.transaction().getInputs());//TODO: corrigir lib e remover
-
         return transactionDto;
-    }
-
-    private void gambiarra(ArrayList<TransactionInput> transactionInputs) {
-        transactionInputs.forEach(transactionInput -> transactionInput.setScriptSig(new Script(new ArrayList<>())));
     }
 
     private String findChangeAddress(String address) {
