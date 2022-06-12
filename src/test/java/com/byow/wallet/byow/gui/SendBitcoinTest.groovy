@@ -269,6 +269,39 @@ class SendBitcoinTest extends GuiTest {
             "0.5"        | _
     }
 
+    def "should not send dust bitcoin"() {
+        when:
+            clickOn("New")
+            clickOn("Wallet")
+            clickOn("#name")
+            write("My Test Wallet 18")
+            clickOn("Create")
+            clickOn("OK")
+            clickOn("Receive")
+            sleep(TIMEOUT, SECONDS)
+
+            BigDecimal funds = 0
+            IntStream.range(0, previousUtxosNumber).forEach{
+                String address = lookup("#receivingAddress").queryAs(TextField).text
+                sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
+                funds += previousAmount
+            }
+
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
+            clickOn("#sendTab")
+            sendBitcoin(nodeAddress, amountToSend)
+            clickOn("OK")
+            String errorMessage = "Could not send transaction: amount to send is dust."
+            NodeQuery nodeQuery = lookup(errorMessage)
+            clickOn("OK")
+        then:
+            nodeQuery.queryLabeled().getText() == errorMessage
+        where:
+            previousUtxosNumber | amountToSend | previousAmount
+            1                   | "0.00000293" | 0.1
+    }
+
     private void sendBitcoin(String nodeAddress, String amountToSend, boolean waitForDialog = true) {
         clickOn("#amountToSend")
         write(amountToSend)
