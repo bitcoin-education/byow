@@ -15,13 +15,19 @@ import java.util.stream.LongStream;
 @Service
 public class AddressSequentialGenerator {
     private final int initialNumberOfGeneratedAddresses;
+
     private final AddressGeneratorFactory addressGeneratorFactory;
+
+    private final AddressPrefixFactory addressPrefixFactory;
 
     public AddressSequentialGenerator(
         @Qualifier("initialNumberOfGeneratedAddresses") int initialNumberOfGeneratedAddresses,
-        AddressGeneratorFactory addressGeneratorFactory) {
+        AddressGeneratorFactory addressGeneratorFactory,
+        AddressPrefixFactory addressPrefixFactory
+    ) {
         this.initialNumberOfGeneratedAddresses = initialNumberOfGeneratedAddresses;
         this.addressGeneratorFactory = addressGeneratorFactory;
+        this.addressPrefixFactory = addressPrefixFactory;
     }
 
     public List<Address> generate(String key, String addressType, long fromIndex) {
@@ -38,6 +44,6 @@ public class AddressSequentialGenerator {
 
     private Address generateAddress(AddressGenerator addressGenerator, ExtendedPubkey extendedPubkey, long index, AddressType addressType) {
         ExtendedKey extendedChildKey = extendedPubkey.ckd(String.valueOf(index));
-        return new Address(addressGenerator.generate(extendedChildKey), index, BigDecimal.ZERO, 0, addressType);
+        return new Address(addressGenerator.generate(extendedChildKey, addressPrefixFactory.get(addressType)), index, BigDecimal.ZERO, 0, addressType);
     }
 }

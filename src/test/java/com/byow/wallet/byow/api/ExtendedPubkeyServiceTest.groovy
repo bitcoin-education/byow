@@ -25,7 +25,7 @@ class ExtendedPubkeyServiceTest extends Specification {
             MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString)
             ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey(password, ExtendedKeyPrefixes.MAINNET_PREFIX.privatePrefix)
         when:
-            ExtendedPubkey extendedPubkey = extendedPubkeyService.create(masterKey, derivationPath, addressType)
+            ExtendedPubkey extendedPubkey = extendedPubkeyService.create(masterKey, derivationPath, addressType, ExtendedKeyPrefixes.MAINNET_SEGWIT_PREFIX)
         then:
             extendedPubkey.key == expectedExtendedPubkey
         where:
