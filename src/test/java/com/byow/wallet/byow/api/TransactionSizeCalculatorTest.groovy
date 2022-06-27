@@ -1,13 +1,22 @@
 package com.byow.wallet.byow.api
 
+import com.byow.wallet.byow.api.config.AddressConfiguration
+import com.byow.wallet.byow.api.services.AddressConfigFinder
 import com.byow.wallet.byow.api.services.TransactionSizeCalculator
 import spock.lang.Specification
+
+import static java.util.Collections.nCopies
 
 class TransactionSizeCalculatorTest extends Specification {
     private TransactionSizeCalculator transactionSizeCalculator
 
     def setup() {
-        transactionSizeCalculator = new TransactionSizeCalculator()
+        AddressConfiguration addressConfiguration = new AddressConfiguration()
+        def addressConfigs = [
+            addressConfiguration.segwitConfig()
+        ]
+        def addressConfigFinder = new AddressConfigFinder(addressConfigs)
+        transactionSizeCalculator = new TransactionSizeCalculator(addressConfigFinder)
     }
 
     def "should calculate transaction size for P2WPKH transaction outputs and inputs"() {
@@ -16,12 +25,12 @@ class TransactionSizeCalculatorTest extends Specification {
         then:
             result == expectedSize
         where:
-            inputs           | outputs    | expectedSize
-            ["a"]            | ["a", "b"] | 141
-            ["a", "b"]       | ["a", "b"] | 209
-            ["a", "b", "c"]  | ["a", "b"] | 277
-            ["a"]            | ["a"]      | 110
-            ["a", "b"]       | ["a"]      | 178
-            ["a", "b", "c"]  | ["a"]      | 246
+            inputs                                                   | outputs                                                  | expectedSize
+            nCopies(1, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | nCopies(2, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | 141
+            nCopies(2, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | nCopies(2, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | 209
+            nCopies(3, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | nCopies(2, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | 277
+            nCopies(1, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | nCopies(1, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | 110
+            nCopies(2, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | nCopies(1, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | 178
+            nCopies(3, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | nCopies(1, "tb1qkvhn32mj44r6dcwlkl4jtqu3mpe64c8fxq3d40") | 246
     }
 }

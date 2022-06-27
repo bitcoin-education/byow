@@ -1,6 +1,8 @@
 package com.byow.wallet.byow.api.config;
 
 import com.byow.wallet.byow.api.services.SegwitAddressGenerator;
+import com.byow.wallet.byow.api.services.SegwitInputBuilder;
+import com.byow.wallet.byow.api.services.SegwitTransactionSigner;
 import com.byow.wallet.byow.domains.AddressConfig;
 import io.github.bitcoineducation.bitcoinjava.Script;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +42,11 @@ public class AddressConfiguration {
             MAINNET_SEGWIT_PREFIX,
             isSegwit,
             P2WPKH,
-            Script::p2wpkhAddress
+            Script::p2wpkhAddress,
+            new SegwitInputBuilder(),
+            98,
+            0,
+            new SegwitTransactionSigner()
         );
     }
 

@@ -4,20 +4,19 @@ import com.byow.wallet.byow.domains.Address;
 import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.ExtendedPubkey;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
 
 @Component
 public class CurrentWallet {
     private final SimpleStringProperty name = new SimpleStringProperty();
 
-    private final SimpleStringProperty receivingAddress = new SimpleStringProperty();
-
-    private String changeAddress;
+    private final ObservableMap<AddressType, String> receivingAddresses = FXCollections.observableHashMap();
 
     private final Addresses addresses = new Addresses();
 
@@ -41,18 +40,6 @@ public class CurrentWallet {
 
     public SimpleStringProperty nameProperty() {
         return name;
-    }
-
-    public String getReceivingAddress() {
-        return receivingAddress.get();
-    }
-
-    public SimpleStringProperty receivingAddressProperty() {
-        return receivingAddress;
-    }
-
-    public void setReceivingAddress(String receivingAddress) {
-        this.receivingAddress.set(receivingAddress);
     }
 
     public List<String> getAddressesAsStrings() {
@@ -147,14 +134,6 @@ public class CurrentWallet {
         balances.clear();
     }
 
-    public String getChangeAddress() {
-        return changeAddress;
-    }
-
-    public void setChangeAddress(String changeAddress) {
-        this.changeAddress = changeAddress;
-    }
-
     public Address getAddress(String address) {
         return addresses.getAddress(address);
     }
@@ -167,4 +146,25 @@ public class CurrentWallet {
         this.mnemonicSeed = mnemonicSeed;
     }
 
+    public void setReceivingAddresses() {
+        extendedPubkeys.forEach(
+            extendedPubkey -> receivingAddresses.put(
+                AddressType.valueOf(extendedPubkey.getType()),
+                extendedPubkey.getAddresses().get(0).getAddress()
+            )
+        );
+    }
+
+    public void setReceivingAddress(long nextAddressIndex, AddressType addressType) {
+        String nextAddress = getAddressAt(nextAddressIndex, addressType);
+        receivingAddresses.put(addressType, nextAddress);
+    }
+
+    public String getReceivingAddress(AddressType addressType) {
+        return receivingAddresses.get(addressType);
+    }
+
+    public ObservableMap<AddressType, String> getObservableReceivingAddresses() {
+        return receivingAddresses;
+    }
 }

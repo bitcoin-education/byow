@@ -1,7 +1,6 @@
 package com.byow.wallet.byow.api.services;
 
 import com.byow.wallet.byow.domains.UtxoDto;
-import com.byow.wallet.byow.utils.Satoshi;
 import io.github.bitcoineducation.bitcoinjava.*;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +12,12 @@ import static io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes.MAINNET
 
 @Service
 public class TransactionSignerService {
+    private final AddressConfigFinder addressConfigFinder;
+
+    public TransactionSignerService(AddressConfigFinder addressConfigFinder) {
+        this.addressConfigFinder = addressConfigFinder;
+    }
+
     public void sign(Transaction transaction, String mnemonicSeed, String password, List<UtxoDto> utxoDtos) {
         IntStream.range(0, utxoDtos.size())
             .forEachOrdered(i -> sign(i, utxoDtos.get(i), transaction, mnemonicSeed, password));
@@ -24,9 +29,14 @@ public class TransactionSignerService {
         ExtendedPrivateKey extendedPrivateKey = (ExtendedPrivateKey) masterKey.ckd(utxoDto.derivationPath(), true, MAINNET_PREFIX.getPrivatePrefix());
         PrivateKey privateKey = extendedPrivateKey.toPrivateKey();
         try {
-            TransactionECDSASigner.sign(transaction, privateKey, i, Satoshi.toSatoshis(utxoDto.amount()), true);
+            sign(i, utxoDto, transaction, privateKey);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void sign(int i, UtxoDto utxoDto, Transaction transaction, PrivateKey privateKey) throws IOException {
+        TransactionSigner transactionSigner = addressConfigFinder.findByAddressType(utxoDto.addressType().toString()).transactionSigner();
+        transactionSigner.sign(transaction, privateKey, i, utxoDto.amount());
     }
 }

@@ -1,9 +1,11 @@
 package com.byow.wallet.byow.gui.services;
 
+import com.byow.wallet.byow.api.services.ChangeAddressTypeFinder;
 import com.byow.wallet.byow.api.services.CoinSelector;
 import com.byow.wallet.byow.api.services.EstimateFeeService;
 import com.byow.wallet.byow.api.services.TransactionCreatorService;
 import com.byow.wallet.byow.api.services.node.client.NodeListUnspentClient;
+import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.TransactionDto;
 import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.domains.node.ErrorMessages;
@@ -30,18 +32,22 @@ public class CreateTransactionService {
 
     private final TransactionCreatorService transactionCreatorService;
 
+    private final ChangeAddressTypeFinder changeAddressTypeFinder;
+
     public CreateTransactionService(
         EstimateFeeService estimateFeeService,
         CurrentWallet currentWallet,
         NodeListUnspentClient nodeListUnspentClient,
         CoinSelector coinSelector,
-        TransactionCreatorService transactionCreatorService
+        TransactionCreatorService transactionCreatorService,
+        ChangeAddressTypeFinder changeAddressTypeFinder
     ) {
         this.estimateFeeService = estimateFeeService;
         this.currentWallet = currentWallet;
         this.nodeListUnspentClient = nodeListUnspentClient;
         this.coinSelector = coinSelector;
         this.transactionCreatorService = transactionCreatorService;
+        this.changeAddressTypeFinder = changeAddressTypeFinder;
     }
 
     public TransactionDto create(String address, BigDecimal amount) {
@@ -55,12 +61,13 @@ public class CreateTransactionService {
 
         List<Utxo> utxos = nodeListUnspentClient.listUnspent(addresses, currentWallet.getName());
 
-        List<Utxo> selectedUtxos = coinSelector.select(utxos, Satoshi.toSatoshis(amount), feeRate, address, currentWallet.getChangeAddress());
+        String changeAddress = findChangeAddress(address);
+        List<Utxo> selectedUtxos = coinSelector.select(utxos, Satoshi.toSatoshis(amount), feeRate, address, changeAddress);
         Transaction transaction = transactionCreatorService.create(
             selectedUtxos,
             address,
             Satoshi.toSatoshis(amount),
-            currentWallet.getChangeAddress(),
+            changeAddress,
             feeRate
         );
 
@@ -79,6 +86,11 @@ public class CreateTransactionService {
         );
         validateFunds(transactionDto);
         return transactionDto;
+    }
+
+    private String findChangeAddress(String address) {
+        AddressType addressType = changeAddressTypeFinder.find(address);
+        return currentWallet.getReceivingAddress(addressType);
     }
 
     private void validateFunds(TransactionDto transactionDto) {

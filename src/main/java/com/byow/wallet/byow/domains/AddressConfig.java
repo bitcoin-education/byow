@@ -1,6 +1,8 @@
 package com.byow.wallet.byow.domains;
 
 import com.byow.wallet.byow.api.services.AddressGenerator;
+import com.byow.wallet.byow.api.services.TransactionInputBuilder;
+import com.byow.wallet.byow.api.services.TransactionSigner;
 import io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefix;
 import io.github.bitcoineducation.bitcoinjava.Script;
 
@@ -16,6 +18,10 @@ public record AddressConfig(
     ExtendedKeyPrefix extendedKeyPrefix,
     Predicate<String> addressMatcher,
     String scriptPubkeyType,
-    BiFunction<Script, String, String> addressParser
+    BiFunction<Script, String, String> addressParser,
+    TransactionInputBuilder transactionInputBuilder,
+    int inputPlusOutputSize,
+    int scriptSigSize,
+    TransactionSigner transactionSigner
 ) {
 }

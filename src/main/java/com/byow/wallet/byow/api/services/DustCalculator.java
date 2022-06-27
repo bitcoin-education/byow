@@ -7,17 +7,22 @@ import java.math.BigInteger;
 
 @Service
 public class DustCalculator {
-    private static final int SEGWIT_INPUT_PLUS_OUTPUT_SIZE = 98;
-
     private final long dustRelayFee;
 
+    private final AddressConfigFinder addressConfigFinder;
+
     public DustCalculator(
-        @Value("${bitcoin.dustRelayFee}") long dustRelayFee
+        @Value("${bitcoin.dustRelayFee}") long dustRelayFee,
+        AddressConfigFinder addressConfigFinder
     ) {
         this.dustRelayFee = dustRelayFee;
+        this.addressConfigFinder = addressConfigFinder;
     }
 
-    public boolean isDust(BigInteger amountInSatoshis) {
-        return amountInSatoshis.longValue() < SEGWIT_INPUT_PLUS_OUTPUT_SIZE * dustRelayFee / 1000;
+    public boolean isDust(BigInteger amountInSatoshis, String address) {
+        int inputPlusOutputSize = addressConfigFinder.findByAddress(address)
+            .orElseThrow()
+            .inputPlusOutputSize();
+        return amountInSatoshis.longValue() < inputPlusOutputSize * dustRelayFee / 1000;
     }
 }
