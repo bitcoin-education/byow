@@ -8,6 +8,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.byow.wallet.byow.utils.AddressMatcher.isNestedSegwit;
 import static com.byow.wallet.byow.utils.AddressMatcher.isSegwit;
 
 @Service
@@ -30,6 +31,8 @@ public class TransactionSizeCalculator {
     private static final double N_VALUE = 8;
     private static final double SCRIPT_PUBKEY_LENGTH = 1; // for up to 252 vbytes
     private static final double SCRIPT_PUBKEY = 22; // for P2WPKH outputs
+    private static final double SCRIPT_PUBKEY_NESTED_SEGWIT = 23; // for nested segwit outputs
+
 
     private final AddressConfigFinder addressConfigFinder;
 
@@ -65,6 +68,9 @@ public class TransactionSizeCalculator {
     private double scriptPubkeySize(String address) {
         if (isSegwit.test(address)) {
             return SCRIPT_PUBKEY;
+        }
+        if (isNestedSegwit.test(address)) {
+            return SCRIPT_PUBKEY_NESTED_SEGWIT;
         }
         throw new NoSuchElementException("Script pubkey size calculation not implemented.");
     }
