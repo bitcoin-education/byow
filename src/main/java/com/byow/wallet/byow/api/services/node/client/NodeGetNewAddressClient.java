@@ -11,7 +11,7 @@ public class NodeGetNewAddressClient {
         this.nodeClient = nodeClient;
     }
 
-    public String getNewAddress(String wallet) {
-        return nodeClient.makeRequest("getnewaddress", new ParameterizedTypeReference<>(){}, "wallet/".concat(wallet));
+    public String getNewAddress(String wallet, String addressType) {
+        return nodeClient.makeRequest("getnewaddress", new ParameterizedTypeReference<>(){}, "wallet/".concat(wallet), "", addressType);
     }
 }

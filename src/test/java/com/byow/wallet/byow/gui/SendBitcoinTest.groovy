@@ -43,7 +43,7 @@ class SendBitcoinTest extends GuiTest {
                 funds += amount
             }
 
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             clickOn("#amountToSend")
@@ -103,7 +103,7 @@ class SendBitcoinTest extends GuiTest {
                 funds += amount
             }
 
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             sendBitcoin(nodeAddress, amountToSend)
@@ -170,7 +170,7 @@ class SendBitcoinTest extends GuiTest {
             }
             String formattedFunds = BitcoinFormatter.format(funds)
 
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             sendBitcoin(nodeAddress, amountToSend)
@@ -229,7 +229,7 @@ class SendBitcoinTest extends GuiTest {
                 funds += previousAmount
             }
 
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             sendBitcoin(nodeAddress, amountToSend, false)
@@ -255,7 +255,7 @@ class SendBitcoinTest extends GuiTest {
             clickOn("Receive")
             sleep(TIMEOUT, SECONDS)
 
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             sendBitcoin(nodeAddress, amountToSend, false)
@@ -287,7 +287,7 @@ class SendBitcoinTest extends GuiTest {
                 funds += previousAmount
             }
 
-            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
             sendBitcoin(nodeAddress, amountToSend)
@@ -300,17 +300,6 @@ class SendBitcoinTest extends GuiTest {
         where:
             previousUtxosNumber | amountToSend | previousAmount
             1                   | "0.00000293" | 0.1
-    }
-
-    private void sendBitcoin(String nodeAddress, String amountToSend, boolean waitForDialog = true) {
-        clickOn("#amountToSend")
-        write(amountToSend)
-        clickOn("#addressToSend")
-        write(nodeAddress)
-        clickOn("#send")
-        if (waitForDialog) {
-            super.waitForDialog()
-        }
     }
 
 }

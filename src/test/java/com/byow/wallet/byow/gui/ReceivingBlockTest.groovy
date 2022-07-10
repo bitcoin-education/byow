@@ -81,7 +81,7 @@ class ReceivingBlockTest extends GuiTest {
     }
 
     void mineBlocks(int blocks) {
-        String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET)
+        String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
         nodeGenerateToAddressClient.generateToAddress(TESTWALLET, blocks, nodeAddress)
         waitFor(TIMEOUT, SECONDS, {
             TableView tableView = lookup("#addressesTable").queryAs(TableView)
