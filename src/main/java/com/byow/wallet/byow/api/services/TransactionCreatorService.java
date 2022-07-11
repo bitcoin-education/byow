@@ -18,18 +18,18 @@ public class TransactionCreatorService {
 
     private final DustCalculator dustCalculator;
 
-    private final List<ScriptPubkeyBuilder> scriptPubkeyBuilders;
-
     private final AddressConfigFinder addressConfigFinder;
+
+    private final ScriptConfigFinder scriptConfigFinder;
 
     public TransactionCreatorService(
         DustCalculator dustCalculator,
-        List<ScriptPubkeyBuilder> scriptPubkeyBuilders,
-        AddressConfigFinder addressConfigFinder
+        AddressConfigFinder addressConfigFinder,
+        ScriptConfigFinder scriptConfigFinder
     ) {
         this.dustCalculator = dustCalculator;
-        this.scriptPubkeyBuilders = scriptPubkeyBuilders;
         this.addressConfigFinder = addressConfigFinder;
+        this.scriptConfigFinder = scriptConfigFinder;
     }
 
     public Transaction create(List<Utxo> utxos, String addressToSend, BigInteger amountToSend, String changeAddress, BigDecimal feeRate) {
@@ -65,10 +65,8 @@ public class TransactionCreatorService {
     }
 
     private TransactionOutput buildOutput(String address, BigInteger amount) {
-        Script script = scriptPubkeyBuilders.stream()
-            .filter(scriptPubkeyBuilder -> scriptPubkeyBuilder.match(address))
-            .findFirst()
-            .orElseThrow()
+        Script script = scriptConfigFinder.findByAddress(address)
+            .scriptPubkeyBuilder()
             .build(address);
         return new TransactionOutput(amount, script);
     }

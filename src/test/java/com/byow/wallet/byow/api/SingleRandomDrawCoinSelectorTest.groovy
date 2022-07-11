@@ -2,8 +2,10 @@ package com.byow.wallet.byow.api
 
 import com.byow.wallet.byow.Utils
 import com.byow.wallet.byow.api.config.AddressConfiguration
+import com.byow.wallet.byow.api.config.ScriptConfiguration
 import com.byow.wallet.byow.api.services.AddressConfigFinder
 import com.byow.wallet.byow.api.services.DustCalculator
+import com.byow.wallet.byow.api.services.ScriptConfigFinder
 import com.byow.wallet.byow.api.services.SingleRandomDrawCoinSelector
 import com.byow.wallet.byow.api.services.TransactionSizeCalculator
 import com.byow.wallet.byow.domains.Utxo
@@ -18,7 +20,13 @@ class SingleRandomDrawCoinSelectorTest extends Specification {
             addressConfiguration.segwitConfig()
         ]
         def addressConfigFinder = new AddressConfigFinder(addressConfigs)
-        singleRandomDrawCoinSelector = new SingleRandomDrawCoinSelector(new TransactionSizeCalculator(addressConfigFinder), new DustCalculator(3000, addressConfigFinder))
+        ScriptConfiguration scriptConfiguration = new ScriptConfiguration()
+        def scriptConfigFinder = new ScriptConfigFinder(List.of(
+                scriptConfiguration.P2WPKHConfig(),
+                scriptConfiguration.P2SHConfig(),
+                scriptConfiguration.P2PKHConfig()
+        ))
+        singleRandomDrawCoinSelector = new SingleRandomDrawCoinSelector(new TransactionSizeCalculator(addressConfigFinder, scriptConfigFinder), new DustCalculator(3000, addressConfigFinder))
     }
 
     def "should select #expectedNInputs coins for transaction with #expectedNOutputs outputs"() {
