@@ -36,7 +36,7 @@ class SendBitcoinAdditionalTest extends GuiTest {
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach {
                 String address = lookup("#receivingAddress").queryAs(TextField).text
@@ -87,17 +87,19 @@ class SendBitcoinAdditionalTest extends GuiTest {
             clickOn("New")
             clickOn("Wallet")
             clickOn("#name")
-            write("My Test Wallet 16")
+            def walletName = "My Test Wallet 16"
+            write(walletName)
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach {
                 String address = lookup("#receivingAddress").queryAs(TextField).text
                 sendBitcoinAndWait(address, fundAmount, 1, "#addressesTable", fundAmount)
                 funds += fundAmount
             }
+            String lastReceivingAddress = lookup("#receivingAddress").queryAs(TextField).text
             String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
@@ -119,17 +121,38 @@ class SendBitcoinAdditionalTest extends GuiTest {
             clickOn("#transactionsTab")
             TableView<TransactionRow> transactionsTable = lookup("#transactionsTable").queryAs(TableView)
             String labelText = lookup("#totalBalance").queryAs(Label).getText()
+            def transactionsTableSize = transactionsTable.items.size()
+            def transactionsTableBalance = transactionsTable.items[0].balance
+            def transactionsTableConfirmations = transactionsTable.items[0].confirmations
+            def addressesTableSize = addressesTable.items.size()
+
+            loadWallet(walletName)
+            TableView<TransactionRow> transactionsTableAfterLoad = lookup("#transactionsTable").queryAs(TableView)
+
+            clickOn("#addressesTab")
+            TableView<AddressRow> addressesTableAfterLoad = lookup("#addressesTable").queryAs(TableView)
+
+            clickOn("Receive")
+            String lastReceivingAddressAfterLoad = lookup("#receivingAddress").queryAs(TextField).text
+
+            String labelTextAfterLoad = lookup("#totalBalance").queryAs(Label).getText()
         then:
-            addressesTable.items.size() == 0
-            transactionsTable.items.size() == previousUtxosNumber + 1
-            transactionsTable.items[0].balance == "-".concat(totalSpent)
-            transactionsTable.items[0].confirmations == 1
+            lastReceivingAddress == lastReceivingAddressAfterLoad
+            addressesTableSize == 0
+            addressesTableAfterLoad.items.size() == addressesTableSize
+            transactionsTableSize == previousUtxosNumber + 1
+            transactionsTableBalance == "-".concat(totalSpent)
+            transactionsTableConfirmations == 1
+            transactionsTableAfterLoad.items.size() == transactionsTableSize
+            transactionsTableAfterLoad.items[0].balance == transactionsTableBalance
+            transactionsTableAfterLoad.items[0].confirmations == transactionsTableConfirmations
             amountToSendLabel == BitcoinFormatter.format(new BigDecimal(amountToSend))
             totalFeeLabel == totalFee
             totalLabel == totalSpent
             feeRateLabel == feeRate
             addressToSendLabel == nodeAddress
             labelText == "Total Balance: $changeAmount BTC (confirmed: $changeAmount, unconfirmed: 0.00000000)"
+            labelText == labelTextAfterLoad
         where:
             previousUtxosNumber | amountToSend | totalFee         | totalSpent    | changeAmount | fundAmount | feeRate
             1                   | "1.00000000" | "0.00002090"     | "1.00002090"  | "0.00000000" | 1.00002090 | "0.0002 BTC/kvByte"
@@ -142,20 +165,22 @@ class SendBitcoinAdditionalTest extends GuiTest {
             clickOn("New")
             clickOn("Wallet")
             clickOn("#name")
-            write("My Test Wallet 17")
+            def walletName = "My Test Wallet 17"
+            write(walletName)
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
             BigDecimal funds = 0
             String lastUsedAddress = ""
             IntStream.range(0, previousUtxosNumber).forEach {
                 String address = lookup("#receivingAddress").queryAs(TextField).text
                 BigDecimal amount = 1.0
-                sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", amount)
+                sendBitcoinAndWait(address, 1.0, it+1, "#addressesTable", amount)
                 funds += amount
                 lastUsedAddress = address
             }
+            String lastReceivingAddress = lookup("#receivingAddress").queryAs(TextField).text
             String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
@@ -176,22 +201,41 @@ class SendBitcoinAdditionalTest extends GuiTest {
             clickOn("#transactionsTab")
             TableView<TransactionRow> transactionsTable = lookup("#transactionsTable").queryAs(TableView)
             String labelText = lookup("#totalBalance").queryAs(Label).getText()
+            def addressesTableSize = addressesTable.items.size()
+            def transactionsTableSize = transactionsTable.items.size()
+            def transactionsTableBalance = transactionsTable.items[0].balance
+
+            loadWallet(walletName)
+            TableView<TransactionRow> transactionsTableAfterLoad = lookup("#transactionsTable").queryAs(TableView)
+
+            clickOn("#addressesTab")
+            TableView<AddressRow> addressesTableAfterLoad = lookup("#addressesTable").queryAs(TableView)
+
+            clickOn("Receive")
+            String lastReceivingAddressAfterLoad = lookup("#receivingAddress").queryAs(TextField).text
+
+            String labelTextAfterLoad = lookup("#totalBalance").queryAs(Label).getText()
         then:
-            addressesTable.items.size() == 2
+            lastReceivingAddress == lastReceivingAddressAfterLoad
+            addressesTableSize == 2
+            addressesTableAfterLoad.items.size() == addressesTableSize
             addressesTable.items.any {
                 it.balance == changeAmount
             }
             addressesTable.items.any {
                 it.balance == BitcoinFormatter.format(new BigDecimal(amountToSend))
             }
-            transactionsTable.items.size() == previousUtxosNumber + 1
-            transactionsTable.items[0].balance == "-".concat(totalSpent)
+            transactionsTableSize == previousUtxosNumber + 1
+            transactionsTableBalance == "-".concat(totalSpent)
+            transactionsTableAfterLoad.items.size() == transactionsTableSize
+            transactionsTableAfterLoad.items[0].balance == transactionsTableBalance
             amountToSendLabel == BitcoinFormatter.format(new BigDecimal(amountToSend))
             totalFeeLabel == totalFee
             totalLabel == totalSpent
             feeRateLabel == feeRate
             addressToSendLabel == lastUsedAddress
             labelText == "Total Balance: $totalBalance BTC (confirmed: ${BitcoinFormatter.format(funds)}, unconfirmed: ${"-".concat(totalSpent)})"
+            labelTextAfterLoad == labelText
         where:
             previousUtxosNumber | amountToSend | totalFee         | totalSpent    | changeAmount | totalBalance | feeRate
             1                   | "0.5"        | "0.00002679"     | "0.00002679"  | "0.49997321" | "0.99997321" | "0.0002 BTC/kvByte"
@@ -207,7 +251,7 @@ class SendBitcoinAdditionalTest extends GuiTest {
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach {
                 String address = lookup("#receivingAddress").queryAs(TextField).text

@@ -41,7 +41,7 @@ public class TransactionRow {
     }
 
     public static TransactionRow from(NodeTransaction nodeTransaction) {
-        return new TransactionRow(nodeTransaction.txid(), BitcoinFormatter.format(nodeTransaction.amount()), nodeTransaction.confirmations(), nodeTransaction.time().toString());
+        return new TransactionRow(nodeTransaction.txid(), BitcoinFormatter.format(nodeTransaction.totalSpent()), nodeTransaction.confirmations(), nodeTransaction.time().toString());
     }
 
     public String getId() {

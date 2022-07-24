@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<fx:root type="javafx.scene.control.Label" xmlns:fx="http://javafx.com/fxml" >
+    <HBox.margin>
+        <Insets left="10.0" />
+    </HBox.margin>
+</fx:root>

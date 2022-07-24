@@ -23,7 +23,7 @@ public class BlockReceivedListener implements ApplicationListener<BlockReceivedE
     public void onApplicationEvent(BlockReceivedEvent event) {
         List<String> addresses = currentWallet.getAddressesAsStrings();
         if (!addresses.isEmpty()) {
-            updateUTXOsService.update(addresses, currentWallet.getName());
+            updateUTXOsService.update(addresses, currentWallet.getFirstAddress());
         }
     }
 }

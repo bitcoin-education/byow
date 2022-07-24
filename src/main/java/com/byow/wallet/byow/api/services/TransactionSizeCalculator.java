@@ -1,5 +1,9 @@
 package com.byow.wallet.byow.api.services;
 
+import com.byow.wallet.byow.domains.node.ErrorMessages;
+import com.byow.wallet.byow.gui.exceptions.CreateTransactionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -9,6 +13,8 @@ import java.util.List;
 
 @Service
 public class TransactionSizeCalculator {
+    private final static Logger logger = LoggerFactory.getLogger(TransactionSizeCalculator.class);
+
     // OVERHEAD
     private static final double N_VERSION = 4;
     private static final double INPUT_COUNT = 1; // for up to 252 inputs
@@ -65,7 +71,12 @@ public class TransactionSizeCalculator {
     }
 
     private double scriptPubkeySize(String address) {
-        return scriptConfigFinder.findByAddress(address).scriptPubkeySize();
+        try {
+            return scriptConfigFinder.findByAddress(address).scriptPubkeySize();
+        } catch (Exception e) {
+            logger.error("Error building output", e);
+            throw new CreateTransactionException(ErrorMessages.INVALID_ADDRESS);
+        }
     }
 
     private double inputSize(String address) {

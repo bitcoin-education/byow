@@ -3,12 +3,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import javafx.geometry.Insets?>
 <?import com.byow.wallet.byow.gui.controllers.ReceiveTabController?>
 <?import com.byow.wallet.byow.gui.controllers.AddressesTableController?>
 <?import com.byow.wallet.byow.gui.controllers.TransactionsTableController?>
 <?import com.byow.wallet.byow.gui.controllers.TotalBalanceController?>
 <?import com.byow.wallet.byow.gui.controllers.SendTabController?>
+<?import com.byow.wallet.byow.gui.controllers.ProgressBarController?>
+<?import com.byow.wallet.byow.gui.controllers.FooterController?>
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="770" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.byow.wallet.byow.gui.controllers.MainWindowController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
@@ -17,6 +18,16 @@
             <items>
               <MenuItem mnemonicParsing="false" onAction="#openCreateWalletDialog" text="Wallet" />
             </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Load">
+              <items>
+                  <Menu fx:id="loadMenuFxml" mnemonicParsing="false" text="Wallet" />
+              </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Import">
+              <items>
+                  <MenuItem fx:id="importMenuFxml" onAction="#openImportWalletDialog" mnemonicParsing="false" text="Wallet" />
+              </items>
           </Menu>
         </menus>
       </MenuBar>
@@ -48,4 +59,12 @@
          </children>
       </VBox>
    </center>
+   <bottom>
+       <HBox prefHeight="19.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+           <children>
+               <ProgressBarController/>
+               <FooterController/>
+           </children>
+       </HBox>
+   </bottom>
 </BorderPane>

@@ -6,7 +6,9 @@ import io.github.bitcoineducation.bitcoinjava.Script;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.byow.wallet.byow.domains.AddressType.*;
@@ -26,13 +28,14 @@ public class AddressConfiguration {
     private int initialNumberOfGeneratedAddresses;
 
     @Bean({"SEGWIT", "SEGWIT_CHANGE"})
+    @Order(0)
     public AddressConfig segwitConfig() {
         return new AddressConfig(
             SEGWIT,
-            Map.of(
-                SEGWIT, "84'/0'/0'/0",
-                SEGWIT_CHANGE, "84'/0'/0'/1"
-            ),
+            new LinkedHashMap<>(){{
+                put(SEGWIT, "84'/0'/0'/0");
+                put(SEGWIT_CHANGE, "84'/0'/0'/1");
+            }},
             new SegwitAddressGenerator(),
             Map.of(
                 MAINNET, MAINNET_P2WPKH_ADDRESS_PREFIX,
@@ -51,13 +54,14 @@ public class AddressConfiguration {
     }
 
     @Bean({"NESTED_SEGWIT", "NESTED_SEGWIT_CHANGE"})
+    @Order(1)
     public AddressConfig nestedSegwitConfig() {
         return new AddressConfig(
             NESTED_SEGWIT,
-            Map.of(
-                NESTED_SEGWIT, "49'/0'/0'/0",
-                NESTED_SEGWIT_CHANGE, "49'/0'/0'/1"
-            ),
+            new LinkedHashMap<>(){{
+                put(NESTED_SEGWIT, "49'/0'/0'/0");
+                put(NESTED_SEGWIT_CHANGE, "49'/0'/0'/1");
+            }},
             new NestedSegwitAddressGenerator(),
             Map.of(
                 MAINNET, MAINNET_P2SH_ADDRESS_PREFIX,

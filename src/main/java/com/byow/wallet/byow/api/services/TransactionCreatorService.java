@@ -1,8 +1,12 @@
 package com.byow.wallet.byow.api.services;
 
 import com.byow.wallet.byow.domains.Utxo;
+import com.byow.wallet.byow.domains.node.ErrorMessages;
+import com.byow.wallet.byow.gui.exceptions.CreateTransactionException;
 import com.byow.wallet.byow.utils.Satoshi;
 import io.github.bitcoineducation.bitcoinjava.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,6 +19,8 @@ import static com.byow.wallet.byow.utils.Fee.totalCalculatedFee;
 
 @Service
 public class TransactionCreatorService {
+
+    private final static Logger logger = LoggerFactory.getLogger(TransactionCreatorService.class);
 
     private final DustCalculator dustCalculator;
 
@@ -65,10 +71,15 @@ public class TransactionCreatorService {
     }
 
     private TransactionOutput buildOutput(String address, BigInteger amount) {
-        Script script = scriptConfigFinder.findByAddress(address)
-            .scriptPubkeyBuilder()
-            .build(address);
-        return new TransactionOutput(amount, script);
+        try {
+            Script script = scriptConfigFinder.findByAddress(address)
+                .scriptPubkeyBuilder()
+                .build(address);
+            return new TransactionOutput(amount, script);
+        } catch (Exception e) {
+            logger.error("Error building output", e);
+            throw new CreateTransactionException(ErrorMessages.INVALID_ADDRESS);
+        }
     }
 
     private ArrayList<TransactionInput> buildInputs(List<Utxo> utxos) {

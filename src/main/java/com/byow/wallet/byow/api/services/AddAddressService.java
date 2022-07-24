@@ -14,11 +14,11 @@ public class AddAddressService {
         this.addressSequentialGenerator = addressSequentialGenerator;
     }
 
-    public void addAddresses(List<ExtendedPubkey> extendedPubkeys, long fromIndex) {
-        extendedPubkeys.forEach(extendedPubkey -> addAddresses(extendedPubkey, fromIndex));
+    public void addAddresses(List<ExtendedPubkey> extendedPubkeys, long fromIndex, int numberOfGeneratedAddresses) {
+        extendedPubkeys.forEach(extendedPubkey -> addAddresses(extendedPubkey, fromIndex, numberOfGeneratedAddresses));
     }
 
-    private void addAddresses(ExtendedPubkey extendedPubkey, long fromIndex) {
-        extendedPubkey.addAddresses(new ArrayList<>(addressSequentialGenerator.generate(extendedPubkey.getKey(), extendedPubkey.getType(), fromIndex)));
+    private void addAddresses(ExtendedPubkey extendedPubkey, long fromIndex, int numberOfGeneratedAddresses) {
+        extendedPubkey.addAddresses(new ArrayList<>(addressSequentialGenerator.generate(extendedPubkey.getKey(), extendedPubkey.getType(), fromIndex, numberOfGeneratedAddresses)));
     }
 }

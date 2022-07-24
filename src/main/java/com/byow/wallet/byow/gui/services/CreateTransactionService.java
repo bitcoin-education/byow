@@ -59,7 +59,7 @@ public class CreateTransactionService {
             throw new CreateTransactionException(ErrorMessages.WALLET_NOT_LOADED);
         }
 
-        List<Utxo> utxos = nodeListUnspentClient.listUnspent(addresses, currentWallet.getName());
+        List<Utxo> utxos = nodeListUnspentClient.listUnspent(addresses, currentWallet.getFirstAddress());
 
         String changeAddress = findChangeAddress(address);
         List<Utxo> selectedUtxos = coinSelector.select(utxos, Satoshi.toSatoshis(amount), feeRate, address, changeAddress);

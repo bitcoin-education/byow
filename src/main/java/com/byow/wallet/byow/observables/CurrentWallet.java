@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class CurrentWallet {
@@ -30,6 +31,8 @@ public class CurrentWallet {
 
     private String mnemonicSeed;
 
+    private String firstAddress;
+
     public void setName(String name) {
         this.name.set(name);
     }
@@ -44,6 +47,14 @@ public class CurrentWallet {
 
     public List<String> getAddressesAsStrings() {
         return addresses.getAddressesAsStrings();
+    }
+
+    public String getFirstAddress() {
+        return firstAddress;
+    }
+
+    public void setFirstAddress(String firstAddress) {
+        this.firstAddress = firstAddress;
     }
 
     public void setAddresses(List<ExtendedPubkey> extendedPubkeys) {
@@ -72,6 +83,10 @@ public class CurrentWallet {
 
     public ObservableList<AddressRow> getObservableAddressRows() {
         return addressRows.getObservableAddressRows();
+    }
+
+    public Set<AddressType> getAddressTypes() {
+        return addresses.getAddressTypes();
     }
 
     public AddressType getAddressType(String address) {
@@ -167,4 +182,5 @@ public class CurrentWallet {
     public ObservableMap<AddressType, String> getObservableReceivingAddresses() {
         return receivingAddresses;
     }
+
 }

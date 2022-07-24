@@ -1,15 +1,22 @@
 package com.byow.wallet.byow.gui
 
+import com.byow.wallet.byow.api.services.CreateWalletService
 import com.byow.wallet.byow.api.services.ExtendedPubkeyService
+import com.byow.wallet.byow.api.services.MnemonicSeedService
 import com.byow.wallet.byow.api.services.NestedSegwitAddressGenerator
 import com.byow.wallet.byow.api.services.SegwitAddressGenerator
 import com.byow.wallet.byow.api.services.node.NodeLoadOrCreateWalletService
 import com.byow.wallet.byow.api.services.node.client.NodeGenerateToAddressClient
 import com.byow.wallet.byow.api.services.node.client.NodeGetBalanceClient
 import com.byow.wallet.byow.api.services.node.client.NodeGetNewAddressClient
+import com.byow.wallet.byow.api.services.node.client.NodeListWalletsClient
 import com.byow.wallet.byow.api.services.node.client.NodeSendToAddressClient
+import com.byow.wallet.byow.database.repositories.WalletRepository
+import com.byow.wallet.byow.database.services.SaveWalletService
 import com.byow.wallet.byow.domains.AddressType
+import com.byow.wallet.byow.domains.Wallet
 import com.byow.wallet.byow.gui.events.GuiStartedEvent
+import com.byow.wallet.byow.observables.CurrentWallet
 import com.byow.wallet.byow.utils.BitcoinFormatter
 import io.github.bitcoineducation.bitcoinjava.AddressConstants
 import io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes
@@ -18,6 +25,7 @@ import io.github.bitcoineducation.bitcoinjava.ExtendedPubkey
 import io.github.bitcoineducation.bitcoinjava.MnemonicSeed
 import javafx.scene.control.DialogPane
 import javafx.scene.control.TableView
+import javafx.scene.control.TextField
 import javafx.stage.Stage
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,6 +48,12 @@ abstract class GuiTest extends ApplicationSpec {
     public static final String TESTWALLET = "testwallet"
 
     public static final int TIMEOUT = 10
+
+    @Autowired
+    protected CurrentWallet currentWallet
+
+    @Autowired
+    protected NodeListWalletsClient nodeListWalletsClient;
 
     @Autowired
     protected NodeSendToAddressClient nodeSendToAddressClient
@@ -68,6 +82,18 @@ abstract class GuiTest extends ApplicationSpec {
     @Autowired
     protected NestedSegwitAddressGenerator nestedSegwitAddressGenerator
 
+    @Autowired
+    protected WalletRepository walletRepository;
+
+    @Autowired
+    CreateWalletService createWalletService
+
+    @Autowired
+    MnemonicSeedService mnemonicSeedService
+
+    @Autowired
+    SaveWalletService saveWalletService;
+
     protected Stage stage
 
     @Override
@@ -83,6 +109,7 @@ abstract class GuiTest extends ApplicationSpec {
     @Override
     void start(Stage stage) throws Exception {
         Security.addProvider(new BouncyCastleProvider())
+        walletRepository.deleteAll()
         this.stage = stage
         this.context.publishEvent(new GuiStartedEvent(this, stage));
     }
@@ -92,11 +119,13 @@ abstract class GuiTest extends ApplicationSpec {
         createBalanceIfNecessary()
     }
 
-    protected void sendBitcoinAndWait(String address, double expectedTotalAmount = 1.0, int expectedTotalSize = 1, String lookupComponent="#addressesTable", double amount = 1.0) {
+    protected void sendBitcoinAndWait(String address, double expectedTotalAmount = 1.0, int expectedTotalSize = 1, String lookupComponent="#addressesTable", double amount = 1.0, String receivingAddressComponent="#receivingAddress") {
         nodeSendToAddressClient.sendToAddress(TESTWALLET, address, amount)
         waitFor(TIMEOUT, SECONDS, {
             TableView tableView = lookup(lookupComponent).queryAs(TableView)
-            return tableView?.items?.size() == expectedTotalSize && tableView?.items?[expectedTotalSize - 1]?.balance == BitcoinFormatter.format(expectedTotalAmount)
+            return tableView?.items?.size() == expectedTotalSize &&
+                tableView?.items?[expectedTotalSize - 1]?.balance == BitcoinFormatter.format(expectedTotalAmount) &&
+                lookup(receivingAddressComponent).queryAs(TextField).text != address
         })
     }
 
@@ -108,9 +137,9 @@ abstract class GuiTest extends ApplicationSpec {
         }
     }
 
-   protected boolean addressIsValid(String address, String mnemonicSeedString, Integer index) {
+   protected boolean addressIsValid(String address, String mnemonicSeedString, Integer index, String password = "") {
         MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString)
-        ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey("", ExtendedKeyPrefixes.MAINNET_PREFIX.getPrivatePrefix())
+        ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey(password, ExtendedKeyPrefixes.MAINNET_PREFIX.getPrivatePrefix())
         String extendedPubkeyString = extendedPubkeyService.create(masterKey, "84'/0'/0'/0/".concat(index.toString()), AddressType.SEGWIT, MAINNET_SEGWIT_PREFIX).getKey()
         ExtendedPubkey extendedPubkey = ExtendedPubkey.unserialize(extendedPubkeyString)
         String expectedAddress = segwitAddressGenerator.generate(extendedPubkey, AddressConstants.REGTEST_P2WPKH_ADDRESS_PREFIX)
@@ -133,6 +162,13 @@ abstract class GuiTest extends ApplicationSpec {
        })
    }
 
+   protected void waitLoadWallet() {
+       waitFor(60, SECONDS, {
+           sleep(1, SECONDS)
+           return currentWallet.firstAddress && nodeListWalletsClient.listLoaded().contains(currentWallet.firstAddress)
+       })
+   }
+
    protected void sendBitcoin(String nodeAddress, String amountToSend, boolean waitForDialog = true) {
        clickOn("#amountToSend")
        write(amountToSend)
@@ -142,6 +178,35 @@ abstract class GuiTest extends ApplicationSpec {
        if (waitForDialog) {
            this.waitForDialog()
        }
+   }
+
+   protected void loadWallet(String walletName, String password = "") {
+       clickOn("Load")
+       moveTo("Wallet")
+       clickOn(walletName)
+       clickOn("#loadWalletPassword")
+       write(password)
+       clickOn("OK")
+       sleep(TIMEOUT, SECONDS)
+   }
+
+   protected void importWallet(String walletName, String mnemonicSeed, String password = "") {
+       clickOn("Import")
+       clickOn("Wallet")
+       clickOn("#walletName")
+       write(walletName)
+       clickOn("#walletPassword")
+       write(password)
+       clickOn("#mnemonicSeed")
+       write(mnemonicSeed)
+       clickOn("OK")
+       sleep(TIMEOUT, SECONDS)
+   }
+
+   protected Wallet createWallet(String walletName, String password, String mnemonicSeed) {
+       Wallet wallet = createWalletService.create(walletName, password, mnemonicSeed, new Date(), 3)
+       saveWalletService.saveWallet(wallet)
+       return wallet
    }
 
 }

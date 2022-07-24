@@ -2,6 +2,9 @@ package com.byow.wallet.byow.gui
 
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
+import org.testfx.service.query.NodeQuery
+
+import static java.util.concurrent.TimeUnit.SECONDS
 
 class CreateWalletTest extends GuiTest {
     def "should create wallet"() {
@@ -19,6 +22,28 @@ class CreateWalletTest extends GuiTest {
             mnemonicSeed
             stage.title == "BYOW Wallet - " + "My Test Wallet"
             address
+    }
+
+    def "should not create wallet with repeated name"() {
+        given:
+            def walletName = "My Test Wallet 28"
+            def password = ""
+            def mnemonicSeed = mnemonicSeedService.create()
+            createWallet(walletName, password, mnemonicSeed)
+        when:
+            clickOn("New")
+            clickOn("Wallet")
+            clickOn("#name")
+            write(walletName)
+            clickOn("Create")
+            clickOn("OK")
+            sleep(TIMEOUT, SECONDS)
+
+            String errorMessage = "Could not create wallet: the wallet name already exists."
+            NodeQuery nodeQuery = lookup(errorMessage)
+            clickOn("OK")
+        then:
+            nodeQuery.queryLabeled().getText() == errorMessage
     }
 
     def "should cancel wallet creation"() {
