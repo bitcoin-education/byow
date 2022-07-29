@@ -5,6 +5,7 @@ import com.byow.wallet.byow.domains.Wallet;
 import com.byow.wallet.byow.gui.events.CreatedWalletEvent;
 import com.byow.wallet.byow.gui.events.ImportedWalletEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,11 +17,13 @@ public class SaveWalletListener {
     }
 
     @EventListener
+    @Order(0)
     public void onCreatedWalletEvent(CreatedWalletEvent event) {
         saveWallet(event.getWallet());
     }
 
     @EventListener
+    @Order(0)
     public void onImportedWalletEvent(ImportedWalletEvent event) {
         saveWallet(event.getWallet());
     }

@@ -6,6 +6,7 @@ import com.byow.wallet.byow.gui.events.LoadedWalletEvent;
 import com.byow.wallet.byow.gui.services.UpdateCurrentWalletService;
 import com.byow.wallet.byow.gui.services.UpdateUTXOsService;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,11 +21,13 @@ public class LoadedWalletListener {
     }
 
     @EventListener
+    @Order(1)
     public void onLoadedWalletEvent(LoadedWalletEvent event) {
         loadWallet(event.getWallet());
     }
 
     @EventListener
+    @Order(2)
     public void onImportedWalletEvent(ImportedWalletEvent event) {
         loadWallet(event.getWallet());
     }
