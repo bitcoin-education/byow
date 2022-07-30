@@ -18,6 +18,11 @@
               <MenuItem mnemonicParsing="false" onAction="#openCreateWalletDialog" text="Wallet" />
             </items>
           </Menu>
+          <Menu mnemonicParsing="false" text="Load">
+              <items>
+                  <Menu fx:id="loadMenuFxml" mnemonicParsing="false" text="Wallet" />
+              </items>
+          </Menu>
         </menus>
       </MenuBar>
    </top>
