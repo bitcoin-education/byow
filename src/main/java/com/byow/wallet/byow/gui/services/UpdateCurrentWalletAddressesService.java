@@ -56,7 +56,7 @@ public class UpdateCurrentWalletAddressesService {
         long nextAddressIndex = currentWallet.findNextAddressIndex(addressType);
         if (mustImportAddresses(nextAddressIndex, addressType)) {
             List<ExtendedPubkey> extendedPubkeys = currentWallet.getExtendedPubkeys();
-            addAddressService.addAddresses(extendedPubkeys, nextAddressIndex, numberOfGeneratedAddresses);
+            addAddressService.addAddresses(extendedPubkeys, nextAddressIndex, initialNumberOfGeneratedAddresses);
             currentWallet.setAddresses(extendedPubkeys);
             List<String> addressStrings = currentWallet.getAddressesAsStrings(nextAddressIndex, nextAddressIndex + initialNumberOfGeneratedAddresses);
             nodeMultiImportAddressClient.importAddresses(currentWallet.getName(), addressStrings, new Date());

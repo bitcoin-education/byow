@@ -10,6 +10,7 @@ import com.byow.wallet.byow.api.services.node.client.NodeGenerateToAddressClient
 import com.byow.wallet.byow.api.services.node.client.NodeGetBalanceClient
 import com.byow.wallet.byow.api.services.node.client.NodeGetNewAddressClient
 import com.byow.wallet.byow.api.services.node.client.NodeSendToAddressClient
+import com.byow.wallet.byow.database.repositories.WalletRepository
 import com.byow.wallet.byow.database.services.SaveWalletService
 import com.byow.wallet.byow.domains.AddressType
 import com.byow.wallet.byow.domains.Wallet
@@ -81,6 +82,9 @@ abstract class GuiTest extends ApplicationSpec {
     @Autowired
     SaveWalletService saveWalletService
 
+    @Autowired
+    WalletRepository walletRepository
+
     protected Stage stage
 
     @Override
@@ -96,6 +100,7 @@ abstract class GuiTest extends ApplicationSpec {
     @Override
     void start(Stage stage) throws Exception {
         Security.addProvider(new BouncyCastleProvider())
+        walletRepository.deleteAll()
         this.stage = stage
         this.context.publishEvent(new GuiStartedEvent(this, stage));
     }

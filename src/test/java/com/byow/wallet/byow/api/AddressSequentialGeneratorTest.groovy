@@ -30,12 +30,12 @@ class AddressSequentialGeneratorTest extends Specification {
 
         addressPrefixFactory = new AddressPrefixFactory("mainnet", addressConfigFinder)
         addressGeneratorFactory = new AddressGeneratorFactory(addressConfigFinder)
-        addressSequentialGenerator = new AddressSequentialGenerator(20, addressGeneratorFactory, addressPrefixFactory)
+        addressSequentialGenerator = new AddressSequentialGenerator(addressGeneratorFactory, addressPrefixFactory)
     }
 
     def "should generate 20 addresses"() {
         when:
-            List<Address> addresses = addressSequentialGenerator.generate("zpub6tmUiGj1DxgtbyrfYZUgfrVLuU2gyFPZMkSof4MdWNJaKuas4R1DB9D2arQ52ThKRxfpMbHQeYig45Mt8eNhd5zkFSx81CQyyDYUKRE3y7Y", "SEGWIT", 0, numberOfGeneratedAddresses)
+            List<Address> addresses = addressSequentialGenerator.generate("zpub6tmUiGj1DxgtbyrfYZUgfrVLuU2gyFPZMkSof4MdWNJaKuas4R1DB9D2arQ52ThKRxfpMbHQeYig45Mt8eNhd5zkFSx81CQyyDYUKRE3y7Y", "SEGWIT", 0, 20)
         then:
             addresses.size() == 20
     }
