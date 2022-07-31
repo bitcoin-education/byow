@@ -1,6 +1,8 @@
 package com.byow.wallet.byow.gui
 
+import com.byow.wallet.byow.api.services.CreateWalletService
 import com.byow.wallet.byow.api.services.ExtendedPubkeyService
+import com.byow.wallet.byow.api.services.MnemonicSeedService
 import com.byow.wallet.byow.api.services.NestedSegwitAddressGenerator
 import com.byow.wallet.byow.api.services.SegwitAddressGenerator
 import com.byow.wallet.byow.api.services.node.NodeLoadOrCreateWalletService
@@ -8,7 +10,10 @@ import com.byow.wallet.byow.api.services.node.client.NodeGenerateToAddressClient
 import com.byow.wallet.byow.api.services.node.client.NodeGetBalanceClient
 import com.byow.wallet.byow.api.services.node.client.NodeGetNewAddressClient
 import com.byow.wallet.byow.api.services.node.client.NodeSendToAddressClient
+import com.byow.wallet.byow.database.repositories.WalletRepository
+import com.byow.wallet.byow.database.services.SaveWalletService
 import com.byow.wallet.byow.domains.AddressType
+import com.byow.wallet.byow.domains.Wallet
 import com.byow.wallet.byow.gui.events.GuiStartedEvent
 import com.byow.wallet.byow.utils.BitcoinFormatter
 import io.github.bitcoineducation.bitcoinjava.AddressConstants
@@ -68,6 +73,18 @@ abstract class GuiTest extends ApplicationSpec {
     @Autowired
     protected NestedSegwitAddressGenerator nestedSegwitAddressGenerator
 
+    @Autowired
+    protected MnemonicSeedService mnemonicSeedService
+
+    @Autowired
+    protected CreateWalletService createWalletService
+
+    @Autowired
+    protected SaveWalletService saveWalletService
+
+    @Autowired
+    protected WalletRepository walletRepository
+
     protected Stage stage
 
     @Override
@@ -83,6 +100,7 @@ abstract class GuiTest extends ApplicationSpec {
     @Override
     void start(Stage stage) throws Exception {
         Security.addProvider(new BouncyCastleProvider())
+        walletRepository.deleteAll()
         this.stage = stage
         this.context.publishEvent(new GuiStartedEvent(this, stage));
     }
@@ -144,4 +162,19 @@ abstract class GuiTest extends ApplicationSpec {
        }
    }
 
+   protected Wallet createWallet(String walletName, String password, String mnemonicSeed) {
+       Wallet wallet = createWalletService.create(walletName, password, mnemonicSeed, new Date(), 3)
+       saveWalletService.saveWallet(wallet)
+       return wallet
+   }
+
+   protected void loadWallet(String walletName, String password = "") {
+       clickOn("Load")
+       moveTo("Wallet")
+       clickOn(walletName)
+       clickOn("#loadWalletPassword")
+       write(password)
+       clickOn("OK")
+       sleep(TIMEOUT, SECONDS)
+   }
 }

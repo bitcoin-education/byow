@@ -24,7 +24,7 @@ public class CreateWalletService {
         this.addAddressService = addAddressService;
     }
 
-    public Wallet create(String name, String password, String mnemonicSeedString) {
+    public Wallet create(String name, String password, String mnemonicSeedString, Date createdAt, int numberOfGeneratedAddresses) {
         MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString);
         ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey(password, MAINNET_PREFIX.getPrivatePrefix());
         List<ExtendedPubkey> extendedPubkeys = addressConfigs.stream()
@@ -34,8 +34,8 @@ public class CreateWalletService {
                         .stream()
                         .map(entry -> extendedPubkeyService.create(masterKey, entry.getValue(), entry.getKey(), addressConfig.extendedKeyPrefix()))
                 ).toList();
-        addAddressService.addAddresses(extendedPubkeys, 0);
-        return new Wallet(name, extendedPubkeys, new Date(), mnemonicSeedString);
+        addAddressService.addAddresses(extendedPubkeys, 0, numberOfGeneratedAddresses);
+        return new Wallet(name, extendedPubkeys, createdAt, mnemonicSeedString);
     }
 
 }

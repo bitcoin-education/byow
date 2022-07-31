@@ -13,10 +13,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
+import java.util.Date;
 
 @Component
 public class CreateWalletDialogController {
@@ -46,10 +48,18 @@ public class CreateWalletDialogController {
 
     private final ConfigurableApplicationContext context;
 
-    public CreateWalletDialogController(MnemonicSeedService mnemonicSeedService, CreateWalletService createWalletService, ConfigurableApplicationContext context) {
+    private final int initialNumberOfGeneratedAddresses;
+
+    public CreateWalletDialogController(
+        MnemonicSeedService mnemonicSeedService,
+        CreateWalletService createWalletService,
+        ConfigurableApplicationContext context,
+        @Qualifier("initialNumberOfGeneratedAddresses") int initialNumberOfGeneratedAddresses
+    ) {
         this.mnemonicSeedService = mnemonicSeedService;
         this.createWalletService = createWalletService;
         this.context = context;
+        this.initialNumberOfGeneratedAddresses = initialNumberOfGeneratedAddresses;
     }
 
     public void createMnemonicSeed() throws FileNotFoundException {
@@ -77,7 +87,7 @@ public class CreateWalletDialogController {
     }
 
     private void createWallet() {
-        Wallet wallet = createWalletService.create(this.name.getText(), this.password.getText(), this.mnemonicSeed.getText());
+        Wallet wallet = createWalletService.create(this.name.getText(), this.password.getText(), this.mnemonicSeed.getText(), new Date(), initialNumberOfGeneratedAddresses);
         this.context.publishEvent(new CreatedWalletEvent(this, wallet));
         dialogPane.getScene().getWindow().hide();
     }
