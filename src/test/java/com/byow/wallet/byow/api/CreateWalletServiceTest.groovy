@@ -28,7 +28,7 @@ class CreateWalletServiceTest extends Specification {
         def addressPrefixFactory = new AddressPrefixFactory("MAINNET", addressConfigFinder)
         def extendedPubkeyService = new ExtendedPubkeyService()
         def addressGeneratorFactory = new AddressGeneratorFactory(addressConfigFinder)
-        def addressSequentialGenerator = new AddressSequentialGenerator(20, addressGeneratorFactory, addressPrefixFactory)
+        def addressSequentialGenerator = new AddressSequentialGenerator(addressGeneratorFactory, addressPrefixFactory)
 
         AddAddressService addAddressService = new AddAddressService(addressSequentialGenerator)
         createWalletService = new CreateWalletService(addressConfigs, extendedPubkeyService, addAddressService)
@@ -40,7 +40,7 @@ class CreateWalletServiceTest extends Specification {
             String password = ""
             String mnemonicSeed = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
         when:
-            Wallet wallet = createWalletService.create(name, password, mnemonicSeed)
+            Wallet wallet = createWalletService.create(name, password, mnemonicSeed, new Date(), 20)
         then:
             wallet.name() == name
             wallet.extendedPubkeys().size() == 2

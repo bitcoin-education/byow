@@ -30,6 +30,8 @@ public class MainWindowController {
 
     private final Resource createWalletDialog;
 
+    private final Resource loadWalletDialog;
+
     private final ApplicationContext context;
 
     private final CurrentWallet currentWallet;
@@ -38,11 +40,13 @@ public class MainWindowController {
 
     public MainWindowController(
         @Value("fxml/create_wallet_dialog.fxml") Resource createWalletDialog,
+        @Value("fxml/load_wallet_dialog.fxml") Resource loadWalletDialog,
         ApplicationContext context,
         CurrentWallet currentWallet,
         LoadMenu loadMenu
     ) {
         this.createWalletDialog = createWalletDialog;
+        this.loadWalletDialog = loadWalletDialog;
         this.context = context;
         this.currentWallet = currentWallet;
         this.loadMenu = loadMenu;
@@ -57,9 +61,27 @@ public class MainWindowController {
             WalletEntity wallet = change.getElementAdded();
             if (!menuContainsWallet(wallet)) {
                 MenuItem menuItem = new MenuItem(wallet.getName());
+                menuItem.setOnAction(click -> openLoadWalletDialog(wallet));
                 loadMenuFxml.getItems().addAll(menuItem);
             }
         });
+    }
+
+    private void openLoadWalletDialog(WalletEntity wallet) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(this.borderPane.getScene().getWindow());
+        dialog.setTitle("Load Wallet");
+        dialog.setOnShown(event -> dialog.getDialogPane().getScene().getWindow().setOnCloseRequest(event1 -> dialog.hide()));
+
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(loadWalletDialog.getURL(), null, null, context::getBean);
+            dialog.getDialogPane().setContent(fxmlLoader.load());
+            LoadWalletDialogController controller = fxmlLoader.getController();
+            controller.setWallet(wallet);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        dialog.show();
     }
 
     private boolean menuContainsWallet(WalletEntity wallet) {
