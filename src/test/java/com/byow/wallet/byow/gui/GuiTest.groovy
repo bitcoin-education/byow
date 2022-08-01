@@ -9,12 +9,14 @@ import com.byow.wallet.byow.api.services.node.NodeLoadOrCreateWalletService
 import com.byow.wallet.byow.api.services.node.client.NodeGenerateToAddressClient
 import com.byow.wallet.byow.api.services.node.client.NodeGetBalanceClient
 import com.byow.wallet.byow.api.services.node.client.NodeGetNewAddressClient
+import com.byow.wallet.byow.api.services.node.client.NodeListWalletsClient
 import com.byow.wallet.byow.api.services.node.client.NodeSendToAddressClient
 import com.byow.wallet.byow.database.repositories.WalletRepository
 import com.byow.wallet.byow.database.services.SaveWalletService
 import com.byow.wallet.byow.domains.AddressType
 import com.byow.wallet.byow.domains.Wallet
 import com.byow.wallet.byow.gui.events.GuiStartedEvent
+import com.byow.wallet.byow.observables.CurrentWallet
 import com.byow.wallet.byow.utils.BitcoinFormatter
 import io.github.bitcoineducation.bitcoinjava.AddressConstants
 import io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes
@@ -85,6 +87,12 @@ abstract class GuiTest extends ApplicationSpec {
     @Autowired
     protected WalletRepository walletRepository
 
+    @Autowired
+    protected CurrentWallet currentWallet
+
+    @Autowired
+    protected NodeListWalletsClient nodeListWalletsClient
+
     protected Stage stage
 
     @Override
@@ -151,7 +159,15 @@ abstract class GuiTest extends ApplicationSpec {
        })
    }
 
-   protected void sendBitcoin(String nodeAddress, String amountToSend, boolean waitForDialog = true) {
+   protected void waitLoadWallet() {
+       waitFor(60, SECONDS, {
+           sleep(1, SECONDS)
+           return currentWallet.firstAddress && nodeListWalletsClient.listLoaded().contains(currentWallet.firstAddress)
+       })
+   }
+
+
+    protected void sendBitcoin(String nodeAddress, String amountToSend, boolean waitForDialog = true) {
        clickOn("#amountToSend")
        write(amountToSend)
        clickOn("#addressToSend")
