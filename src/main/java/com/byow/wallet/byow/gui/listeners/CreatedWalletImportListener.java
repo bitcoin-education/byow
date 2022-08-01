@@ -5,6 +5,7 @@ import com.byow.wallet.byow.gui.events.CreatedWalletEvent;
 import com.byow.wallet.byow.gui.events.LoadedWalletEvent;
 import com.byow.wallet.byow.gui.services.ImportWalletService;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Future;
@@ -25,6 +26,7 @@ public class CreatedWalletImportListener {
     }
 
     @EventListener
+    @Order(0)
     public void onLoadedWalletEvent(LoadedWalletEvent event) {
         importWallet(event.getWallet());
     }

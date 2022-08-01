@@ -126,9 +126,9 @@ abstract class GuiTest extends ApplicationSpec {
         }
     }
 
-   protected boolean addressIsValid(String address, String mnemonicSeedString, Integer index) {
+   protected boolean addressIsValid(String address, String mnemonicSeedString, Integer index, String password = "") {
         MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString)
-        ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey("", ExtendedKeyPrefixes.MAINNET_PREFIX.getPrivatePrefix())
+        ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey(password, ExtendedKeyPrefixes.MAINNET_PREFIX.getPrivatePrefix())
         String extendedPubkeyString = extendedPubkeyService.create(masterKey, "84'/0'/0'/0/".concat(index.toString()), AddressType.SEGWIT, MAINNET_SEGWIT_PREFIX).getKey()
         ExtendedPubkey extendedPubkey = ExtendedPubkey.unserialize(extendedPubkeyString)
         String expectedAddress = segwitAddressGenerator.generate(extendedPubkey, AddressConstants.REGTEST_P2WPKH_ADDRESS_PREFIX)

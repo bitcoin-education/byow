@@ -30,6 +30,8 @@ public class CurrentWallet {
 
     private String mnemonicSeed;
 
+    private String firstAddress;
+
     public void setName(String name) {
         this.name.set(name);
     }
@@ -166,5 +168,13 @@ public class CurrentWallet {
 
     public ObservableMap<AddressType, String> getObservableReceivingAddresses() {
         return receivingAddresses;
+    }
+
+    public void setFirstAddress(String firstAddress) {
+        this.firstAddress = firstAddress;
+    }
+
+    public String getFirstAddress() {
+        return firstAddress;
     }
 }
