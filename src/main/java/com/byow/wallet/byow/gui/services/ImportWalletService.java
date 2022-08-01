@@ -45,7 +45,6 @@ public class ImportWalletService {
     private boolean addressesImported(Wallet wallet) {
         Set<String> importedAddresses = nodeReceivedByAddressClient.listAddresses(wallet.getFirstAddress(), 0, true, true)
             .stream()
-            .filter(nodeAddress -> nodeAddress.address().equals(wallet.getAddresses().get(0)))
             .map(NodeAddress::address)
             .collect(Collectors.toSet());
         Set<String> walletAddresses = new HashSet<>(wallet.getAddresses());
