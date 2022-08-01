@@ -1,17 +1,11 @@
 package com.byow.wallet.byow.gui.services;
 
-import com.byow.wallet.byow.api.services.AddAddressService;
-import com.byow.wallet.byow.api.services.node.client.NodeMultiImportAddressClient;
-import com.byow.wallet.byow.domains.AddressType;
-import com.byow.wallet.byow.domains.ExtendedPubkey;
 import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.observables.CurrentWallet;
 import javafx.application.Platform;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,22 +16,10 @@ public class UpdateCurrentWalletAddressesService {
 
     private final CurrentWallet currentWallet;
 
-    private final AddAddressService addAddressService;
-
-    private final int initialNumberOfGeneratedAddresses;
-
-    private final NodeMultiImportAddressClient nodeMultiImportAddressClient;
-
     public UpdateCurrentWalletAddressesService(
-        CurrentWallet currentWallet,
-        AddAddressService addAddressService,
-        @Qualifier("initialNumberOfGeneratedAddresses") int initialNumberOfGeneratedAddresses,
-        NodeMultiImportAddressClient nodeMultiImportAddressClient
+        CurrentWallet currentWallet
     ) {
         this.currentWallet = currentWallet;
-        this.addAddressService = addAddressService;
-        this.initialNumberOfGeneratedAddresses = initialNumberOfGeneratedAddresses;
-        this.nodeMultiImportAddressClient = nodeMultiImportAddressClient;
     }
 
     public void update(List<Utxo> utxos) {
@@ -45,31 +27,8 @@ public class UpdateCurrentWalletAddressesService {
         groupedUtxos.forEach((address, utxoList) -> {
             setBalance(address, utxoList);
             setConfirmations(address, utxoList);
-            markAsUsed(address);
             Platform.runLater(() -> currentWallet.setAddressRow(address));
-            updateReceivingAddress(address);
         });
-    }
-
-    private void updateReceivingAddress(String address) {
-        AddressType addressType = currentWallet.getAddressType(address);
-        long nextAddressIndex = currentWallet.findNextAddressIndex(addressType);
-        if (mustImportAddresses(nextAddressIndex, addressType)) {
-            List<ExtendedPubkey> extendedPubkeys = currentWallet.getExtendedPubkeys();
-            addAddressService.addAddresses(extendedPubkeys, nextAddressIndex, initialNumberOfGeneratedAddresses);
-            currentWallet.setAddresses(extendedPubkeys);
-            List<String> addressStrings = currentWallet.getAddressesAsStrings(nextAddressIndex, nextAddressIndex + initialNumberOfGeneratedAddresses);
-            nodeMultiImportAddressClient.importAddresses(currentWallet.getFirstAddress(), addressStrings, new Date());
-        }
-        Platform.runLater(() -> currentWallet.setReceivingAddress(nextAddressIndex, addressType));
-    }
-
-    private boolean mustImportAddresses(long nextAddressIndex, AddressType addressType) {
-        return nextAddressIndex == currentWallet.getAddressesCount(addressType);
-    }
-
-    private void markAsUsed(String address) {
-        currentWallet.markAddressAsUsed(address);
     }
 
     private void setConfirmations(String address, List<Utxo> utxoList) {

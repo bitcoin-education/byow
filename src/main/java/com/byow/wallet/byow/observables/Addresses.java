@@ -94,4 +94,8 @@ public class Addresses {
             .map(Address::getAddress)
             .toList();
     }
+
+    public Set<AddressType> getAddressTypes() {
+        return addresses.keySet();
+    }
 }

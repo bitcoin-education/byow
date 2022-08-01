@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class CurrentWallet {
@@ -176,5 +177,9 @@ public class CurrentWallet {
 
     public String getFirstAddress() {
         return firstAddress;
+    }
+
+    public Set<AddressType> getAddressTypes() {
+        return addresses.getAddressTypes();
     }
 }
