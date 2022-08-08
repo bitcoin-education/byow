@@ -25,6 +25,6 @@ public class LoadedWalletListener {
 
     private void loadWallet(Wallet wallet) {
         updateCurrentWalletService.update(wallet);
-        updateUTXOsService.update(wallet.getAddresses(), wallet.name());
+        updateUTXOsService.update(wallet.getAddresses(), wallet.getFirstAddress());
     }
 }

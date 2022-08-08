@@ -9,8 +9,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
+
+import static java.util.Objects.isNull;
 
 public class TransactionRow {
     private final StringProperty id = new SimpleStringProperty();
@@ -40,8 +44,18 @@ public class TransactionRow {
         }
     }
 
-    public static TransactionRow from(NodeTransaction nodeTransaction) {
-        return new TransactionRow(nodeTransaction.txid(), BitcoinFormatter.format(nodeTransaction.amount()), nodeTransaction.confirmations(), nodeTransaction.time().toString());
+    public static TransactionRow from(List<NodeTransaction> nodeTransactions) {
+        BigDecimal txFee = nodeTransactions.stream()
+            .map(NodeTransaction::fee)
+            .filter(fee -> !isNull(fee))
+            .findFirst()
+            .orElse(BigDecimal.ZERO);
+        BigDecimal amount = nodeTransactions.stream()
+            .map(NodeTransaction::amount)
+            .reduce(BigDecimal::add)
+            .orElse(BigDecimal.ZERO)
+            .add(txFee);
+        return new TransactionRow(nodeTransactions.get(0).txid(), BitcoinFormatter.format(amount), nodeTransactions.get(0).confirmations(), nodeTransactions.get(0).time().toString());
     }
 
     public String getId() {

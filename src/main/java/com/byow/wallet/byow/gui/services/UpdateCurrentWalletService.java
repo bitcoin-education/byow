@@ -14,6 +14,7 @@ public class UpdateCurrentWalletService {
 
     public void update(Wallet wallet) {
         currentWallet.setName(wallet.name());
+        currentWallet.setFirstAddress(wallet.getFirstAddress());
         currentWallet.setExtendedPubkeys(wallet.extendedPubkeys());
         currentWallet.setAddresses(wallet.extendedPubkeys());
         currentWallet.clearAddressRows();

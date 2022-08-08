@@ -46,7 +46,7 @@ public class TransactionReceivedListener implements ApplicationListener<Transact
             .filter(address -> !address.isEmpty() && currentWallet.getAddressesAsStrings().contains(address))
             .toList();
         if (!addresses.isEmpty()) {
-            updateUTXOsService.update(addresses, currentWallet.getName());
+            updateUTXOsService.update(addresses, currentWallet.getFirstAddress());
         }
     }
 }
