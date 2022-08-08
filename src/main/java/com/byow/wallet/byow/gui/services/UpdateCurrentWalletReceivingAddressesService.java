@@ -2,6 +2,7 @@ package com.byow.wallet.byow.gui.services;
 
 import com.byow.wallet.byow.api.services.AddAddressService;
 import com.byow.wallet.byow.api.services.node.client.NodeMultiImportAddressClient;
+import com.byow.wallet.byow.database.repositories.WalletRepository;
 import com.byow.wallet.byow.domains.AddressType;
 import com.byow.wallet.byow.domains.ExtendedPubkey;
 import com.byow.wallet.byow.domains.node.NodeTransaction;
@@ -24,16 +25,20 @@ public class UpdateCurrentWalletReceivingAddressesService {
 
     private final NodeMultiImportAddressClient nodeMultiImportAddressClient;
 
+    private final WalletRepository walletRepository;
+
     public UpdateCurrentWalletReceivingAddressesService(
         CurrentWallet currentWallet,
         AddAddressService addAddressService,
         @Qualifier("initialNumberOfGeneratedAddresses") int initialNumberOfGeneratedAddresses,
-        NodeMultiImportAddressClient nodeMultiImportAddressClient
+        NodeMultiImportAddressClient nodeMultiImportAddressClient,
+        WalletRepository walletRepository
     ) {
         this.currentWallet = currentWallet;
         this.addAddressService = addAddressService;
         this.initialNumberOfGeneratedAddresses = initialNumberOfGeneratedAddresses;
         this.nodeMultiImportAddressClient = nodeMultiImportAddressClient;
+        this.walletRepository = walletRepository;
     }
 
     public void update(List<NodeTransaction> nodeTransactions) {
@@ -52,6 +57,7 @@ public class UpdateCurrentWalletReceivingAddressesService {
             currentWallet.setAddresses(extendedPubkeys);
             List<String> addressStrings = currentWallet.getAddressesAsStrings(nextAddressIndex, nextAddressIndex + initialNumberOfGeneratedAddresses);
             nodeMultiImportAddressClient.importAddresses(currentWallet.getFirstAddress(), addressStrings, new Date());
+            walletRepository.incrementNumberOfGeneratedAddresses(initialNumberOfGeneratedAddresses, currentWallet.getName());
         }
         Platform.runLater(() -> currentWallet.setReceivingAddress(nextAddressIndex, addressType));
     }

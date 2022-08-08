@@ -6,7 +6,6 @@ import javafx.scene.control.TableView
 import javafx.scene.control.TextField
 import org.springframework.boot.test.mock.mockito.MockBean
 
-import static java.util.concurrent.TimeUnit.SECONDS
 import static org.mockito.Mockito.when
 
 class LoadWalletTest extends GuiTest {
@@ -27,7 +26,6 @@ class LoadWalletTest extends GuiTest {
         when:
             loadWallet(walletName)
             String address = lookup("#receivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address, 0.00001, 1, "#addressesTable", 0.00001)
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
@@ -50,7 +48,6 @@ class LoadWalletTest extends GuiTest {
             def differentPassword = "different password"
             loadWallet(walletName, differentPassword)
             String address = lookup("#receivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address, 0.00001, 1, "#addressesTable", 0.00001)
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")

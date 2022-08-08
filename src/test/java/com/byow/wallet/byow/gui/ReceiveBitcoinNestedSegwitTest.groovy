@@ -5,8 +5,6 @@ import javafx.scene.control.TableView
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 
-import static java.util.concurrent.TimeUnit.SECONDS
-
 class ReceiveBitcoinNestedSegwitTest extends GuiTest {
 
     def setup() {
@@ -23,9 +21,9 @@ class ReceiveBitcoinNestedSegwitTest extends GuiTest {
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
             clickOn("OK")
             clickOn("Receive")
+            waitLoadWallet()
             String address = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
-            sendBitcoinAndWait(address, 0.00001, 1, "#addressesTable", 0.00001)
+            sendBitcoinAndWait(address, 0.00001, 1, "#addressesTable", 0.00001, "#nestedSegwitReceivingAddress")
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
@@ -47,10 +45,10 @@ class ReceiveBitcoinNestedSegwitTest extends GuiTest {
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
             clickOn("OK")
             clickOn("Receive")
+            waitLoadWallet()
             String address = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
-            sendBitcoinAndWait(address)
-            sendBitcoinAndWait(address, 2.0)
+            sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", 1.0, "#nestedSegwitReceivingAddress")
+            sendBitcoinAndWait(address, 2.0, 1, "#addressesTable", 1.0, "#nestedSegwitReceivingAddress")
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
@@ -72,11 +70,11 @@ class ReceiveBitcoinNestedSegwitTest extends GuiTest {
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
             clickOn("OK")
             clickOn("Receive")
+            waitLoadWallet()
             String address = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
-            sendBitcoinAndWait(address)
+            sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", 1.0, "#nestedSegwitReceivingAddress")
             String nextAddress = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(nextAddress, 1.0, 2)
+            sendBitcoinAndWait(nextAddress, 1.0, 2, "#addressesTable", 1.0, "#nestedSegwitReceivingAddress")
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
@@ -99,23 +97,21 @@ class ReceiveBitcoinNestedSegwitTest extends GuiTest {
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
             clickOn("OK")
             clickOn("Receive")
+            waitLoadWallet()
             String firstAddress = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
-            sendBitcoinAndWait(firstAddress)
+            sendBitcoinAndWait(firstAddress, 1.0, 1, "#addressesTable", 1.0, "#nestedSegwitReceivingAddress")
             String secondAddress = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(secondAddress, 1.0, 2)
+            sendBitcoinAndWait(secondAddress, 1.0, 2, "#addressesTable", 1.0, "#nestedSegwitReceivingAddress")
             String thirdAddress = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(thirdAddress, 1.0, 3)
-            sleep(TIMEOUT, SECONDS)
+            sendBitcoinAndWait(thirdAddress, 1.0, 3, "#addressesTable", 1.0, "#nestedSegwitReceivingAddress")
             String fourthAddress = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(fourthAddress, 1.0, 4)
+            sendBitcoinAndWait(fourthAddress, 1.0, 4, "#addressesTable", 1.0, "#nestedSegwitReceivingAddress")
             String fifthAddress = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(fifthAddress, 1.0, 5)
+            sendBitcoinAndWait(fifthAddress, 1.0, 5, "#addressesTable", 1.0, "#nestedSegwitReceivingAddress")
             String sixthAddress = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(sixthAddress, 1.0, 6)
-            sleep(TIMEOUT, SECONDS)
+            sendBitcoinAndWait(sixthAddress, 1.0, 6, "#addressesTable", 1.0, "#nestedSegwitReceivingAddress")
             String seventhAddress = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(seventhAddress, 1.0, 7)
+            sendBitcoinAndWait(seventhAddress, 1.0, 7, "#addressesTable", 1.0, "#nestedSegwitReceivingAddress")
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)

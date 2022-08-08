@@ -4,8 +4,6 @@ import javafx.scene.control.Label
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 
-import static java.util.concurrent.TimeUnit.SECONDS
-
 class TotalBalanceTest extends GuiTest {
     def setup() {
         loadWalletAndAddBalance()
@@ -21,8 +19,8 @@ class TotalBalanceTest extends GuiTest {
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
             clickOn("OK")
             clickOn("Receive")
+            waitLoadWallet()
             String address = lookup("#receivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address, 1.0, 1, "#transactionsTable")
             String labelText = lookup("#totalBalance").queryAs(Label).getText()
         then:
