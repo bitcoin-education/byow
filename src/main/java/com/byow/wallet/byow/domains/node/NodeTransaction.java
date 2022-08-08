@@ -7,7 +7,6 @@ public record NodeTransaction(
     String txid,
     Long confirmations,
     BigDecimal amount,
-    BigDecimal fee,
     String address,
     Instant time
 ) {

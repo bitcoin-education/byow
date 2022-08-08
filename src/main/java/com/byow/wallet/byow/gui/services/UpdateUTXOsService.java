@@ -18,29 +18,22 @@ public class UpdateUTXOsService {
     private final NodeListUnspentClient nodeListUnspentClient;
 
     private final UpdateCurrentWalletAddressesService updateCurrentWalletAddressesService;
-
     private final UpdateCurrentWalletTransactionsService updateCurrentWalletTransactionsService;
-
     private final UpdateCurrentWalletBalanceService updateCurrentWalletBalanceService;
-
     private final NodeListTransactionsClient nodeListTransactionsClient;
-
-    private final UpdateCurrentWalletReceivingAddressesService updateCurrentWalletReceivingAddressesService;
 
     public UpdateUTXOsService(
         NodeListUnspentClient nodeListUnspentClient,
         UpdateCurrentWalletAddressesService updateCurrentWalletAddressesService,
         UpdateCurrentWalletTransactionsService updateCurrentWalletTransactionsService,
         UpdateCurrentWalletBalanceService updateCurrentWalletBalanceService,
-        NodeListTransactionsClient nodeListTransactionsClient,
-        UpdateCurrentWalletReceivingAddressesService updateCurrentWalletReceivingAddressesService
+        NodeListTransactionsClient nodeListTransactionsClient
     ) {
         this.nodeListUnspentClient = nodeListUnspentClient;
         this.updateCurrentWalletAddressesService = updateCurrentWalletAddressesService;
         this.updateCurrentWalletTransactionsService = updateCurrentWalletTransactionsService;
         this.updateCurrentWalletBalanceService = updateCurrentWalletBalanceService;
         this.nodeListTransactionsClient = nodeListTransactionsClient;
-        this.updateCurrentWalletReceivingAddressesService = updateCurrentWalletReceivingAddressesService;
     }
 
     @Async("defaultExecutorService")
@@ -48,7 +41,6 @@ public class UpdateUTXOsService {
         List<Utxo> utxos = nodeListUnspentClient.listUnspent(addresses, name);
         updateCurrentWalletAddressesService.update(utxos);
         List<NodeTransaction> nodeTransactions = nodeListTransactionsClient.listTransactions(name);
-        updateCurrentWalletReceivingAddressesService.update(nodeTransactions);
         updateCurrentWalletTransactionsService.updateNodeTransactions(nodeTransactions);
         updateCurrentWalletBalanceService.update();
     }

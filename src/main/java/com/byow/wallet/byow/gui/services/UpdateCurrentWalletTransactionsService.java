@@ -7,7 +7,6 @@ import javafx.application.Platform;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UpdateCurrentWalletTransactionsService {
@@ -23,9 +22,7 @@ public class UpdateCurrentWalletTransactionsService {
 
     public void updateNodeTransactions(List<NodeTransaction> nodeTransactions) {
         List<TransactionRow> transactionRows = nodeTransactions.stream()
-            .collect(Collectors.groupingBy(NodeTransaction::txid))
-            .values()
-            .stream()
+            .filter(nodeTransaction -> currentWallet.getAddressesAsStrings().contains(nodeTransaction.address()) || currentWallet.getTransactionIds().contains(nodeTransaction.txid()))
             .map(TransactionRow::from)
             .toList();
         Platform.runLater(() -> currentWallet.addTransactionRows(transactionRows));

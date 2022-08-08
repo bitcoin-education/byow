@@ -95,7 +95,4 @@ public class Addresses {
             .toList();
     }
 
-    public Set<AddressType> getAddressTypes() {
-        return addresses.keySet();
-    }
 }
