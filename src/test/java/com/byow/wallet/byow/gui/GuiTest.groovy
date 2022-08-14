@@ -25,6 +25,7 @@ import io.github.bitcoineducation.bitcoinjava.ExtendedPubkey
 import io.github.bitcoineducation.bitcoinjava.MnemonicSeed
 import javafx.scene.control.DialogPane
 import javafx.scene.control.TableView
+import javafx.scene.control.TextField
 import javafx.stage.Stage
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.springframework.beans.factory.annotation.Autowired
@@ -118,11 +119,13 @@ abstract class GuiTest extends ApplicationSpec {
         createBalanceIfNecessary()
     }
 
-    protected void sendBitcoinAndWait(String address, double expectedTotalAmount = 1.0, int expectedTotalSize = 1, String lookupComponent="#addressesTable", double amount = 1.0) {
+    protected void sendBitcoinAndWait(String address, double expectedTotalAmount = 1.0, int expectedTotalSize = 1, String lookupComponent="#addressesTable", double amount = 1.0, String receivingAddressComponent = "#receivingAddress") {
         nodeSendToAddressClient.sendToAddress(TESTWALLET, address, amount)
         waitFor(TIMEOUT, SECONDS, {
             TableView tableView = lookup(lookupComponent).queryAs(TableView)
-            return tableView?.items?.size() == expectedTotalSize && tableView?.items?[expectedTotalSize - 1]?.balance == BitcoinFormatter.format(expectedTotalAmount)
+            return tableView?.items?.size() == expectedTotalSize &&
+                tableView?.items?[expectedTotalSize - 1]?.balance == BitcoinFormatter.format(expectedTotalAmount) &&
+                lookup(receivingAddressComponent).queryAs(TextField).text != address
         })
     }
 

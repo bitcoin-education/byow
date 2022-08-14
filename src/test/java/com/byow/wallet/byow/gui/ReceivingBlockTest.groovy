@@ -23,8 +23,8 @@ class ReceivingBlockTest extends GuiTest {
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
             clickOn("OK")
             clickOn("Receive")
+            waitLoadWallet()
             String address = lookup("#receivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address)
             mineBlocks(confirmations)
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
@@ -55,8 +55,8 @@ class ReceivingBlockTest extends GuiTest {
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
             clickOn("OK")
             clickOn("Receive")
+            waitLoadWallet()
             String address = lookup("#receivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address)
             mineBlocks(confirmations)
             sendBitcoinAndWait(address)

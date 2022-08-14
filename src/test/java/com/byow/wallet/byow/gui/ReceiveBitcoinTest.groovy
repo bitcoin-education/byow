@@ -1,11 +1,11 @@
 package com.byow.wallet.byow.gui
 
+import com.byow.wallet.byow.observables.AddressRow
+import com.byow.wallet.byow.observables.TransactionRow
 import javafx.scene.control.Label
 import javafx.scene.control.TableView
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
-
-import static java.util.concurrent.TimeUnit.SECONDS
 
 class ReceiveBitcoinTest extends GuiTest {
 
@@ -23,8 +23,8 @@ class ReceiveBitcoinTest extends GuiTest {
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
             clickOn("OK")
             clickOn("Receive")
+            waitLoadWallet()
             String address = lookup("#receivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address, 0.00001, 1, "#addressesTable", 0.00001)
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
@@ -47,8 +47,8 @@ class ReceiveBitcoinTest extends GuiTest {
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
             clickOn("OK")
             clickOn("Receive")
+            waitLoadWallet()
             String address = lookup("#receivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address)
             sendBitcoinAndWait(address, 2.0)
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
@@ -72,8 +72,8 @@ class ReceiveBitcoinTest extends GuiTest {
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
             clickOn("OK")
             clickOn("Receive")
+            waitLoadWallet()
             String address = lookup("#receivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address)
             String nextAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(nextAddress, 1.0, 2)
@@ -94,33 +94,44 @@ class ReceiveBitcoinTest extends GuiTest {
             clickOn("New")
             clickOn("Wallet")
             clickOn("#name")
-            write("My Test Wallet 4")
+            def walletName = "My Test Wallet 4"
+            write(walletName)
             clickOn("Create")
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea).text
             clickOn("OK")
             clickOn("Receive")
+            waitLoadWallet()
             String firstAddress = lookup("#receivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(firstAddress)
             String secondAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(secondAddress, 1.0, 2)
             String thirdAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(thirdAddress, 1.0, 3)
-            sleep(TIMEOUT, SECONDS)
             String fourthAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(fourthAddress, 1.0, 4)
             String fifthAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(fifthAddress, 1.0, 5)
             String sixthAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(sixthAddress, 1.0, 6)
-            sleep(TIMEOUT, SECONDS)
             String seventhAddress = lookup("#receivingAddress").queryAs(TextField).text
             sendBitcoinAndWait(seventhAddress, 1.0, 7)
+            String lastReceivingAddress = lookup("#receivingAddress").queryAs(TextField).text
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
             TableView transactionsTableView = lookup("#transactionsTable").queryAs(TableView)
             String labelText = lookup("#totalBalance").queryAs(Label).getText()
+            def addressesTableSize = addressesTableView.items.size()
+            def transactionTableSize = transactionsTableView.items.size()
+
+            loadWallet(walletName)
+            TableView<TransactionRow> transactionsTableAfterLoad = lookup("#transactionsTable").queryAs(TableView)
+            clickOn("#addressesTab")
+            TableView<AddressRow> addressesTableAfterLoad = lookup("#addressesTable").queryAs(TableView)
+            clickOn("Receive")
+            String lastReceivingAddressAfterLoad = lookup("#receivingAddress").queryAs(TextField).text
+            String labelTextAfterLoad = lookup("#totalBalance").queryAs(Label).text
         then:
+            lastReceivingAddress == lastReceivingAddressAfterLoad
             addressesTableView.items.size() == 7
             transactionsTableView.items.size() == 7
             addressIsValid(firstAddress, mnemonicSeed, 0)
@@ -130,7 +141,10 @@ class ReceiveBitcoinTest extends GuiTest {
             addressIsValid(fifthAddress, mnemonicSeed, 4)
             addressIsValid(sixthAddress, mnemonicSeed, 5)
             addressIsValid(seventhAddress, mnemonicSeed, 6)
+            transactionsTableAfterLoad.items.size() == transactionTableSize
+            addressesTableAfterLoad.items.size() == addressesTableSize
             labelText == "Total Balance: 7.00000000 BTC (confirmed: 0.00000000, unconfirmed: 7.00000000)"
+            labelText == labelTextAfterLoad
     }
 
 }

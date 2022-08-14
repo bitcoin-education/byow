@@ -38,13 +38,11 @@ class SendBitcoinTest extends GuiTest {
 
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach{
-                sleep(2, SECONDS)
                 String address = lookup("#receivingAddress").queryAs(TextField).text
                 BigDecimal amount = 1.0
                 sendBitcoinAndWait(address, 1.0, it+1, "#addressesTable", amount)
                 funds += amount
             }
-            sleep(TIMEOUT, SECONDS)
             String lastReceivingAddress = lookup("#receivingAddress").queryAs(TextField).text
 
             String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
@@ -115,7 +113,7 @@ class SendBitcoinTest extends GuiTest {
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
 
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach{
@@ -181,7 +179,7 @@ class SendBitcoinTest extends GuiTest {
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
 
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach{
@@ -242,7 +240,7 @@ class SendBitcoinTest extends GuiTest {
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
 
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach{
@@ -275,7 +273,7 @@ class SendBitcoinTest extends GuiTest {
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
 
             String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
@@ -300,7 +298,7 @@ class SendBitcoinTest extends GuiTest {
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
 
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach{

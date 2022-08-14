@@ -27,7 +27,6 @@ class LoadWalletTest extends GuiTest {
         when:
             loadWallet(walletName)
             String address = lookup("#receivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address, 0.00001, 1, "#addressesTable", 0.00001)
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")
@@ -50,7 +49,6 @@ class LoadWalletTest extends GuiTest {
             def differentPassword = "different password"
             loadWallet(walletName, differentPassword)
             String address = lookup("#receivingAddress").queryAs(TextField).text
-            sleep(TIMEOUT, SECONDS)
             sendBitcoinAndWait(address, 0.00001, 1, "#addressesTable", 0.00001)
             TableView addressesTableView = lookup("#addressesTable").queryAs(TableView)
             clickOn("Transactions")

@@ -33,13 +33,13 @@ class SendBitcoinNestedSegwitTest extends GuiTest {
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
 
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach{
                 String address = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
                 BigDecimal amount = 1.0
-                sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", amount)
+                sendBitcoinAndWait(address, 1.0, it+1, "#addressesTable", amount, "#nestedSegwitReceivingAddress")
                 funds += amount
             }
 
@@ -93,13 +93,13 @@ class SendBitcoinNestedSegwitTest extends GuiTest {
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
 
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach{
                 String address = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
                 BigDecimal amount = 1.0
-                sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", amount)
+                sendBitcoinAndWait(address, 1.0, 1, "#addressesTable", amount, "#nestedSegwitReceivingAddress")
                 funds += amount
             }
 
@@ -156,12 +156,12 @@ class SendBitcoinNestedSegwitTest extends GuiTest {
             clickOn("Create")
             clickOn("OK")
             clickOn("Receive")
-            sleep(TIMEOUT, SECONDS)
+            waitLoadWallet()
 
             BigDecimal funds = 0
             IntStream.range(0, previousUtxosNumber).forEach{
                 String address = lookup("#nestedSegwitReceivingAddress").queryAs(TextField).text
-                sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
+                sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount, "#nestedSegwitReceivingAddress")
                 funds += previousAmount
             }
 
