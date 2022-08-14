@@ -3,7 +3,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import javafx.geometry.Insets?>
 <?import com.byow.wallet.byow.gui.controllers.ReceiveTabController?>
 <?import com.byow.wallet.byow.gui.controllers.AddressesTableController?>
 <?import com.byow.wallet.byow.gui.controllers.TransactionsTableController?>
@@ -21,6 +20,11 @@
           <Menu mnemonicParsing="false" text="Load">
               <items>
                   <Menu fx:id="loadMenuFxml" mnemonicParsing="false" text="Wallet" />
+              </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Import">
+              <items>
+                  <MenuItem fx:id="importMenuFxml" onAction="#openImportWalletDialog" mnemonicParsing="false" text="Wallet" />
               </items>
           </Menu>
         </menus>

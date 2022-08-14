@@ -195,4 +195,17 @@ abstract class GuiTest extends ApplicationSpec {
            return currentWallet.firstAddress && nodeListWalletsClient.listLoaded().contains(currentWallet.firstAddress)
        })
    }
+
+    protected void importWallet(String walletName, String mnemonicSeed, String password = "") {
+        clickOn("Import")
+        clickOn("Wallet")
+        clickOn("#walletName")
+        write(walletName)
+        clickOn("#walletPassword")
+        write(password)
+        clickOn("#mnemonicSeed")
+        write(mnemonicSeed)
+        clickOn("OK")
+        sleep(TIMEOUT, SECONDS)
+    }
 }
