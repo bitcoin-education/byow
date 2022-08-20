@@ -4,6 +4,7 @@ import com.byow.wallet.byow.database.entities.WalletEntity;
 import com.byow.wallet.byow.observables.CurrentWallet;
 import com.byow.wallet.byow.observables.LoadMenu;
 import javafx.collections.SetChangeListener;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
@@ -32,6 +33,8 @@ public class MainWindowController {
 
     private final Resource loadWalletDialog;
 
+    private final Resource importWalletDialog;
+
     private final ApplicationContext context;
 
     private final CurrentWallet currentWallet;
@@ -41,12 +44,14 @@ public class MainWindowController {
     public MainWindowController(
         @Value("fxml/create_wallet_dialog.fxml") Resource createWalletDialog,
         @Value("fxml/load_wallet_dialog.fxml") Resource loadWalletDialog,
+        @Value("fxml/import_wallet_dialog.fxml") Resource importWalletDialog,
         ApplicationContext context,
         CurrentWallet currentWallet,
         LoadMenu loadMenu
     ) {
         this.createWalletDialog = createWalletDialog;
         this.loadWalletDialog = loadWalletDialog;
+        this.importWalletDialog = importWalletDialog;
         this.context = context;
         this.currentWallet = currentWallet;
         this.loadMenu = loadMenu;
@@ -100,6 +105,21 @@ public class MainWindowController {
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(createWalletDialog.getURL(), null, null, context::getBean);
+            dialog.getDialogPane().setContent(fxmlLoader.load());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        dialog.show();
+    }
+
+    public void openImportWalletDialog() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(this.borderPane.getScene().getWindow());
+        dialog.setTitle("Import Wallet");
+        dialog.setOnShown(event -> dialog.getDialogPane().getScene().getWindow().setOnCloseRequest(event1 -> dialog.hide()));
+
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(importWalletDialog.getURL(), null, null, context::getBean);
             dialog.getDialogPane().setContent(fxmlLoader.load());
         } catch (IOException e) {
             throw new RuntimeException(e);

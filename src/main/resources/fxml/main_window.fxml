@@ -23,6 +23,11 @@
                   <Menu fx:id="loadMenuFxml" mnemonicParsing="false" text="Wallet" />
               </items>
           </Menu>
+          <Menu mnemonicParsing="false" text="Import">
+              <items>
+                  <Menu fx:id="importMenuFxml" onAction="#openImportWalletDialog" mnemonicParsing="false" text="Wallet" />
+              </items>
+          </Menu>
         </menus>
       </MenuBar>
    </top>
