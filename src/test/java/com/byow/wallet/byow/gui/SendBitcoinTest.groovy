@@ -322,4 +322,35 @@ class SendBitcoinTest extends GuiTest {
             1                   | "0.00000293" | 0.1
     }
 
+    def "should not send bitcoin to invalid address"() {
+        when:
+            clickOn("New")
+            clickOn("Wallet")
+            clickOn("#name")
+            write("My Test Wallet 34")
+            clickOn("Create")
+            clickOn("OK")
+            clickOn("Receive")
+            waitLoadWallet()
+
+            BigDecimal funds = 0
+            IntStream.range(0, previousUtxosNumber).forEach{
+                String address = lookup("#receivingAddress").queryAs(TextField).text
+                sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
+                funds += previousAmount
+            }
+
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
+            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
+            clickOn("#sendTab")
+            sendBitcoin("asdf", amountToSend, false)
+            String errorMessage = "Could not send transaction: invalid address."
+            NodeQuery nodeQuery = lookup(errorMessage)
+            clickOn("OK")
+        then:
+            nodeQuery.queryLabeled().getText() == errorMessage
+        where:
+            previousUtxosNumber | amountToSend | previousAmount
+            1                   | "0.01"        | 0.1
+    }
 }

@@ -1,9 +1,10 @@
 package com.byow.wallet.byow.gui.controllers;
 
 import com.byow.wallet.byow.api.services.CreateWalletService;
+import com.byow.wallet.byow.database.services.ValidateWalletService;
 import com.byow.wallet.byow.domains.Wallet;
-import com.byow.wallet.byow.gui.events.CreatedWalletEvent;
 import com.byow.wallet.byow.gui.events.ImportedWalletEvent;
+import com.byow.wallet.byow.gui.services.AlertErrorService;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.byow.wallet.byow.domains.node.ErrorMessages.WALLET_NAME_ALREADY_EXISTS;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Date.from;
 import static java.util.Objects.isNull;
@@ -52,14 +54,22 @@ public class ImportWalletDialogController {
 
     private final ConfigurableApplicationContext context;
 
+    private final ValidateWalletService validateWalletService;
+
+    private final AlertErrorService alertErrorService;
+
     public ImportWalletDialogController(
         CreateWalletService createWalletService,
         @Qualifier("initialNumberOfGeneratedAddresses") int initialNumberOfGeneratedAddresses,
-        ConfigurableApplicationContext context
+        ConfigurableApplicationContext context,
+        ValidateWalletService validateWalletService,
+        AlertErrorService alertErrorService
     ) {
         this.createWalletService = createWalletService;
         this.initialNumberOfGeneratedAddresses = initialNumberOfGeneratedAddresses;
         this.context = context;
+        this.validateWalletService = validateWalletService;
+        this.alertErrorService = alertErrorService;
     }
 
     public void initialize() {
@@ -83,6 +93,10 @@ public class ImportWalletDialogController {
     }
 
     private void importWallet() {
+        if (validateWalletService.walletExists(this.walletName.getText())) {
+            alertErrorService.alertError(WALLET_NAME_ALREADY_EXISTS);
+            return;
+        }
         Wallet wallet = createWalletService.create(this.walletName.getText(), this.walletPassword.getText(), this.mnemonicSeed.getText(), buildDate(), initialNumberOfGeneratedAddresses);
         this.context.publishEvent(new ImportedWalletEvent(this, wallet));
         dialogPane.getScene().getWindow().hide();

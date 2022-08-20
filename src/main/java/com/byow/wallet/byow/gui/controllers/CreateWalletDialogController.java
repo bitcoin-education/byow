@@ -2,8 +2,10 @@ package com.byow.wallet.byow.gui.controllers;
 
 import com.byow.wallet.byow.api.services.CreateWalletService;
 import com.byow.wallet.byow.api.services.MnemonicSeedService;
+import com.byow.wallet.byow.database.services.ValidateWalletService;
 import com.byow.wallet.byow.domains.Wallet;
 import com.byow.wallet.byow.gui.events.CreatedWalletEvent;
+import com.byow.wallet.byow.gui.services.AlertErrorService;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
 import java.util.Date;
+
+import static com.byow.wallet.byow.domains.node.ErrorMessages.WALLET_NAME_ALREADY_EXISTS;
 
 @Component
 public class CreateWalletDialogController {
@@ -50,16 +54,24 @@ public class CreateWalletDialogController {
 
     private final int initialNumberOfGeneratedAddresses;
 
+    private final ValidateWalletService validateWalletService;
+
+    private final AlertErrorService alertErrorService;
+
     public CreateWalletDialogController(
         MnemonicSeedService mnemonicSeedService,
         CreateWalletService createWalletService,
         ConfigurableApplicationContext context,
-        @Qualifier("initialNumberOfGeneratedAddresses") int initialNumberOfGeneratedAddresses
+        @Qualifier("initialNumberOfGeneratedAddresses") int initialNumberOfGeneratedAddresses,
+        ValidateWalletService validateWalletService,
+        AlertErrorService alertErrorService
     ) {
         this.mnemonicSeedService = mnemonicSeedService;
         this.createWalletService = createWalletService;
         this.context = context;
         this.initialNumberOfGeneratedAddresses = initialNumberOfGeneratedAddresses;
+        this.validateWalletService = validateWalletService;
+        this.alertErrorService = alertErrorService;
     }
 
     public void createMnemonicSeed() throws FileNotFoundException {
@@ -87,6 +99,10 @@ public class CreateWalletDialogController {
     }
 
     private void createWallet() {
+        if (validateWalletService.walletExists(name.getText())) {
+            alertErrorService.alertError(WALLET_NAME_ALREADY_EXISTS);
+            return;
+        }
         Wallet wallet = createWalletService.create(this.name.getText(), this.password.getText(), this.mnemonicSeed.getText(), new Date(), initialNumberOfGeneratedAddresses);
         this.context.publishEvent(new CreatedWalletEvent(this, wallet));
         dialogPane.getScene().getWindow().hide();
