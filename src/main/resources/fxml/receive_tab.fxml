@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextField?>
+<fx:root text="Receive" type="javafx.scene.control.Tab" xmlns:fx="http://javafx.com/fxml">
+    <content>
+        <GridPane>
+            <children>
+                <Label text="Segwit address">
+                    <GridPane.margin>
+                        <Insets left="10.0" right="10.0" top="10.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="receivingAddress" editable="false" prefWidth="350.0" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets left="10.0" right="10.0" top="10.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Nested Segwit address" GridPane.rowIndex="1">
+                    <GridPane.margin>
+                        <Insets left="10.0" right="10.0" top="10.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="nestedSegwitReceivingAddress" editable="false" prefWidth="350.0" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets left="10.0" right="10.0" top="10.0"/>
+                    </GridPane.margin>
+                </TextField>
+            </children>
+        </GridPane>
+    </content>
+</fx:root>
