@@ -334,7 +334,8 @@ class SendBitcoinTest extends GuiTest {
             waitLoadWallet()
 
             BigDecimal funds = 0
-            IntStream.range(0, previousUtxosNumber).forEach{
+            def previousAmount = 0.1
+            IntStream.range(0, 1).forEach{
                 String address = lookup("#receivingAddress").queryAs(TextField).text
                 sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
                 funds += previousAmount
@@ -343,14 +344,21 @@ class SendBitcoinTest extends GuiTest {
             String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
             clickOn("#sendTab")
-            sendBitcoin("asdf", amountToSend, false)
+            sendBitcoin(addressToSend, "0.01", false)
             String errorMessage = "Could not send transaction: invalid address."
             NodeQuery nodeQuery = lookup(errorMessage)
             clickOn("OK")
         then:
             nodeQuery.queryLabeled().getText() == errorMessage
         where:
-            previousUtxosNumber | amountToSend | previousAmount
-            1                   | "0.01"        | 0.1
+            addressToSend                                                    | _
+            "asdf"                                                           | _
+            "bcrtasdf"                                                       | _
+            "bcrt1q3d5nn9qw9s44cr6g6mh75m0cf4tr7prsfrm5c7"                   | _
+            "mu27DxrNovbD24uZJJXHnPxEDJkAZBCYN7"                             | _
+            "2N2JnaoXzjcMYPWbofDQXT2wxy2ecUHKMgg"                            | _
+            "bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0" | _
+            "1EW9vumPzu9xExRwajYuxUjuMK9TbC8bks"                             | _
+            "3AkaX4by89rCBiyFz5neq5xhkgSSfzEtfx"                             | _
     }
 }

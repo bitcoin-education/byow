@@ -1,13 +1,38 @@
 package com.byow.wallet.byow.utils;
 
-import java.util.function.Predicate;
+import com.byow.wallet.byow.domains.Environment;
 
-import static java.util.stream.Stream.of;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import static com.byow.wallet.byow.domains.Environment.*;
 
 public class AddressMatcher {
-    public static Predicate<String> isSegwit = address -> of("bcrt", "tb", "bc").anyMatch(address::startsWith);
+    public static Predicate<String> isSegwit(Environment environment) {
+        Map<Environment, Predicate<String>> map = Map.of(
+            MAINNET, address -> !address.startsWith("bcrt") && address.startsWith("bc"),
+            TESTNET, address -> address.startsWith("tb"),
+            REGTEST, address -> address.startsWith("bcrt")
+        );
+        return map.get(environment);
+    }
 
-    public static Predicate<String> isNestedSegwit = address -> of("3", "2").anyMatch(address::startsWith);
+    public static Predicate<String> isNestedSegwit(Environment environment) {
+        Map<Environment, Predicate<String>> map = Map.of(
+            MAINNET, address -> address.startsWith("3"),
+            TESTNET, address -> address.startsWith("2"),
+            REGTEST, address -> address.startsWith("2")
+        );
+        return map.get(environment);
+    }
 
-    public static Predicate<String> isLegacy = address -> of("1", "m", "n").anyMatch(address::startsWith);
+    public static Predicate<String> isLegacy(Environment environment) {
+        Map<Environment, Predicate<String>> map = Map.of(
+            MAINNET, address -> address.startsWith("1"),
+            TESTNET, address -> Stream.of("m", "n").anyMatch(address::startsWith),
+            REGTEST, address -> Stream.of("m", "n").anyMatch(address::startsWith)
+        );
+        return map.get(environment);
+    }
 }

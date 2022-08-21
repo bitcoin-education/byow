@@ -2,6 +2,7 @@ package com.byow.wallet.byow.api.config;
 
 import com.byow.wallet.byow.api.services.*;
 import com.byow.wallet.byow.domains.AddressConfig;
+import com.byow.wallet.byow.domains.Environment;
 import io.github.bitcoineducation.bitcoinjava.Script;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,9 @@ public class AddressConfiguration {
     @Value("${initialNumberOfGeneratedAddresses}")
     private int initialNumberOfGeneratedAddresses;
 
+    @Value("${bitcoinEnvironment}")
+    private Environment bitcoinEnvironment;
+
     @Bean({"SEGWIT", "SEGWIT_CHANGE"})
     @Order(0)
     public AddressConfig segwitConfig() {
@@ -43,7 +47,7 @@ public class AddressConfiguration {
                 REGTEST, REGTEST_P2WPKH_ADDRESS_PREFIX
             ),
             MAINNET_SEGWIT_PREFIX,
-            isSegwit,
+            isSegwit(bitcoinEnvironment),
             P2WPKH,
             Script::p2wpkhAddress,
             new SegwitInputBuilder(),
@@ -69,7 +73,7 @@ public class AddressConfiguration {
                 REGTEST, TESTNET_P2SH_ADDRESS_PREFIX
             ),
             MAINNET_NESTED_SEGWIT_PREFIX,
-            isNestedSegwit,
+            isNestedSegwit(bitcoinEnvironment),
             P2SH,
             Script::nestedSegwitAddress,
             new NestedSegwitInputBuilder(),
