@@ -7,6 +7,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.TableView
 import javafx.scene.control.TextField
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.testfx.service.query.NodeQuery
 
 import java.util.concurrent.TimeUnit
 
@@ -76,5 +77,30 @@ class ImportWalletTest extends GuiTest {
             transactionTableSize == 1
             addressIsValid(address, mnemonicSeed, 0)
             labelText == "Total Balance: 1.00000000 BTC (confirmed: 1.00000000, unconfirmed: 0.00000000)"
+    }
+
+    def "should not import wallet with repeated name"() {
+        given:
+            def walletName = "My Test Wallet 33"
+            def password = ""
+            def mnemonicSeed = mnemonicSeedService.create()
+            createWallet(walletName, password, mnemonicSeed)
+        when:
+            clickOn("Import")
+            clickOn("Wallet")
+            clickOn("#walletName")
+            write(walletName)
+            clickOn("#walletPassword")
+            write(password)
+            clickOn("#mnemonicSeed")
+            write(mnemonicSeed)
+            clickOn("OK")
+            sleep(5, TimeUnit.SECONDS)
+
+            String errorMessage = "Could not create wallet: the wallet name already exists."
+            NodeQuery nodeQuery = lookup(errorMessage)
+            clickOn("OK")
+        then:
+            nodeQuery.queryLabeled().text == errorMessage
     }
 }

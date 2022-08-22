@@ -8,6 +8,7 @@ import com.byow.wallet.byow.api.services.DustCalculator
 import com.byow.wallet.byow.api.services.ScriptConfigFinder
 import com.byow.wallet.byow.api.services.SingleRandomDrawCoinSelector
 import com.byow.wallet.byow.api.services.TransactionSizeCalculator
+import com.byow.wallet.byow.domains.Environment
 import com.byow.wallet.byow.domains.Utxo
 import spock.lang.Specification
 
@@ -15,12 +16,12 @@ class SingleRandomDrawCoinSelectorTest extends Specification {
     SingleRandomDrawCoinSelector singleRandomDrawCoinSelector
 
     def setup() {
-        AddressConfiguration addressConfiguration = new AddressConfiguration()
+        AddressConfiguration addressConfiguration = new AddressConfiguration(bitcoinEnvironment: Environment.REGTEST)
         def addressConfigs = [
             addressConfiguration.segwitConfig()
         ]
         def addressConfigFinder = new AddressConfigFinder(addressConfigs)
-        ScriptConfiguration scriptConfiguration = new ScriptConfiguration()
+        ScriptConfiguration scriptConfiguration = new ScriptConfiguration(bitcoinEnvironment: Environment.REGTEST)
         def scriptConfigFinder = new ScriptConfigFinder(List.of(
                 scriptConfiguration.P2WPKHConfig(),
                 scriptConfiguration.P2SHConfig(),

@@ -15,4 +15,6 @@ public interface WalletRepository extends JpaRepository<WalletEntity, Long> {
     @Modifying
     @Query("update WalletEntity w set w.numberOfGeneratedAddresses = w.numberOfGeneratedAddresses + :increment where w.name = :name")
     void incrementNumberOfGeneratedAddresses(@Param("increment") Integer increment, @Param("name") String name);
+
+    boolean existsByName(String walletName);
 }
