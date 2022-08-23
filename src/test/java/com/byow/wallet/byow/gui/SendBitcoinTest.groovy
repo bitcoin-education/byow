@@ -10,6 +10,7 @@ import javafx.scene.control.TextField
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.testfx.service.query.NodeQuery
 
+
 import java.util.stream.IntStream
 
 import static java.util.concurrent.TimeUnit.SECONDS
@@ -322,7 +323,7 @@ class SendBitcoinTest extends GuiTest {
             1                   | "0.00000293" | 0.1
     }
 
-    def "should not sent bitcoin to invalid address"() {
+    def "should not send bitcoin to invalid address"() {
         when:
             clickOn("New")
             clickOn("Wallet")
