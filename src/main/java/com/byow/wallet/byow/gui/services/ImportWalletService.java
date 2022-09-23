@@ -5,6 +5,7 @@ import com.byow.wallet.byow.api.services.node.client.NodeMultiImportAddressClien
 import com.byow.wallet.byow.api.services.node.client.NodeReceivedByAddressClient;
 import com.byow.wallet.byow.domains.Wallet;
 import com.byow.wallet.byow.domains.node.NodeAddress;
+import com.byow.wallet.byow.gui.annotations.ActivateProgressBar;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
@@ -33,6 +34,7 @@ public class ImportWalletService {
     }
 
     @Async("defaultExecutorService")
+    @ActivateProgressBar("Loading wallet...")
     @Retryable(exceptionExpression = "@importWalletService.shouldRetry()", maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 1000))
     public Future<Void> importWallet(Wallet wallet) {
         nodeLoadOrCreateWalletService.loadOrCreateWallet(wallet.getFirstAddress());

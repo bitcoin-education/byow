@@ -9,6 +9,8 @@
 <?import com.byow.wallet.byow.gui.controllers.TransactionsTableController?>
 <?import com.byow.wallet.byow.gui.controllers.TotalBalanceController?>
 <?import com.byow.wallet.byow.gui.controllers.SendTabController?>
+<?import com.byow.wallet.byow.gui.controllers.ProgressBarController?>
+<?import com.byow.wallet.byow.gui.controllers.FooterController?>
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="770" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.byow.wallet.byow.gui.controllers.MainWindowController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
@@ -58,4 +60,12 @@
          </children>
       </VBox>
    </center>
+   <bottom>
+       <HBox prefHeight="19.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+           <children>
+               <ProgressBarController/>
+               <FooterController/>
+           </children>
+       </HBox>
+   </bottom>
 </BorderPane>

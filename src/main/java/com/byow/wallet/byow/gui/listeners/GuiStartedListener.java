@@ -24,7 +24,9 @@ public class GuiStartedListener implements ApplicationListener<GuiStartedEvent> 
         AddressesTableController.class,
         TransactionsTableController.class,
         TotalBalanceController.class,
-        SendTabController.class
+        SendTabController.class,
+        ProgressBarController.class,
+        FooterController.class
     );
 
     private final Resource fxml;
