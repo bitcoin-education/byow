@@ -4,6 +4,7 @@ import com.byow.wallet.byow.api.services.TransactionSignerService;
 import com.byow.wallet.byow.api.services.node.client.NodeSendRawTransactionClient;
 import com.byow.wallet.byow.domains.TransactionDto;
 import com.byow.wallet.byow.domains.UtxoDto;
+import com.byow.wallet.byow.gui.annotations.ActivateProgressBar;
 import com.byow.wallet.byow.gui.events.TransactionSentEvent;
 import com.byow.wallet.byow.observables.CurrentWallet;
 import org.slf4j.Logger;
@@ -52,6 +53,7 @@ public class SendTransactionService {
     }
 
     @Async("defaultExecutorService")
+    @ActivateProgressBar("Sending transaction...")
     public Future<Error> signAndSend(TransactionDto transactionDto, String password) {
         List<UtxoDto> utxoDtos = transactionDto.selectedUtxos().stream()
             .map(utxoDtoBuilder::build)

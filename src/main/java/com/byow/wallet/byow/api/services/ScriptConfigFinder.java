@@ -1,6 +1,8 @@
 package com.byow.wallet.byow.api.services;
 
 import com.byow.wallet.byow.domains.ScriptConfig;
+import com.byow.wallet.byow.domains.node.ErrorMessages;
+import com.byow.wallet.byow.gui.exceptions.CreateTransactionException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,6 @@ public class ScriptConfigFinder {
         return scriptConfigs.stream()
             .filter(scriptConfig -> scriptConfig.addressMatcher().test(address))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new CreateTransactionException(ErrorMessages.INVALID_ADDRESS));
     }
 }

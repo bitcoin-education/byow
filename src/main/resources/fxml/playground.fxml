@@ -20,7 +20,7 @@
             </Menu>
             <Menu mnemonicParsing="false" text="Import">
                 <items>
-                    <Menu fx:id="importMenuFxml" onAction="#openImportWalletDialog" mnemonicParsing="false" text="Wallet" />
+                    <Menu fx:id="importMenuFxml" mnemonicParsing="false" onAction="#openImportWalletDialog" text="Wallet" />
                 </items>
             </Menu>
             </menus>
@@ -153,4 +153,16 @@
             </children>
         </VBox>
     </center>
+   <bottom>
+      <HBox prefHeight="19.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <ProgressBar prefWidth="200.0" progress="0.0" />
+            <Label>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+   </bottom>
 </BorderPane>

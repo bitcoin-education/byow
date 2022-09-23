@@ -8,6 +8,7 @@ import com.byow.wallet.byow.api.services.AddressPrefixFactory
 import com.byow.wallet.byow.api.services.AddressSequentialGenerator
 import com.byow.wallet.byow.api.services.CreateWalletService
 import com.byow.wallet.byow.api.services.ExtendedPubkeyService
+import com.byow.wallet.byow.domains.Environment
 import com.byow.wallet.byow.domains.Wallet
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import spock.lang.Specification
@@ -20,7 +21,7 @@ class CreateWalletServiceTest extends Specification {
 
     def setup() {
         Security.addProvider(new BouncyCastleProvider())
-        AddressConfiguration addressConfiguration = new AddressConfiguration()
+        AddressConfiguration addressConfiguration = new AddressConfiguration(bitcoinEnvironment: Environment.REGTEST)
         def addressConfigs = [
             addressConfiguration.segwitConfig()
         ]

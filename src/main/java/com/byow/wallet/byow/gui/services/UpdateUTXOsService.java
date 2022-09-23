@@ -5,6 +5,7 @@ import com.byow.wallet.byow.api.services.node.client.NodeListUnspentClient;
 import com.byow.wallet.byow.domains.TransactionDto;
 import com.byow.wallet.byow.domains.Utxo;
 import com.byow.wallet.byow.domains.node.NodeTransaction;
+import com.byow.wallet.byow.gui.annotations.ActivateProgressBar;
 import com.byow.wallet.byow.observables.TransactionRow;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,7 @@ public class UpdateUTXOsService {
     }
 
     @Async("defaultExecutorService")
+    @ActivateProgressBar("Updating UTXOs...")
     public void update(List<String> addresses, String name) {
         List<Utxo> utxos = nodeListUnspentClient.listUnspent(addresses, name);
         updateCurrentWalletAddressesService.update(utxos);

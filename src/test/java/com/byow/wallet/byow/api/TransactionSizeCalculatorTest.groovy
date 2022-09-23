@@ -5,6 +5,7 @@ import com.byow.wallet.byow.api.config.ScriptConfiguration
 import com.byow.wallet.byow.api.services.AddressConfigFinder
 import com.byow.wallet.byow.api.services.ScriptConfigFinder
 import com.byow.wallet.byow.api.services.TransactionSizeCalculator
+import com.byow.wallet.byow.domains.Environment
 import spock.lang.Specification
 
 import static java.util.Collections.nCopies
@@ -13,13 +14,13 @@ class TransactionSizeCalculatorTest extends Specification {
     private TransactionSizeCalculator transactionSizeCalculator
 
     def setup() {
-        AddressConfiguration addressConfiguration = new AddressConfiguration()
+        AddressConfiguration addressConfiguration = new AddressConfiguration(bitcoinEnvironment: Environment.TESTNET)
         def addressConfigs = [
             addressConfiguration.segwitConfig(),
             addressConfiguration.nestedSegwitConfig()
         ]
         def addressConfigFinder = new AddressConfigFinder(addressConfigs)
-        ScriptConfiguration scriptConfiguration = new ScriptConfiguration()
+        ScriptConfiguration scriptConfiguration = new ScriptConfiguration(bitcoinEnvironment: Environment.TESTNET)
         def scriptConfigFinder = new ScriptConfigFinder(List.of(
             scriptConfiguration.P2WPKHConfig(),
             scriptConfiguration.P2SHConfig(),

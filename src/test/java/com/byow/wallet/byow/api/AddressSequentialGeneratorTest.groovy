@@ -6,6 +6,7 @@ import com.byow.wallet.byow.api.services.AddressGeneratorFactory
 import com.byow.wallet.byow.api.services.AddressPrefixFactory
 import com.byow.wallet.byow.api.services.AddressSequentialGenerator
 import com.byow.wallet.byow.domains.Address
+import com.byow.wallet.byow.domains.Environment
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import spock.lang.Specification
 
@@ -25,7 +26,7 @@ class AddressSequentialGeneratorTest extends Specification {
     def setup() {
         Security.addProvider(new BouncyCastleProvider())
         addressConfigFinder = mock(AddressConfigFinder)
-        def addressConfiguration = new AddressConfiguration()
+        def addressConfiguration = new AddressConfiguration(bitcoinEnvironment: Environment.REGTEST)
         when(addressConfigFinder.findByAddressType(any())).thenReturn(addressConfiguration.segwitConfig())
 
         addressPrefixFactory = new AddressPrefixFactory("mainnet", addressConfigFinder)
