@@ -172,7 +172,7 @@ class SendBitcoinNestedSegwitTest extends GuiTest {
             clickOn("OK")
             String errorMessage = "Could not send transaction: amount to send is dust."
             NodeQuery nodeQuery = lookup(errorMessage)
-            clickOn("OK")
+            clickOn("#alertOk")
         then:
             nodeQuery.queryLabeled().getText() == errorMessage
         where:

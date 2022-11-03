@@ -25,7 +25,7 @@ public class NodeLoadOrCreateWalletService {
         this.nodeListWalletsClient = nodeListWalletsClient;
     }
 
-    public void loadOrCreateWallet(String name) {
+    public void loadOrCreateWallet(String name, boolean disablePrivateKeys, boolean blank, String passphrase, boolean avoidReuse, boolean descriptors) {
         List<String> allWallets = nodeListWalletsClient.listAll();
         List<String> loadedWallets = nodeListWalletsClient.listLoaded();
         if (loadedWallets.stream().anyMatch(nodeWallet -> nodeWallet.equals(name))) {
@@ -35,6 +35,6 @@ public class NodeLoadOrCreateWalletService {
             nodeLoadWalletClient.load(name);
             return;
         }
-        nodeCreateWalletClient.create(name);
+        nodeCreateWalletClient.create(name, disablePrivateKeys, blank, passphrase, avoidReuse, descriptors);
     }
 }

@@ -11,7 +11,7 @@ public class NodeCreateWalletClient {
         this.nodeClient = nodeClient;
     }
 
-    public void create(String name) {
-        nodeClient.makeRequest("createwallet", new ParameterizedTypeReference<>(){}, "", name);
+    public void create(String name, boolean disablePrivateKeys, boolean blank, String passphrase, boolean avoidReuse, boolean descriptors) {
+        nodeClient.makeRequest("createwallet", new ParameterizedTypeReference<>(){}, "", name, disablePrivateKeys, blank, passphrase, avoidReuse, descriptors);
     }
 }

@@ -50,7 +50,7 @@ class CreateWalletTest extends GuiTest {
 
             String errorMessage = "Could not create wallet: the wallet name already exists."
             NodeQuery nodeQuery = lookup(errorMessage)
-            clickOn("OK")
+            clickOn("#alertOk")
         then:
             nodeQuery.queryLabeled().text == errorMessage
     }
