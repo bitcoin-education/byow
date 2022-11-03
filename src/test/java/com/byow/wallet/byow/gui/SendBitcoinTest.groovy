@@ -208,7 +208,7 @@ class SendBitcoinTest extends GuiTest {
             clickOn("OK")
             String errorMessage = "Could not send transaction: wrong password."
             NodeQuery nodeQuery = lookup(errorMessage)
-            clickOn("OK")
+            clickOn("#alertOk")
 
             TableView<AddressRow> addressesTable = lookup("#addressesTable").queryAs(TableView)
 
@@ -256,7 +256,7 @@ class SendBitcoinTest extends GuiTest {
             sendBitcoin(nodeAddress, amountToSend, false)
             String errorMessage = "Could not send transaction: not enough funds."
             NodeQuery nodeQuery = lookup(errorMessage)
-            clickOn("OK")
+            clickOn("#alertOk")
         then:
             nodeQuery.queryLabeled().getText() == errorMessage
         where:
@@ -282,7 +282,7 @@ class SendBitcoinTest extends GuiTest {
             sendBitcoin(nodeAddress, amountToSend, false)
             String errorMessage = "Could not send transaction: not enough funds."
             NodeQuery nodeQuery = lookup(errorMessage)
-            clickOn("OK")
+            clickOn("#alertOk")
         then:
             nodeQuery.queryLabeled().getText() == errorMessage
         where:
@@ -315,7 +315,7 @@ class SendBitcoinTest extends GuiTest {
             clickOn("OK")
             String errorMessage = "Could not send transaction: amount to send is dust."
             NodeQuery nodeQuery = lookup(errorMessage)
-            clickOn("OK")
+            clickOn("#alertOk")
         then:
             nodeQuery.queryLabeled().getText() == errorMessage
         where:
@@ -348,7 +348,7 @@ class SendBitcoinTest extends GuiTest {
             sendBitcoin(addressToSend, "0.01", false)
             String errorMessage = "Could not send transaction: invalid address."
             NodeQuery nodeQuery = lookup(errorMessage)
-            clickOn("OK")
+            clickOn("#alertOk")
         then:
             nodeQuery.queryLabeled().text == errorMessage
         where:
