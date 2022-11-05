@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.io.FileNotFoundException;
 import java.util.Date;
 
 import static com.byow.wallet.byow.domains.node.ErrorMessages.WALLET_NAME_ALREADY_EXISTS;
@@ -74,7 +73,7 @@ public class CreateWalletDialogController {
         this.alertErrorService = alertErrorService;
     }
 
-    public void createMnemonicSeed() throws FileNotFoundException {
+    public void createMnemonicSeed() {
         mnemonicSeed.setText(mnemonicSeedService.create());
     }
 
