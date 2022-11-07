@@ -115,7 +115,7 @@ abstract class GuiTest extends ApplicationSpec {
     }
 
     def loadWalletAndAddBalance() {
-        nodeLoadOrCreateWalletService.loadOrCreateWallet(TESTWALLET)
+        nodeLoadOrCreateWalletService.loadOrCreateWallet(TESTWALLET, false, false, "", true, false)
         createBalanceIfNecessary()
     }
 

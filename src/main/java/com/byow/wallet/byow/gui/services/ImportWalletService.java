@@ -37,7 +37,7 @@ public class ImportWalletService {
     @ActivateProgressBar("Loading wallet...")
     @Retryable(exceptionExpression = "@importWalletService.shouldRetry()", maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 1000))
     public Future<Void> importWallet(Wallet wallet) {
-        nodeLoadOrCreateWalletService.loadOrCreateWallet(wallet.getFirstAddress());
+        nodeLoadOrCreateWalletService.loadOrCreateWallet(wallet.getFirstAddress(), true, true, "", false, false);
         if (!addressesImported(wallet)) {
             nodeMultiImportAddressClient.importAddresses(wallet.getFirstAddress(), wallet.getAddresses(), wallet.createdAt());
         }
