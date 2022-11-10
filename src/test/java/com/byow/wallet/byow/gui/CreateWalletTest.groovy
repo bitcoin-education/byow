@@ -15,11 +15,11 @@ import org.testfx.framework.spock.ApplicationSpec
 
 @SpringBootTest
 class CreateWalletTest extends ApplicationSpec {
-    @Value("classpath:/fxml/main_window.fxml")
-    private Resource fxml
-
     @Autowired
-    private ApplicationContext context
+    protected ApplicationContext context
+
+    @Value("classpath:/fxml/main_window.fxml")
+    protected Resource fxml
 
     @Override
     void init() throws Exception {
@@ -32,8 +32,8 @@ class CreateWalletTest extends ApplicationSpec {
     }
 
     @Override
-    void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(fxml.URL)
+    void start(Stage stage) {
+        FXMLLoader fxmlLoader = new FXMLLoader(fxml.getURL())
         fxmlLoader.controllerFactory = context::getBean
         Parent root = fxmlLoader.load()
         stage.title = "BYOW Wallet"
@@ -47,7 +47,7 @@ class CreateWalletTest extends ApplicationSpec {
             clickOn("Wallet")
             clickOn("#name")
             write("My Test Wallet")
-            clickOn("Create")
+            clickOn("create")
             def mnemonicSeed = lookup("#mnemonicSeed").queryAs(TextArea.class).text
         then:
             mnemonicSeed
