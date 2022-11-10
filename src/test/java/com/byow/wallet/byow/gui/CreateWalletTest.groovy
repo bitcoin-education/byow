@@ -15,9 +15,6 @@ import org.testfx.framework.spock.ApplicationSpec
 
 @SpringBootTest
 class CreateWalletTest extends ApplicationSpec {
-
-    private Stage stage
-
     @Value("classpath:/fxml/main_window.fxml")
     private Resource fxml
 
