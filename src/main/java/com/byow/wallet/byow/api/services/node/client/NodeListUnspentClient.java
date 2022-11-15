@@ -18,6 +18,11 @@ public class NodeListUnspentClient {
     }
 
     public List<Utxo> listUnspent(List<String> addresses, String name) {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Utxo[] utxosArray = nodeClient.makeRequest("listunspent", new ParameterizedTypeReference<>(){}, "wallet/".concat(name), 0, MAX_VALUE, addresses);
         return Arrays.stream(utxosArray).toList();
     }

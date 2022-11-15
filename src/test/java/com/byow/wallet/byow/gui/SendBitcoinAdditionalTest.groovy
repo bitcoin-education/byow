@@ -115,6 +115,7 @@ class SendBitcoinAdditionalTest extends GuiTest {
             clickOn("OK")
             sleep(TIMEOUT, SECONDS)
             nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
+            sleep(TIMEOUT, SECONDS)
             TableView<AddressRow> addressesTable = lookup("#addressesTable").queryAs(TableView)
             clickOn("#transactionsTab")
             TableView<TransactionRow> transactionsTable = lookup("#transactionsTable").queryAs(TableView)
