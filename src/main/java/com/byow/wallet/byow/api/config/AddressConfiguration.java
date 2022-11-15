@@ -2,11 +2,14 @@ package com.byow.wallet.byow.api.config;
 
 import com.byow.wallet.byow.domains.AddressConfig;
 import com.byow.wallet.byow.domains.AddressType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AddressConfiguration {
+    @Value("${initialNumberOfGeneratedAddresses}")
+    private int initialNumberOfGeneratedAddresses;
 
     @Bean("SEGWIT")
     AddressConfig segwitConfig() {
@@ -20,6 +23,6 @@ public class AddressConfiguration {
 
     @Bean
     Integer initialNumberOfGeneratedAddresses() {
-        return 20;
+        return initialNumberOfGeneratedAddresses;
     }
 }
