@@ -5,7 +5,7 @@
 <?import javafx.scene.text.*?>
 
 
-<DialogPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1">
+<DialogPane fx:id="dialogPane" fx:controller="com.byow.wallet.byow.gui.controllers.SendTransactionDialogController" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1">
    <content>
       <GridPane>
         <columnConstraints>
@@ -28,7 +28,7 @@
                </font>
             </Label>
             <Label text="Amount to send:" GridPane.rowIndex="1" />
-            <Label fx:id="amountToSend" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="amountToSendDialog" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="Total Fees:" GridPane.rowIndex="2" />
             <Label fx:id="totalFees" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Total:" GridPane.rowIndex="3" />
@@ -36,7 +36,7 @@
             <Label text="Fee rate:" GridPane.rowIndex="4" />
             <Label fx:id="feeRate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label text="Address to send:" GridPane.rowIndex="5" />
-            <Label fx:id="addressToSend" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label fx:id="addressToSendDialog" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <Label text="Wallet Password:" GridPane.rowIndex="6" />
             <PasswordField fx:id="walletPassword" GridPane.columnIndex="1" GridPane.rowIndex="6" />
          </children>
