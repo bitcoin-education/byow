@@ -10,4 +10,8 @@ public record Wallet(String name, List<ExtendedPubkey> extendedPubkeys, Date cre
             .map(Address::getAddress)
             .toList();
     }
+
+    public String getFirstAddress() {
+        return getAddresses().get(0);
+    }
 }

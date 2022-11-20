@@ -16,6 +16,8 @@ import java.util.List;
 public class CurrentWallet {
     private final SimpleStringProperty name = new SimpleStringProperty();
 
+    private String firstAddress;
+
     private final ObservableMap<AddressType, String> receivingAddresses = FXCollections.observableHashMap();
 
     private final Addresses addresses = new Addresses();
@@ -167,4 +169,13 @@ public class CurrentWallet {
     public ObservableMap<AddressType, String> getObservableReceivingAddresses() {
         return receivingAddresses;
     }
+
+    public void setFirstAddress(String firstAddress) {
+        this.firstAddress = firstAddress;
+    }
+
+    public String getFirstAddress() {
+        return firstAddress;
+    }
+
 }
