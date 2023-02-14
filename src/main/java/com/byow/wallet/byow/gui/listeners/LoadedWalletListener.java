@@ -2,6 +2,7 @@ package com.byow.wallet.byow.gui.listeners;
 
 import com.byow.wallet.byow.domains.Wallet;
 import com.byow.wallet.byow.gui.events.ImportedWalletEvent;
+import com.byow.wallet.byow.gui.events.ImportedWatchOnlyWalletEvent;
 import com.byow.wallet.byow.gui.events.LoadedWalletEvent;
 import com.byow.wallet.byow.gui.services.UpdateCurrentWalletService;
 import com.byow.wallet.byow.gui.services.UpdateUTXOsService;
@@ -29,6 +30,12 @@ public class LoadedWalletListener {
     @EventListener
     @Order(2)
     public void onImportedWalletEvent(ImportedWalletEvent event) {
+        loadWallet(event.getWallet());
+    }
+
+    @EventListener
+    @Order(2)
+    public void onImportedWatchOnlyWalletEvent(ImportedWatchOnlyWalletEvent event) {
         loadWallet(event.getWallet());
     }
 

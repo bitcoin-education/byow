@@ -206,7 +206,7 @@ class SendBitcoinTest extends GuiTest {
             write("wrong password")
 
             clickOn("OK")
-            String errorMessage = "Could not send transaction: wrong password."
+            String errorMessage = "Could not send transaction: wrong signature."
             NodeQuery nodeQuery = lookup(errorMessage)
             clickOn("#alertOk")
 

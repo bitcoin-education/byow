@@ -6,6 +6,7 @@ import com.byow.wallet.byow.api.services.AddressConfigFinder
 import com.byow.wallet.byow.api.services.AddressGeneratorFactory
 import com.byow.wallet.byow.api.services.AddressPrefixFactory
 import com.byow.wallet.byow.api.services.AddressSequentialGenerator
+import com.byow.wallet.byow.api.services.CreateExtendedPubkeysService
 import com.byow.wallet.byow.api.services.CreateWalletService
 import com.byow.wallet.byow.api.services.ExtendedPubkeyService
 import com.byow.wallet.byow.domains.Environment
@@ -30,9 +31,10 @@ class CreateWalletServiceTest extends Specification {
         def extendedPubkeyService = new ExtendedPubkeyService()
         def addressGeneratorFactory = new AddressGeneratorFactory(addressConfigFinder)
         def addressSequentialGenerator = new AddressSequentialGenerator(addressGeneratorFactory, addressPrefixFactory)
+        def createExtendedPubkeysService = new CreateExtendedPubkeysService(addressConfigs, extendedPubkeyService)
 
         AddAddressService addAddressService = new AddAddressService(addressSequentialGenerator)
-        createWalletService = new CreateWalletService(addressConfigs, extendedPubkeyService, addAddressService)
+        createWalletService = new CreateWalletService(addAddressService, createExtendedPubkeysService)
     }
 
     def "should create wallet"() {

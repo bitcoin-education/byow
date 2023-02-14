@@ -59,6 +59,16 @@ public class SendTransactionService {
             .map(utxoDtoBuilder::build)
             .toList();
         transactionSignerService.sign(transactionDto.transaction(), currentWallet.getMnemonicSeed(), password, utxoDtos);
+        return send(transactionDto);
+    }
+
+    @Async("defaultExecutorService")
+    @ActivateProgressBar("Sending transaction...")
+    public Future<Error> send(TransactionDto transactionDto) {
+        return sendTransaction(transactionDto);
+    }
+
+    private Future<Error> sendTransaction(TransactionDto transactionDto) {
         try {
             nodeSendRawTransactionClient.send(transactionDto.transaction().serialize());
         } catch (IOException e) {

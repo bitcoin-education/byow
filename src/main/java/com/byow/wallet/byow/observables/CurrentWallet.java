@@ -10,6 +10,7 @@ import javafx.collections.ObservableMap;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -25,13 +26,15 @@ public class CurrentWallet {
 
     private final AddressRows addressRows = new AddressRows();
 
-    private List<ExtendedPubkey> extendedPubkeys;
+    private List<ExtendedPubkey> extendedPubkeys = new ArrayList<>();
 
     private final TransactionRows transactionRows = new TransactionRows();
 
     private final Balances balances = new Balances();
 
     private String mnemonicSeed;
+
+    private boolean watchOnly = false;
 
     public void setName(String name) {
         this.name.set(name);
@@ -181,5 +184,13 @@ public class CurrentWallet {
 
     public Set<AddressType> getAddressTypes() {
         return addresses.getAddressTypes();
+    }
+
+    public boolean isWatchOnly() {
+        return watchOnly;
+    }
+
+    public void setWatchOnly(boolean watchOnly) {
+        this.watchOnly = watchOnly;
     }
 }

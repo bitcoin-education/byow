@@ -4,6 +4,9 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
+
+import static javax.persistence.FetchType.EAGER;
 
 @Entity
 @Table(name = "wallet")
@@ -25,6 +28,14 @@ public class WalletEntity {
     @Column(name = "created_at")
     @CreatedDate
     private Date createdAt;
+
+    @OneToMany(fetch = EAGER)
+    @JoinColumn(name = "wallet_id")
+    private List<ExtendedPubkeyEntity> extendedPubkeys;
+
+    @OneToOne(fetch = EAGER, mappedBy = "wallet")
+    @JoinColumn(name = "wallet_id")
+    private WatchOnlyPassword watchOnlyPassword;
 
     public WalletEntity() {
     }
@@ -50,5 +61,21 @@ public class WalletEntity {
 
     public Date getCreatedAt() {
         return createdAt;
+    }
+
+    public List<ExtendedPubkeyEntity> getExtendedPubkeys() {
+        return extendedPubkeys;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public boolean isWatchOnly() {
+        return mnemonicSeed.isBlank();
+    }
+
+    public WatchOnlyPassword getWatchOnlyPassword() {
+        return watchOnlyPassword;
     }
 }

@@ -14,4 +14,8 @@ public record Wallet(String name, List<ExtendedPubkey> extendedPubkeys, Date cre
     public String getFirstAddress() {
         return getAddresses().get(0);
     }
+
+    public boolean isWatchOnly() {
+        return mnemonicSeed.isBlank();
+    }
 }
