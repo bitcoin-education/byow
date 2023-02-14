@@ -27,7 +27,13 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Import">
               <items>
-                  <Menu fx:id="importMenuFxml" onAction="#openImportWalletDialog" mnemonicParsing="false" text="Wallet" />
+                  <MenuItem fx:id="importMenuFxml" onAction="#openImportWalletDialog" mnemonicParsing="false" text="Wallet" />
+                  <MenuItem fx:id="importWatchOnlyMenuFxml" onAction="#openImportWatchOnlyWalletDialog" mnemonicParsing="false" text="Watch-only Wallet" />
+              </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Export">
+              <items>
+                  <MenuItem fx:id="exportMenuFxml" onAction="#openExportExtendedPubkeysDialog" mnemonicParsing="false" text="Extended Pubkeys" />
               </items>
           </Menu>
         </menus>

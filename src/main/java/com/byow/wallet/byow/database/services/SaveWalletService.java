@@ -26,7 +26,7 @@ public class SaveWalletService {
         this.loadMenu = loadMenu;
     }
 
-    public void saveWallet(Wallet wallet) {
+    public WalletEntity saveWallet(Wallet wallet) {
         WalletEntity walletEntity = new WalletEntity(
             wallet.name(),
             wallet.mnemonicSeed(),
@@ -35,5 +35,6 @@ public class SaveWalletService {
         );
         walletRepository.save(walletEntity);
         Platform.runLater(() -> loadMenu.add(walletEntity));
+        return walletEntity;
     }
 }

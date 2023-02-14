@@ -31,7 +31,9 @@ public class SendTabController extends Tab {
 
     private final CreateTransactionService createTransactionService;
 
-    private final Resource dialogFxml;
+    private final Resource sendTransactionDialogFxml;
+
+    private final Resource sendTransactionWatchOnlyDialogFxml;
 
     private final ApplicationContext context;
 
@@ -42,13 +44,15 @@ public class SendTabController extends Tab {
         ApplicationContext context,
         CurrentWallet currentWallet,
         CreateTransactionService createTransactionService,
-        @Value("fxml/send_transaction_dialog.fxml") Resource dialogFxml,
+        @Value("fxml/send_transaction_dialog.fxml") Resource sendTransactionDialogFxml,
+        @Value("fxml/send_transaction_watch_only_dialog.fxml") Resource sendTransactionWatchOnlyDialogFxml,
         AlertErrorService alertErrorService
     ) throws IOException {
         this.currentWallet = currentWallet;
         this.createTransactionService = createTransactionService;
-        this.dialogFxml = dialogFxml;
+        this.sendTransactionDialogFxml = sendTransactionDialogFxml;
         this.context = context;
+        this.sendTransactionWatchOnlyDialogFxml = sendTransactionWatchOnlyDialogFxml;
         this.alertErrorService = alertErrorService;
         FXMLLoader fxmlLoader = new FXMLLoader(
             fxml.getURL(),
@@ -80,13 +84,24 @@ public class SendTabController extends Tab {
         dialog.setOnShown(event -> dialog.getDialogPane().getScene().getWindow().setOnCloseRequest(event1 -> dialog.hide()));
 
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(dialogFxml.getURL(), null, null, context::getBean);
-            dialog.getDialogPane().setContent(fxmlLoader.load());
-            SendTransactionDialogController sendTransactionDialogController = fxmlLoader.getController();
-            sendTransactionDialogController.setTransaction(transactionDto);
+            loadDialog(transactionDto, dialog);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         dialog.show();
+    }
+
+    private void loadDialog(TransactionDto transactionDto, Dialog<ButtonType> dialog) throws IOException {
+        if (currentWallet.isWatchOnly()) {
+            FXMLLoader fxmlLoader = new FXMLLoader(sendTransactionWatchOnlyDialogFxml.getURL(), null, null, context::getBean);
+            dialog.getDialogPane().setContent(fxmlLoader.load());
+            SendTransactionWatchOnlyDialogController sendTransactionWatchOnlyDialogController = fxmlLoader.getController();
+            sendTransactionWatchOnlyDialogController.setTransaction(transactionDto);
+            return;
+        }
+        FXMLLoader fxmlLoader = new FXMLLoader(sendTransactionDialogFxml.getURL(), null, null, context::getBean);
+        dialog.getDialogPane().setContent(fxmlLoader.load());
+        SendTransactionDialogController sendTransactionDialogController = fxmlLoader.getController();
+        sendTransactionDialogController.setTransaction(transactionDto);
     }
 }

@@ -22,5 +22,6 @@ public class UpdateCurrentWalletService {
         currentWallet.clearBalances();
         currentWallet.setReceivingAddresses();
         currentWallet.setMnemonicSeed(wallet.mnemonicSeed());
+        currentWallet.setWatchOnly(wallet.isWatchOnly());
     }
 }

@@ -1,39 +1,26 @@
 package com.byow.wallet.byow.api.services;
 
-import com.byow.wallet.byow.domains.AddressConfig;
 import com.byow.wallet.byow.domains.ExtendedPubkey;
 import com.byow.wallet.byow.domains.Wallet;
-import io.github.bitcoineducation.bitcoinjava.ExtendedPrivateKey;
-import io.github.bitcoineducation.bitcoinjava.MnemonicSeed;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
-import static io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes.MAINNET_PREFIX;
-
-@Component
+@Service
 public class CreateWalletService {
-    private final List<AddressConfig> addressConfigs;
-    private final ExtendedPubkeyService extendedPubkeyService;
+
     private final AddAddressService addAddressService;
 
-    public CreateWalletService(List<AddressConfig> addressConfigs, ExtendedPubkeyService extendedPubkeyService, AddAddressService addAddressService) {
-        this.addressConfigs = addressConfigs;
-        this.extendedPubkeyService = extendedPubkeyService;
+    private final CreateExtendedPubkeysService createExtendedPubkeysService;
+
+    public CreateWalletService(AddAddressService addAddressService, CreateExtendedPubkeysService createExtendedPubkeysService) {
         this.addAddressService = addAddressService;
+        this.createExtendedPubkeysService = createExtendedPubkeysService;
     }
 
     public Wallet create(String name, String password, String mnemonicSeedString, Date createdAt, int numberOfGeneratedAddresses) {
-        MnemonicSeed mnemonicSeed = new MnemonicSeed(mnemonicSeedString);
-        ExtendedPrivateKey masterKey = mnemonicSeed.toMasterKey(password, MAINNET_PREFIX.getPrivatePrefix());
-        List<ExtendedPubkey> extendedPubkeys = addressConfigs.stream()
-                .flatMap(addressConfig ->
-                    addressConfig.derivationPaths()
-                        .entrySet()
-                        .stream()
-                        .map(entry -> extendedPubkeyService.create(masterKey, entry.getValue(), entry.getKey(), addressConfig.extendedKeyPrefix()))
-                ).toList();
+        List<ExtendedPubkey> extendedPubkeys = createExtendedPubkeysService.create(mnemonicSeedString, password);
         addAddressService.addAddresses(extendedPubkeys, 0, numberOfGeneratedAddresses);
         return new Wallet(name, extendedPubkeys, createdAt, mnemonicSeedString);
     }
