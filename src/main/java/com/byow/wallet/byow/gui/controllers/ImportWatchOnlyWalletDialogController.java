@@ -8,12 +8,17 @@ import com.byow.wallet.byow.gui.services.AlertErrorService;
 import com.byow.wallet.byow.gui.services.WatchOnlyPasswordService;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -62,13 +67,16 @@ public class ImportWatchOnlyWalletDialogController {
 
     private final WatchOnlyPasswordService watchOnlyPasswordService;
 
+    private final Resource openQRCodeCaptureDialog;
+
     public ImportWatchOnlyWalletDialogController(
         @Qualifier("initialNumberOfGeneratedAddresses") int initialNumberOfGeneratedAddresses,
         ValidateWalletService validateWalletService,
         AlertErrorService alertErrorService,
         ConfigurableApplicationContext context,
         CreateWatchOnlyWalletService createWatchOnlyWalletService,
-        WatchOnlyPasswordService watchOnlyPasswordService
+        WatchOnlyPasswordService watchOnlyPasswordService,
+        @Value("fxml/qr_code_capture.fxml") Resource openQRCodeCaptureDialog
     ) {
         this.initialNumberOfGeneratedAddresses = initialNumberOfGeneratedAddresses;
         this.validateWalletService = validateWalletService;
@@ -76,6 +84,7 @@ public class ImportWatchOnlyWalletDialogController {
         this.context = context;
         this.createWatchOnlyWalletService = createWatchOnlyWalletService;
         this.watchOnlyPasswordService = watchOnlyPasswordService;
+        this.openQRCodeCaptureDialog = openQRCodeCaptureDialog;
     }
 
     public void initialize() {
@@ -127,5 +136,35 @@ public class ImportWatchOnlyWalletDialogController {
 
     public BooleanBinding getAllRequiredInputsAreFull() {
         return allRequiredInputsAreFull;
+    }
+
+    public void captureQRCode() {
+        openQRCodeCaptureDialog();
+    }
+
+    private void openQRCodeCaptureDialog() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(this.dialogPane.getScene().getWindow());
+        dialog.setTitle("Capture QR Code");
+
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(openQRCodeCaptureDialog.getURL(), null, null, context::getBean);
+            dialog.getDialogPane().setContent(fxmlLoader.load());
+            QRCodeCaptureController controller = fxmlLoader.getController();
+            dialog.setOnShown(event -> {
+                dialog.getDialogPane().getScene().getWindow().setOnCloseRequest(event1 -> {
+                    controller.destroy();
+                    dialog.hide();
+                });
+                dialog.getDialogPane().getScene().getWindow().setOnHidden(dialogEvent -> {
+                    if (!controller.getDecodedQRCode().isBlank()) {
+                        extendedPubkeys.setText(controller.getDecodedQRCode());
+                    }
+                });
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        dialog.show();
     }
 }
