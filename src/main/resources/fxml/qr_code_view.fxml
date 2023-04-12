@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+
+<DialogPane fx:id="dialogPane" minHeight="350.0" minWidth="350.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.byow.wallet.byow.gui.controllers.QRCodeViewController">
+    <content>
+        <ImageView fx:id="imageView" fitHeight="350.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true" scaleX="-1" />
+    </content>
+</DialogPane>
