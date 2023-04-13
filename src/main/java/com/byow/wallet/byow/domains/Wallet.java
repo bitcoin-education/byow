@@ -3,6 +3,8 @@ package com.byow.wallet.byow.domains;
 import java.util.Date;
 import java.util.List;
 
+import static com.byow.wallet.byow.domains.AddressType.SEGWIT;
+
 public record Wallet(String name, List<ExtendedPubkey> extendedPubkeys, Date createdAt, String mnemonicSeed) {
     public List<String> getAddresses() {
         return extendedPubkeys.stream()
@@ -12,7 +14,12 @@ public record Wallet(String name, List<ExtendedPubkey> extendedPubkeys, Date cre
     }
 
     public String getFirstAddress() {
-        return getAddresses().get(0);
+        return extendedPubkeys.stream()
+            .filter(extendedPubkey -> extendedPubkey.getType().equals(SEGWIT.name()))
+            .flatMap(extendedPubkey -> extendedPubkey.getAddresses().stream())
+            .map(Address::getAddress)
+            .findFirst()
+            .orElseThrow();
     }
 
     public boolean isWatchOnly() {
