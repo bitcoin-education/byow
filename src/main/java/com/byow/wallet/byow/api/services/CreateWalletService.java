@@ -17,11 +17,13 @@ public class CreateWalletService {
     private final List<AddressConfig> addressConfigs;
     private final ExtendedPubkeyService extendedPubkeyService;
     private final AddAddressService addAddressService;
+    private final ExtendedKeyPrefixFactory extendedKeyPrefixFactory;
 
-    public CreateWalletService(List<AddressConfig> addressConfigs, ExtendedPubkeyService extendedPubkeyService, AddAddressService addAddressService) {
+    public CreateWalletService(List<AddressConfig> addressConfigs, ExtendedPubkeyService extendedPubkeyService, AddAddressService addAddressService, ExtendedKeyPrefixFactory extendedKeyPrefixFactory) {
         this.addressConfigs = addressConfigs;
         this.extendedPubkeyService = extendedPubkeyService;
         this.addAddressService = addAddressService;
+        this.extendedKeyPrefixFactory = extendedKeyPrefixFactory;
     }
 
     public Wallet create(String name, String password, String mnemonicSeedString, Date createdAt, int numberOfGeneratedAddresses) {
@@ -32,7 +34,7 @@ public class CreateWalletService {
                     addressConfig.derivationPaths()
                         .entrySet()
                         .stream()
-                        .map(entry -> extendedPubkeyService.create(masterKey, entry.getValue(), entry.getKey(), addressConfig.extendedKeyPrefix()))
+                        .map(entry -> extendedPubkeyService.create(masterKey, entry.getValue(), entry.getKey(), extendedKeyPrefixFactory.get()))
                 ).toList();
         addAddressService.addAddresses(extendedPubkeys, 0, numberOfGeneratedAddresses);
         return new Wallet(name, extendedPubkeys, createdAt, mnemonicSeedString);

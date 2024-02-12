@@ -1,60 +1,66 @@
 package com.byow.wallet.byow.gui.services;
 
 import com.byow.wallet.byow.api.services.node.NodeLoadOrCreateWalletService;
-import com.byow.wallet.byow.api.services.node.client.NodeMultiImportAddressClient;
-import com.byow.wallet.byow.api.services.node.client.NodeReceivedByAddressClient;
+import com.byow.wallet.byow.api.services.node.client.NodeGetDescriptorInfoClient;
+import com.byow.wallet.byow.api.services.node.client.NodeImportDescriptorsClient;
+import com.byow.wallet.byow.api.services.node.client.NodeListDescriptorsClient;
 import com.byow.wallet.byow.domains.Wallet;
-import com.byow.wallet.byow.domains.node.NodeAddress;
+import com.byow.wallet.byow.domains.node.NodeDescriptorInfoResponse;
 import com.byow.wallet.byow.gui.annotations.ActivateProgressBar;
+import com.byow.wallet.byow.utils.Descriptors;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-
-import static java.lang.Thread.currentThread;
 
 @Service
 public class ImportWalletService {
     private final NodeLoadOrCreateWalletService nodeLoadOrCreateWalletService;
 
-    private final NodeMultiImportAddressClient nodeMultiImportAddressClient;
+    private final NodeImportDescriptorsClient nodeImportDescriptorsClient;
 
-    private final NodeReceivedByAddressClient nodeReceivedByAddressClient;
+    private final NodeGetDescriptorInfoClient nodeGetDescriptorInfoClient;
 
-    public ImportWalletService(NodeLoadOrCreateWalletService nodeLoadOrCreateWalletService, NodeMultiImportAddressClient nodeMultiImportAddressClient, NodeReceivedByAddressClient nodeReceivedByAddressClient) {
+    private final NodeListDescriptorsClient nodeListDescriptorsClient;
+
+    public ImportWalletService(
+        NodeLoadOrCreateWalletService nodeLoadOrCreateWalletService,
+        NodeImportDescriptorsClient nodeImportDescriptorsClient,
+        NodeGetDescriptorInfoClient nodeGetDescriptorInfoClient,
+        NodeListDescriptorsClient nodeListDescriptorsClient) {
         this.nodeLoadOrCreateWalletService = nodeLoadOrCreateWalletService;
-        this.nodeMultiImportAddressClient = nodeMultiImportAddressClient;
-        this.nodeReceivedByAddressClient = nodeReceivedByAddressClient;
+        this.nodeImportDescriptorsClient = nodeImportDescriptorsClient;
+        this.nodeGetDescriptorInfoClient = nodeGetDescriptorInfoClient;
+        this.nodeListDescriptorsClient = nodeListDescriptorsClient;
     }
 
     @Async("defaultExecutorService")
     @ActivateProgressBar("Loading wallet...")
     @Retryable(exceptionExpression = "@importWalletService.shouldRetry()", maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 1000))
     public Future<Void> importWallet(Wallet wallet) {
-        nodeLoadOrCreateWalletService.loadOrCreateWallet(wallet.getFirstAddress(), true, true, "", false, false);
-        if (!addressesImported(wallet)) {
-            nodeMultiImportAddressClient.importAddresses(wallet.getFirstAddress(), wallet.getAddresses(), wallet.createdAt());
+        nodeLoadOrCreateWalletService.loadOrCreateWallet(wallet.getFirstAddress(), true, true, "", false, true);
+        List<String> notImportedDescriptors = getNotImportedDescriptors(wallet);
+        if (!notImportedDescriptors.isEmpty()) {
+            List<NodeDescriptorInfoResponse> descriptorsInfo = nodeGetDescriptorInfoClient.getDescriptorsInfo(wallet.getFirstAddress(), notImportedDescriptors);
+            List<String> descriptors = descriptorsInfo.stream().map(NodeDescriptorInfoResponse::descriptor).toList();
+            nodeImportDescriptorsClient.importDescriptors(wallet.getFirstAddress(), descriptors, wallet.createdAt());
         }
         return new AsyncResult<>(null);
     }
 
-    private boolean addressesImported(Wallet wallet) {
-        Set<String> importedAddresses = nodeReceivedByAddressClient.listAddresses(wallet.getFirstAddress(), 0, true, true)
+    private List<String> getNotImportedDescriptors(Wallet wallet) {
+        List<String> currentDescriptors = Descriptors.getDescriptors(wallet.extendedPubkeys());
+        Set<String> previouslyImportedDescriptors = nodeListDescriptorsClient
+            .getDescriptors(wallet.getFirstAddress())
             .stream()
-            .map(NodeAddress::address)
+            .map(desc -> desc.split("#")[0])
             .collect(Collectors.toSet());
-        Set<String> walletAddresses = new HashSet<>(wallet.getAddresses());
-        walletAddresses.removeAll(importedAddresses);
-        return walletAddresses.isEmpty();
-    }
-
-    public boolean shouldRetry() {
-        return !currentThread().isInterrupted();
+        return currentDescriptors.stream().dropWhile(previouslyImportedDescriptors::contains).toList();
     }
 }
