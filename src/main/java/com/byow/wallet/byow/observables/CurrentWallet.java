@@ -193,4 +193,17 @@ public class CurrentWallet {
     public void setWatchOnly(boolean watchOnly) {
         this.watchOnly = watchOnly;
     }
+
+    public void freeze(String address) {
+        addresses.freeze(address);
+    }
+
+    public void unfreeze(String address) {
+        addresses.unfreeze(address);
+    }
+
+    public List<String> getNotFrozenAddressesAsStrings() {
+        return addresses.getNotFrozenAddressesAsStrings();
+    }
+
 }
