@@ -9,6 +9,7 @@ public final class Address {
     private long confirmations;
     private boolean used;
     private final AddressType addressType;
+    private boolean frozen;
 
     public Address(String address, Long index, BigDecimal balance, long confirmations, AddressType addressType) {
         this.address = address;
@@ -52,5 +53,17 @@ public final class Address {
 
     public boolean isUsed() {
         return used;
+    }
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    public void freeze() {
+        frozen = true;
+    }
+
+    public void unfreeze() {
+        frozen = false;
     }
 }
