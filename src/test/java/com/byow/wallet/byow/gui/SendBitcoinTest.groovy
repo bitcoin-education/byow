@@ -235,35 +235,35 @@ class SendBitcoinTest extends GuiTest {
 
     def "should not send bitcoin without funds greater than amount + fee"() {
         when:
-        clickOn("New")
-        clickOn("Wallet")
-        clickOn("#name")
-        write("My Test Wallet 12")
-        clickOn("Create")
-        clickOn("OK")
-        clickOn("Receive")
-        waitLoadWallet()
+            clickOn("New")
+            clickOn("Wallet")
+            clickOn("#name")
+            write("My Test Wallet 12")
+            clickOn("Create")
+            clickOn("OK")
+            clickOn("Receive")
+            waitLoadWallet()
 
-        BigDecimal funds = 0
-        IntStream.range(0, previousUtxosNumber).forEach{
-            String address = lookup("#receivingAddress").queryAs(TextField).text
-            sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
-            funds += previousAmount
-        }
+            BigDecimal funds = 0
+            IntStream.range(0, previousUtxosNumber).forEach{
+                String address = lookup("#receivingAddress").queryAs(TextField).text
+                sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
+                funds += previousAmount
+            }
 
-        String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
-        nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
-        clickOn("#sendTab")
-        sendBitcoin(nodeAddress, amountToSend, false)
-        String errorMessage = "Could not send transaction: not enough funds."
-        NodeQuery nodeQuery = lookup(errorMessage)
-        clickOn("#alertOk")
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
+            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
+            clickOn("#sendTab")
+            sendBitcoin(nodeAddress, amountToSend, false)
+            String errorMessage = "Could not send transaction: not enough funds."
+            NodeQuery nodeQuery = lookup(errorMessage)
+            clickOn("#alertOk")
         then:
-        nodeQuery.queryLabeled().getText() == errorMessage
+            nodeQuery.queryLabeled().getText() == errorMessage
         where:
-        previousUtxosNumber | amountToSend | previousAmount
-        1                   | "0.5"        | 0.1
-        1                   | "0.5"        | 0.50002089
+            previousUtxosNumber | amountToSend | previousAmount
+            1                   | "0.5"        | 0.1
+            1                   | "0.5"        | 0.50002089
     }
 
     def "should not send bitcoin without any funds"() {
