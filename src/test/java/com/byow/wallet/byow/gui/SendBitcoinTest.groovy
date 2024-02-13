@@ -7,6 +7,7 @@ import com.byow.wallet.byow.utils.BitcoinFormatter
 import javafx.scene.control.Label
 import javafx.scene.control.TableView
 import javafx.scene.control.TextField
+import javafx.scene.input.MouseButton
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.testfx.service.query.NodeQuery
 
@@ -362,5 +363,85 @@ class SendBitcoinTest extends GuiTest {
             "1EW9vumPzu9xExRwajYuxUjuMK9TbC8bks"                             | _
             "3AkaX4by89rCBiyFz5neq5xhkgSSfzEtfx"                             | _
 
+    }
+
+    def "should not send bitcoin from frozen address"() {
+        when:
+            clickOn("New")
+            clickOn("Wallet")
+            clickOn("#name")
+            write("My Test Wallet 35")
+            clickOn("Create")
+            clickOn("OK")
+            clickOn("Receive")
+            waitLoadWallet()
+
+            BigDecimal funds = 0
+            IntStream.range(0, previousUtxosNumber).forEach{
+                String address = lookup("#receivingAddress").queryAs(TextField).text
+                sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
+                funds += previousAmount
+            }
+
+            sleep(3000)
+            TableView<AddressRow> addressesTable = lookup("#addressesTable").queryAs(TableView)
+            AddressRow firstRowAddressesTable = addressesTable.items[0]
+            clickOn(firstRowAddressesTable.address, MouseButton.SECONDARY)
+            clickOn("Freeze Address")
+
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
+            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
+            clickOn("#sendTab")
+            sendBitcoin(nodeAddress, amountToSend, false)
+            String errorMessage = "Could not send transaction: not enough funds."
+            NodeQuery nodeQuery = lookup(errorMessage)
+            clickOn("#alertOk")
+        then:
+            nodeQuery.queryLabeled().getText() == errorMessage
+        where:
+            previousUtxosNumber | amountToSend | previousAmount
+            1                   | "0.5"        | 1
+    }
+
+    def "should send bitcoin from unfrozen address"() {
+        when:
+            clickOn("New")
+            clickOn("Wallet")
+            clickOn("#name")
+            write("My Test Wallet 35")
+            clickOn("Create")
+            clickOn("OK")
+            clickOn("Receive")
+            waitLoadWallet()
+
+            BigDecimal funds = 0
+            IntStream.range(0, previousUtxosNumber).forEach{
+                String address = lookup("#receivingAddress").queryAs(TextField).text
+                sendBitcoinAndWait(address, previousAmount, 1, "#addressesTable", previousAmount)
+                funds += previousAmount
+            }
+
+            sleep(3000)
+            TableView<AddressRow> addressesTable = lookup("#addressesTable").queryAs(TableView)
+            AddressRow firstRowAddressesTable = addressesTable.items[0]
+            clickOn(firstRowAddressesTable.address, MouseButton.SECONDARY)
+            clickOn("Freeze Address")
+            clickOn(firstRowAddressesTable.address, MouseButton.SECONDARY)
+            clickOn("Unfreeze Address")
+
+            String nodeAddress = nodeGetNewAddressClient.getNewAddress(TESTWALLET, "bech32")
+            nodeGenerateToAddressClient.generateToAddress(TESTWALLET, 1, nodeAddress)
+            clickOn("#sendTab")
+            sendBitcoin(nodeAddress, amountToSend)
+            clickOn("OK")
+
+            clickOn("#transactionsTab")
+            TableView<TransactionRow> transactionsTable = lookup("#transactionsTable").queryAs(TableView)
+            def transactionTableSize = transactionsTable.items.size()
+        then:
+            transactionTableSize == previousUtxosNumber + 1
+        where:
+            previousUtxosNumber | amountToSend | previousAmount
+            1                   | "0.5"        | 1
     }
 }

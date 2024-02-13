@@ -7,8 +7,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -62,5 +61,15 @@ public class AddressesTableController extends TableView<Address> {
         columnAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
         columnBalance.setCellValueFactory(new PropertyValueFactory<>("balance"));
         columnConfirmations.setCellValueFactory(new PropertyValueFactory<>("confirmations"));
+    }
+
+    public void unfreezeAddress() {
+        AddressRow selected = addressesTable.getSelectionModel().getSelectedItem();
+        currentWallet.unfreeze(selected.getAddress());
+    }
+
+    public void freezeAddress() {
+        AddressRow selected = addressesTable.getSelectionModel().getSelectedItem();
+        currentWallet.freeze(selected.getAddress());
     }
 }

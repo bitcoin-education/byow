@@ -53,7 +53,7 @@ public class CreateTransactionService {
     public TransactionDto create(String address, BigDecimal amount) {
         BigDecimal feeRate = estimateFeeService.estimate();
 
-        List<String> addresses = currentWallet.getAddressesAsStrings();
+        List<String> addresses = currentWallet.getNotFrozenAddressesAsStrings();
 
         if (addresses.isEmpty()) {
             throw new CreateTransactionException(ErrorMessages.WALLET_NOT_LOADED);

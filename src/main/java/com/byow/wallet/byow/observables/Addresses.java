@@ -98,4 +98,22 @@ public class Addresses {
     public Set<AddressType> getAddressTypes() {
         return addresses.keySet();
     }
+
+    public void freeze(String address) {
+        getAddress(address).freeze();
+    }
+
+    public void unfreeze(String address) {
+        getAddress(address).unfreeze();
+    }
+
+    public List<String> getNotFrozenAddressesAsStrings() {
+        return addresses.values()
+            .stream()
+            .flatMap(addressMap -> addressMap.entrySet().stream())
+            .filter(entry -> !entry.getValue().isFrozen())
+            .map(entry -> entry.getKey())
+            .toList();
+    }
+
 }
