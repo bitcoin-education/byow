@@ -17,8 +17,6 @@ import static com.byow.wallet.byow.domains.Environment.*;
 import static com.byow.wallet.byow.utils.AddressMatcher.isNestedSegwit;
 import static com.byow.wallet.byow.utils.AddressMatcher.isSegwit;
 import static io.github.bitcoineducation.bitcoinjava.AddressConstants.*;
-import static io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes.MAINNET_NESTED_SEGWIT_PREFIX;
-import static io.github.bitcoineducation.bitcoinjava.ExtendedKeyPrefixes.MAINNET_SEGWIT_PREFIX;
 import static io.github.bitcoineducation.bitcoinjava.Script.P2SH;
 import static io.github.bitcoineducation.bitcoinjava.Script.P2WPKH;
 
@@ -46,7 +44,6 @@ public class AddressConfiguration {
                 TESTNET, TESTNET_P2WPKH_ADDRESS_PREFIX,
                 REGTEST, REGTEST_P2WPKH_ADDRESS_PREFIX
             ),
-            MAINNET_SEGWIT_PREFIX,
             isSegwit(bitcoinEnvironment),
             P2WPKH,
             Script::p2wpkhAddress,
@@ -72,7 +69,6 @@ public class AddressConfiguration {
                 TESTNET, TESTNET_P2SH_ADDRESS_PREFIX,
                 REGTEST, TESTNET_P2SH_ADDRESS_PREFIX
             ),
-            MAINNET_NESTED_SEGWIT_PREFIX,
             isNestedSegwit(bitcoinEnvironment),
             P2SH,
             Script::nestedSegwitAddress,

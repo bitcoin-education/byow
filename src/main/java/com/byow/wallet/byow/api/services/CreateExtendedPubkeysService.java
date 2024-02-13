@@ -16,9 +16,12 @@ public class CreateExtendedPubkeysService {
 
     private final ExtendedPubkeyService extendedPubkeyService;
 
-    public CreateExtendedPubkeysService(List<AddressConfig> addressConfigs, ExtendedPubkeyService extendedPubkeyService) {
+    private final ExtendedKeyPrefixFactory extendedKeyPrefixFactory;
+
+    public CreateExtendedPubkeysService(List<AddressConfig> addressConfigs, ExtendedPubkeyService extendedPubkeyService, ExtendedKeyPrefixFactory extendedKeyPrefixFactory) {
         this.addressConfigs = addressConfigs;
         this.extendedPubkeyService = extendedPubkeyService;
+        this.extendedKeyPrefixFactory = extendedKeyPrefixFactory;
     }
 
     public List<ExtendedPubkey> create(String mnemonicSeedString, String password) {
@@ -29,7 +32,7 @@ public class CreateExtendedPubkeysService {
                 addressConfig.derivationPaths()
                     .entrySet()
                     .stream()
-                    .map(entry -> extendedPubkeyService.create(masterKey, entry.getValue(), entry.getKey(), addressConfig.extendedKeyPrefix()))
+                    .map(entry -> extendedPubkeyService.create(masterKey, entry.getValue(), entry.getKey(), extendedKeyPrefixFactory.get()))
             ).toList();
     }
 }
